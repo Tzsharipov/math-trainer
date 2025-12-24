@@ -1,15 +1,85 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Math Trainer</title>
-  </head>
-  <body>
-    <div id="app" class="p-8">
-      <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-xl inline-block">
-        <h1 class="text-2xl font-bold">Tailwind v4 работает!</h1>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Trainer - Умножение и Деление</title>
+</head>
+<body>
+  <div id="app" class="min-h-screen bg-sky-50 p-2 md:p-6 font-sans text-slate-800 flex flex-col items-center">
+    <div class="max-w-7xl w-full flex flex-col lg:flex-row gap-6 justify-center items-start">
+      
+      <!-- Панель настроек (левая панель) -->
+      <aside class="w-full lg:w-72 bg-cyan-400 p-6 rounded-[2.5rem] shadow-xl text-white shrink-0">
+        <h1 class="text-xl font-black mb-4 uppercase tracking-tight">Умножение</h1>
+        
+        <!-- Информация о лимитах -->
+        <div class="bg-white/20 rounded-xl p-3 mb-6 text-[11px] font-bold border border-white/30 uppercase leading-relaxed">
+          Лимиты разрядности:<br>
+          Множимое: 7 | Множитель: 5
+        </div>
+        
+        <!-- Чекбокс подсказок -->
+        <div class="mb-6">
+          <label class="flex items-center gap-3 p-3 rounded-2xl bg-yellow-400 text-slate-800 cursor-pointer hover:bg-yellow-300 transition-all shadow-md">
+            <input type="checkbox" id="checkHints" class="w-5 h-5 accent-blue-600">
+            <span class="font-black text-xs uppercase">Включить подсказки</span>
+          </label>
+        </div>
+        
+        <!-- Переключатель режима -->
+        <div class="flex flex-col gap-2 mb-6 text-sm">
+          <label class="flex items-center gap-3 p-3 rounded-2xl bg-white/10 cursor-pointer hover:bg-white/20 transition-all">
+            <input type="radio" name="mode" value="auto" checked class="w-4 h-4 accent-blue-600">
+            <span class="font-bold">Придумай за меня</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-2xl bg-white/10 cursor-pointer hover:bg-white/20 transition-all">
+            <input type="radio" name="mode" value="manual" class="w-4 h-4 accent-blue-600">
+            <span class="font-bold">Я напишу сам</span>
+          </label>
+        </div>
+        
+        <!-- Режим "Автоматический" -->
+        <div id="ui-auto" class="space-y-4">
+          <select id="selectA" class="w-full p-3 rounded-xl text-slate-800 font-bold outline-none border-none shadow-lg">
+            <option value="1">1-значное</option>
+            <option value="2">2-значное</option>
+            <option value="3" selected>3-значное</option>
+            <option value="4">4-значное</option>
+            <option value="5">5-значное</option>
+            <option value="6">6-значное</option>
+            <option value="7">7-значное</option>
+          </select>
+          <select id="selectB" class="w-full p-3 rounded-xl text-slate-800 font-bold outline-none border-none shadow-lg">
+            <option value="1">1-значное</option>
+            <option value="2" selected>2-значное</option>
+            <option value="3">3-значное</option>
+            <option value="4">4-значное</option>
+            <option value="5">5-значное</option>
+          </select>
+          <button id="btnGen" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-xl uppercase text-sm active:scale-95 transition-all">
+            Создать пример
+          </button>
+        </div>
+        
+        <!-- Режим "Ручной" -->
+        <div id="ui-manual" class="space-y-4 hidden text-slate-800">
+          <input type="number" id="inA" placeholder="Число 1 (max 7)" class="w-full p-3 rounded-xl font-bold outline-none shadow-inner border-2 border-transparent focus:border-green-400">
+          <input type="number" id="inB" placeholder="Число 2 (max 5)" class="w-full p-3 rounded-xl font-bold outline-none shadow-inner border-2 border-transparent focus:border-green-400">
+          <button id="btnStartMan" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-xl uppercase text-sm shadow-xl transition-all">
+            Начать решать
+          </button>
+        </div>
+      </aside>
+      
+      <!-- Рабочая область (справа) -->
+      <main id="workspace" class="hidden h-fit bg-white rounded-[3rem] shadow-2xl p-8 border-8 border-white flex justify-center items-center overflow-auto max-w-full">
+        <div id="mathGrid" class="font-mono w-fit"></div>
+      </main>
+      
     </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  </div>
+  
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
