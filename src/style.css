@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.math-input {
+    transition: all 0.2s ease-in-out;
+}
