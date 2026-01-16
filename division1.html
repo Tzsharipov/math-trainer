@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Trainer - Деление уголком</title>
+  
+  <style>
+    body {
+      visibility: hidden;
+    }
+    body.loaded {
+      visibility: visible;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="min-h-screen bg-sky-50 p-2 md:p-6 font-sans text-slate-800 flex items-center justify-center">
+  
+  <aside id="settingsPanel" class="w-full max-w-sm bg-cyan-400 p-6 rounded-[2.5rem] shadow-xl text-white">
+    <h1 class="text-xl font-black mb-4 uppercase tracking-tight text-gray-900">Деление уголком</h1>
+    
+    <div class="bg-white/20 rounded-xl p-3 mb-6 text-[11px] font-bold border border-white/30 uppercase leading-relaxed text-blue-800">
+      Лимиты разрядности:<br>
+      Делимое: 3-7 | Делитель: 2-4
+    </div>
+    
+    <div class="mb-6">
+      <label class="flex items-center gap-3 p-3 rounded-2xl bg-yellow-400 text-slate-800 cursor-pointer hover:bg-yellow-300 transition-all shadow-md">
+        <input type="checkbox" id="checkHints" class="w-5 h-5 accent-blue-600">
+        <span class="font-black text-xs uppercase">Включить подсказки</span>
+      </label>
+    </div>
+    
+    <div class="flex flex-col gap-2 mb-6 text-sm">
+      <label class="flex items-center gap-3 p-3 rounded-2xl bg-white/10 cursor-pointer hover:bg-white/20 transition-all">
+        <input type="radio" name="mode" value="auto" checked class="w-4 h-4 accent-blue-600">
+        <span class="font-bold text-blue-800">Придумай пример за меня</span>
+      </label>
+      <label class="flex items-center gap-3 p-3 rounded-2xl bg-white/10 cursor-pointer hover:bg-white/20 transition-all">
+        <input type="radio" name="mode" value="manual" class="w-4 h-4 accent-blue-600">
+        <span class="font-bold text-blue-800">Я напишу пример сам</span>
+      </label>
+    </div>
+    
+    <div id="ui-auto" class="space-y-4">
+      <select id="selectDividend" class="w-full p-3 rounded-xl text-slate-800 font-bold outline-none border-none shadow-lg">
+        <option value="3">3-значное делимое</option>
+        <option value="4">4-значное делимое</option>
+        <option value="5" selected>5-значное делимое</option>
+        <option value="6">6-значное делимое</option>
+        <option value="7">7-значное делимое</option>
+      </select>
+      <select id="selectDivisor" class="w-full p-3 rounded-xl text-slate-800 font-bold outline-none border-none shadow-lg">
+        <option value="2" selected>2-значное делитель</option>
+        <option value="3">3-значное делитель</option>
+        <option value="4">4-значное делитель</option>
+      </select>
+      <button id="btnGen" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-xl uppercase text-sm active:scale-95 transition-all">
+        Создать пример
+      </button>
+    </div>
+    
+    <div id="ui-manual" class="space-y-4 hidden text-slate-800">
+      <div class="bg-yellow-200 text-yellow-800 text-xs p-2 rounded mb-2">
+        ⚠️ Делимое должно делиться на делитель без остатка
+      </div>
+      <input type="number" id="inDividend" placeholder="Делимое (мин 100)" class="w-full p-3 rounded-xl font-bold outline-none shadow-inner border-2 border-transparent focus:border-green-400">
+      <input type="number" id="inDivisor" placeholder="Делитель (мин 10)" class="w-full p-3 rounded-xl font-bold outline-none shadow-inner border-2 border-transparent focus:border-green-400">
+      <button id="btnStartMan" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-xl uppercase text-sm shadow-xl transition-all">
+        Начать решать
+      </button>
+    </div>
+    
+    <div class="mt-6">
+      <a href="multiplication.html" class="block w-full bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-6 rounded-xl shadow-xl uppercase text-sm text-center transition-all">
+        🔢 Перейти к умножению
+      </a>
+    </div>
+  </aside>
+  
+  <div id="workspace" class="hidden flex-col items-center gap-6">
+    <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tight">Деление уголком</h2>
+    
+    <div class="bg-white rounded-[3rem] shadow-2xl p-4 border-8 border-white overflow-auto">
+      <div id="mathGrid" class="font-mono w-fit"></div>
+    </div>
+    
+    <div id="checkMessage" class="text-xl font-bold text-center"></div>
+    
+    <button id="btnClearAll" class="bg-cyan-400 hover:bg-cyan-500 text-blue-800 font-black py-2 px-8 rounded-xl shadow-lg uppercase text-sm transition-all">
+      Очистить всё
+    </button>
+    
+    <div class="flex gap-4">
+      <button id="btnNewExample" class="bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
+        Новый пример
+      </button>
+      
+      <button onclick="window.location.href='multiplication.html'" class="bg-orange-500 hover:bg-orange-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
+        🔢 Перейти к умножению
+      </button>
+    </div>
+  </div>
+  
+</div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script type="module" src="/src/division.js"></script>
+</body>
+</html>

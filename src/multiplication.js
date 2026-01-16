@@ -354,3 +354,5 @@ function clearAll() {
     buildGrid(currentA, currentB);
   }
 }
+
+document.body.classList.add('loaded');
