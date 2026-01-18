@@ -3,6 +3,7 @@ import { generateNumber, hasZeroInside } from './division/divisionHelpers.js';
 import { buildGrid } from './division/divisionGrid.js';
 import { checkProduct, checkDifference, checkQuotient } from './division/divisionCheck.js';
 import { updateHighlights, updateHighlightsForStep } from './division/divisionHighlights.js';
+import { updateHintMessage, clearHintMessage } from './division/divisionHints.js';
 
 console.log('DIVISION.JS LOADED v4 (полный порт из Laravel)');
 
@@ -114,9 +115,13 @@ btnClearAll.onclick = () => {
     checkHints.checked = false;
     focusedRow = { step: null, type: null };
     
+    // Очищаем визуально все инпуты
     for (const k in inputRefs) {
       const el = inputRefs[k];
-      if (el) el.style.backgroundColor = '';
+      if (el) {
+        el.value = ''; // Очищаем значение в HTML
+        el.style.backgroundColor = ''; // Убираем подсветку
+      }
     }
     
     setTimeout(() => inputRefs['q:0']?.focus(), 0);
@@ -135,13 +140,29 @@ btnNewExample.onclick = () => {
 // Включение подсказок
 checkHints.onchange = () => {
   hintsEnabled = checkHints.checked;
+  const dividendDigitsArray = String(dividend).split('').map(Number);
+  
   if (hintsEnabled) {
     setTimeout(() => {
       inputRefs['q:0']?.focus();
-      focusedRow = { step: null, type: null };
-      const dividendDigitsArray = String(dividend).split('').map(Number);
+      focusedRow = { step: null, type: null, quotientIndex: 0 };
       updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+      updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
     }, 0);
+  } else {
+    // При выключении подсказок - убираем голубую/жёлтую подсветку и текст подсказки
+    clearHintMessage();
+    for (const k in inputRefs) {
+      const el = inputRefs[k];
+      if (el) {
+        const bg = el.style.backgroundColor;
+        // Убираем только голубую и жёлтую подсветку (подсказки)
+        // НЕ трогаем зелёную и красную (результаты проверки)
+        if (bg === 'rgb(68, 214, 232)' || bg === 'rgb(255, 245, 157)') {
+          el.style.backgroundColor = '';
+        }
+      }
+    }
   }
 };
 
@@ -152,6 +173,9 @@ function buildGridWrapper() {
 function setupLogic() {
   const dividendDigitsArray = String(dividend).split('').map(Number);
   
+  // Синхронизируем hintsEnabled с реальным состоянием чекбокса
+  hintsEnabled = checkHints.checked;
+  
   // Частное
   document.querySelectorAll('.quotient-input').forEach(input => {
     const index = parseInt(input.dataset.quotientIndex);
@@ -160,8 +184,9 @@ function setupLogic() {
     input.oninput = (e) => handleQuotientInput(e, index);
     input.onkeydown = (e) => handleQuotientKey(e, index);
     input.onfocus = () => {
-      focusedRow = { step: null, type: null };
+      focusedRow = { step: null, type: null, quotientIndex: index };
       updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+      updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
     };
   });
   
@@ -178,10 +203,15 @@ function setupLogic() {
     input.onfocus = () => {
       focusedRow = { step, type };
       updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+      updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
     };
   });
   
-  updateHighlightsForStep(0, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+  // Вызываем начальную подсветку ТОЛЬКО если подсказки включены
+  if (hintsEnabled) {
+    updateHighlightsForStep(0, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+    updateHintMessage({ step: null, type: null, quotientIndex: 0 }, stepsData, dividend, divisor, hintsEnabled);
+  }
 }
 
 function handleQuotientInput(e, index) {
@@ -196,7 +226,8 @@ function handleQuotientInput(e, index) {
   e.target.style.backgroundColor = '';
   
   if (value === correctDigit) {
-    if (hintsEnabled) e.target.style.backgroundColor = '#86efac';
+    // Зелёный фон ВСЕГДА при правильном ответе
+    e.target.style.backgroundColor = '#86efac';
     
     const stepIndex = stepsData.findIndex(s => s.quotientIndex === index);
     if (stepIndex >= 0) {
@@ -208,6 +239,8 @@ function handleQuotientInput(e, index) {
       setTimeout(() => {
         inputRefs[`${stepIndex}:product:${rightmostCol}`]?.focus();
         focusedRow = { step: stepIndex, type: 'product' };
+        const dividendDigitsArray = String(dividend).split('').map(Number);
+        updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
       }, 0);
     }
   } else {
@@ -244,6 +277,7 @@ function handleStepInput(e, step, type, col) {
         inputRefs[`${step}:difference:${targetCol}`]?.focus();
         focusedRow = { step, type: 'difference' };
         updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+        updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
       }, 0);
     }
   } else if (type === 'difference') {
@@ -270,8 +304,9 @@ function handleStepInput(e, step, type, col) {
         const nextQuotientIndex = step + 1;
         if (nextQuotientIndex < quotientInputs.length) {
           inputRefs[`q:${nextQuotientIndex}`]?.focus();
-          focusedRow = { step: null, type: null };
+          focusedRow = { step: null, type: null, quotientIndex: nextQuotientIndex };
           updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+          updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
         }
       }, 0);
     }
@@ -314,10 +349,11 @@ function handleStepKey(e, step, type, col) {
       } else {
         const qIndex = Math.min(col, quotientInputs.length - 1);
         inputRefs[`q:${qIndex}`]?.focus();
-        focusedRow = { step: null, type: null };
+        focusedRow = { step: null, type: null, quotientIndex: qIndex };
       }
     }
     updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+    updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
     
@@ -357,6 +393,7 @@ function handleStepKey(e, step, type, col) {
       }
     }
     updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+    updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
   } else if (e.key === 'Delete' || e.key === 'Backspace') {
     e.preventDefault();
     steps[step][type + 'Input'][col] = '';

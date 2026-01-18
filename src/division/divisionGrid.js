@@ -60,8 +60,8 @@ export function buildGrid(
   const quotientCols = Math.max(quotientStr.length, divisorDigits.length);
   const totalGridCols = dividendCols + 1 + quotientCols;
   
-  const cellWidth = `clamp(25px, calc(50vw / ${totalGridCols}), 40px)`;
-  const fontSize = `clamp(12px, calc(25vw / ${totalGridCols}), 20px)`;
+  const cellWidth = `clamp(25px, calc(50vw / ${totalGridCols}), 32px)`;
+  const fontSize = `clamp(12px, calc(25vw / ${totalGridCols}), 16px)`;
   
   // Построение HTML (ТОЧНАЯ структура из Laravel)
   let html = `<div class="bg-gray-100 border-2 border-gray-400 rounded-lg shadow p-4 mx-auto grid gap-x-1 items-start" 
@@ -88,6 +88,14 @@ export function buildGrid(
       style="grid-row: 2; grid-column: ${col}; margin-top: 4px; width: ${cellWidth}; height: ${cellWidth}; font-size: ${fontSize};"
       class="quotient-input text-center border-2 border-gray-300 bg-blue-200 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm">`;
   });
+  
+  // Контейнер для подсказки (занимает место в grid, но сама подсказка absolute)
+  const hintStartCol = dividendCols + 2;
+  html += `<div style="grid-row: 3; grid-column: ${hintStartCol} / -1; position: relative; height: 0;">
+    <div id="hintMessage" 
+      style="position: absolute; top: 8px; left: 0; font-size: clamp(11px, calc(20vw / ${totalGridCols}), 15px); word-wrap: break-word; white-space: normal; line-height: 1.3; max-width: 400px;"
+      class="text-blue-600 font-bold text-left"></div>
+  </div>`;
   
   // Разделительная линия
   html += `<div class="border-l-2 border-gray-400 row-span-full" style="grid-column: ${dividendCols + 1};"></div>`;

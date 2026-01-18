@@ -34,6 +34,40 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
     if (allQuotientFilled) {
       quotientStatus.value = 'correct'
       checkMessage.textContent = '🥳 Частное введено верно!'
+      
+      // Confetti
+      if (window.confetti) {
+        // Первый залп
+        confetti({
+          particleCount: 200,
+          spread: 120,
+          origin: { x: 0.5, y: 0.6 },
+          colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4'],
+          scalar: 1.5
+        });
+        
+        // Второй залп (через 300мс)
+        setTimeout(() => {
+          confetti({
+            particleCount: 150,
+            spread: 100,
+            origin: { x: 0.5, y: 0.6 },
+            colors: ['#FFD700', '#FF6347', '#00CED1'],
+            scalar: 1.5
+          });
+        }, 300);
+        
+        // Третий залп (через 600мс)
+        setTimeout(() => {
+          confetti({
+            particleCount: 150,
+            spread: 100,
+            origin: { x: 0.5, y: 0.6 },
+            colors: ['#32CD32', '#FF69B4', '#FFD700'],
+            scalar: 1.5
+          });
+        }, 600);
+      }
     }
   }
   
@@ -95,34 +129,45 @@ export function checkQuotient(dividend, divisor, quotientInputs, inputRefs, chec
     checkMessage.textContent = '🥳 Частное введено верно!'
     checkMessage.className = 'text-xl font-bold text-center min-h-[2rem] text-green-600'
     
-    // Confetti
+    console.log('✅ Частное правильное!');
+    console.log('window.confetti:', window.confetti);
+    console.log('typeof window.confetti:', typeof window.confetti);
+    
+    // Confetti (точно как в умножении)
     if (window.confetti) {
+      console.log('🎉 Запускаю конфетти!');
+      // Первый залп
       confetti({
-        particleCount: 150,
-        spread: 100,
-        origin: { y: 0.6 },
-        colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4']
-      })
+        particleCount: 200,
+        spread: 120,
+        origin: { x: 0.5, y: 0.6 },
+        colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4'],
+        scalar: 1.5
+      });
       
+      // Второй залп (через 300мс)
       setTimeout(() => {
         confetti({
-          particleCount: 100,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0.3, y: 0.6 },
-          colors: ['#FFD700', '#FF6347', '#00CED1']
-        })
-      }, 200)
+          particleCount: 150,
+          spread: 100,
+          origin: { x: 0.5, y: 0.6 },
+          colors: ['#FFD700', '#FF6347', '#00CED1'],
+          scalar: 1.5
+        });
+      }, 300);
       
+      // Третий залп (через 600мс)
       setTimeout(() => {
         confetti({
-          particleCount: 100,
-          angle: 120,
-          spread: 55,
-          origin: { x: 0.7, y: 0.6 },
-          colors: ['#32CD32', '#FF69B4', '#FFD700']
-        })
-      }, 400)
+          particleCount: 150,
+          spread: 100,
+          origin: { x: 0.5, y: 0.6 },
+          colors: ['#32CD32', '#FF69B4', '#FFD700'],
+          scalar: 1.5
+        });
+      }, 600);
+    } else {
+      console.error('❌ window.confetti НЕ НАЙДЕН!');
     }
   } else {
     checkMessage.textContent = 'Пока неверно. Проверьте цифры частного.'

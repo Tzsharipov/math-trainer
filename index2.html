@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Математический Тренажёр</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Предотвращение FOUC -->
+  <style>
+    body {
+      visibility: hidden;
+    }
+    body.loaded {
+      visibility: visible;
+    }
+    
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(-5%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+      }
+      50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: .8;
+      }
+    }
+    
+    .animate-bounce {
+      animation: bounce 1s infinite;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 text-center p-4">
+    
+    <!-- Заголовок -->
+    <h1 class="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg mb-6 animate-bounce">
+      Добро пожаловать в Математический Тренажёр 🎉
+    </h1>
+    
+    <!-- Иллюстрация -->
+    <img
+      src="https://cdn-icons-png.flaticon.com/512/2729/2729007.png"
+      alt="Math Kids"
+      class="w-32 h-32 md:w-40 md:h-40 mb-6 animate-pulse"
+    />
+    
+    <!-- Подзаголовок -->
+    <p class="text-lg md:text-xl text-white mb-10 px-4">
+      Учимся умножать и делить весело и легко! 🚀
+    </p>
+    
+    <!-- Кнопки выбора -->
+    <div class="flex flex-col md:flex-row gap-6">
+      
+      <!-- Кнопка Умножение -->
+      <button
+        onclick="window.location.href='multiplication.html'"
+        class="px-8 py-4 bg-yellow-400 text-xl font-bold rounded-2xl shadow-lg hover:bg-yellow-500 transition transform hover:scale-110 flex flex-col items-center gap-2 cursor-pointer"
+      >
+        <span class="text-3xl">✖️</span>
+        <span>Умножение столбиком</span>
+      </button>
+      
+      <!-- Кнопка Деление -->
+      <button
+        onclick="window.location.href='division.html'"
+        class="px-8 py-4 bg-green-400 text-xl font-bold rounded-2xl shadow-lg hover:bg-green-500 transition transform hover:scale-110 flex flex-col items-center gap-2 cursor-pointer"
+      >
+        <span class="text-3xl">➗</span>
+        <span>Деление уголком</span>
+      </button>
+      
+    </div>
+  </div>
+  
+  <script>
+    // Показываем body после загрузки
+    document.body.classList.add('loaded');
+  </script>
+</body>
+</html>

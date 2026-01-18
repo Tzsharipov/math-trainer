@@ -78,32 +78,43 @@
         Начать решать
       </button>
     </div>
+    
+    <!-- Кнопки перехода -->
+    <div class="flex gap-3 mt-6">
+      <a href="division.html" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-black py-3 px-4 rounded-xl shadow-xl text-xs text-center transition-all leading-tight">
+        ➗ Перейти<br>к делению
+      </a>
+      <a href="index.html" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-black py-3 px-4 rounded-xl shadow-xl text-xs text-center transition-all leading-tight">
+        🏠 На стартовую<br>страницу
+      </a>
+    </div>
   </aside>
   
   <!-- Рабочая область (скрыта в начале) -->
-  <div id="workspace" class="hidden flex-col items-center gap-6">
-  <!-- Заголовок модуля -->
-  <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tight">Умножение</h2>
-  
-  <div class="bg-white rounded-[3rem] shadow-2xl p-8 border-8 border-white overflow-auto">
-      <div class="flex flex-col items-center gap-4">
-        <div id="mathGrid" class="font-mono w-fit"></div>
-        <div id="checkMessage" class="text-xl font-bold text-center min-h-[2rem]"></div>
-        <button id="btnClearAll" class="bg-cyan-400 hover:bg-cyan-500 text-blue-800 font-black py-2 px-8 rounded-xl shadow-lg uppercase text-sm transition-all">
-          Очистить всё
-        </button>
-      </div>
+  <div id="workspace" class="hidden flex-col items-center">
+    <!-- Заголовок модуля -->
+    <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tight mb-6">Умножение</h2>
+    
+    <div class="bg-white rounded-[3rem] shadow-2xl p-4 border-8 border-white overflow-auto">
+      <div id="mathGrid" class="font-mono w-fit"></div>
     </div>
     
-    <!-- Кнопка "Новый пример" -->
-    <button id="btnNewExample" class="bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
-      Новый пример
+    <div id="checkMessage" class="text-xl font-bold text-center mt-2"></div>
+    
+    <button id="btnClearAll" class="bg-cyan-400 hover:bg-cyan-500 text-blue-800 font-black py-2 px-8 rounded-xl shadow-lg uppercase text-sm transition-all mt-2">
+      Очистить всё
     </button>
-    <!-- Кнопка перехода к делению -->
-    <button onclick="window.location.href='division.html'" class="bg-orange-500 hover:bg-orange-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
-    ➗ Перейти к делению
-    </button>
-
+    
+    <!-- Кнопки "Новый пример" и "Перейти к делению" рядом -->
+    <div class="flex gap-4 mt-6">
+      <button id="btnNewExample" class="bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
+        Новый пример
+      </button>
+      
+      <button onclick="window.location.href='division.html'" class="bg-orange-500 hover:bg-orange-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
+        ➗ Перейти к делению
+      </button>
+    </div>
   </div>
   
 </div>
