@@ -155,12 +155,8 @@ function drawArrows(digitIndex, hintArrows, mathGrid) {
   const digit1Rect = multiplicandDigit.getBoundingClientRect();
   const digit2Rect = multiplierDigit.getBoundingClientRect();
   
-  console.log('popupRect:', popupRect);
-  console.log('digit1Rect:', digit1Rect);
-  console.log('digit2Rect:', digit2Rect);
-  
   // Стартовая точка (от центра верхнего края SVG)
-  const startX = 400; // Центр SVG (width=800)
+  const startX = popupRect.width / 2; // Динамический центр SVG
   const startY = 0;
   
   // Конечные точки (центры цифр относительно SVG)
@@ -256,7 +252,7 @@ function drawSideArrows(idx, carryValue, sideHintArrows, mathGrid, inputs) {
   const resultRect = resultInput.getBoundingClientRect();
   
   // Стартовая точка (ОДНА для обеих стрелок - из правого края SVG = левый край подсказки)
-  const startX = 200;
+  const startX = hintRect.width; // Динамическая ширина SVG
   const startY = 50;
   
   // Конечная точка для стрелки к результату (правый край ячейки, не закрывает цифру)

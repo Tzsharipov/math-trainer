@@ -20,15 +20,45 @@ const sideHint = document.querySelector('#sideHint');
 const sideHintText = document.querySelector('#sideHintText');
 const sideHintArrows = document.querySelector('#sideHintArrows');
 
+// Элементы для ручного режима
+const uiAuto = document.querySelector('#ui-auto');
+const uiManual = document.querySelector('#ui-manual');
+const inMultiplicand = document.querySelector('#inMultiplicand');
+const inMultiplier = document.querySelector('#inMultiplier');
+const btnStartMan = document.querySelector('#btnStartMan');
+
 let currentMultiplicand = 0; // Множимое (многозначное)
 let currentMultiplier = 0;   // Множитель (однозначное)
 
-// Генерация примера
+// Переключение режимов
+document.querySelectorAll('input[name="mode"]').forEach(radio => {
+  radio.onchange = (e) => {
+    uiAuto.classList.toggle('hidden', e.target.value !== 'auto');
+    uiManual.classList.toggle('hidden', e.target.value !== 'manual');
+  };
+});
+
+// Генерация примера (автоматический режим)
 btnGen.onclick = () => {
   const digits = parseInt(selectDigits.value);
   currentMultiplicand = getRandom(digits);
   currentMultiplier = getRandom(1); // Однозначное (1-9)
   buildGrid(currentMultiplicand, currentMultiplier, settingsPanel, workspace, mathGrid, checkMessage, hintPopup, hintText, hintArrows, sideHint, sideHintText, sideHintArrows);
+};
+
+// Начать решать (ручной режим)
+btnStartMan.onclick = () => {
+  const a = inMultiplicand.value;
+  const b = inMultiplier.value;
+  
+  // Проверка: множимое до 4 цифр, множитель однозначный
+  if (a.length <= 4 && b.length === 1 && a && b && parseInt(b) >= 1 && parseInt(b) <= 9) {
+    currentMultiplicand = parseInt(a);
+    currentMultiplier = parseInt(b);
+    buildGrid(currentMultiplicand, currentMultiplier, settingsPanel, workspace, mathGrid, checkMessage, hintPopup, hintText, hintArrows, sideHint, sideHintText, sideHintArrows);
+  } else {
+    alert("Проверь числа! Множимое до 4 цифр, множитель от 1 до 9.");
+  }
 };
 
 // Очистить всё
