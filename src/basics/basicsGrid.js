@@ -223,16 +223,14 @@ function showSideHint(idx, sA, mult, carryValue, writtenDigit, sideHint, sideHin
   }
   
   // Формируем текст подсказки
-  let hintTextContent = '';
-  if (prevCarry > 0) {
-    hintTextContent = `${digit}×${mult} = ${digit * mult}, плюс ${prevCarry} в уме = ${product}<br>Пишем ${writtenDigit}`;
-  } else {
-    hintTextContent = `${digit}×${mult} = ${product}<br>Пишем ${writtenDigit}`;
-  }
-  
-  if (carryValue > 0) {
-    hintTextContent += `, ${carryValue} в уме`;
-  }
+  let hintTextContent = `${digit}×${mult}`;
+if (prevCarry > 0) {
+  hintTextContent += ` + ${prevCarry}`;
+}
+hintTextContent += ` = ${product}<br>${writtenDigit} пишем`;
+if (carryValue > 0) {
+  hintTextContent += `, ${carryValue} в уме`;
+}
   
   sideHintText.innerHTML = hintTextContent;
   sideHint.classList.remove('hidden');

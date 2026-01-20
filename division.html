@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Math Trainer - Деление уголком</title>
   
-  <!-- Предотвращение FOUC -->
   <style>
     body {
       visibility: hidden;
@@ -18,26 +17,23 @@
 <body>
   <div id="app" class="min-h-screen bg-sky-50 p-2 md:p-6 font-sans text-slate-800 flex items-center justify-center">
   
-  <!-- Панель настроек (показывается в начале) -->
-  <aside id="settingsPanel" class="w-full max-w-sm bg-cyan-400 p-6 rounded-[2.5rem] shadow-xl text-white">
-    <h1 class="text-xl font-black mb-4 uppercase tracking-tight text-gray-900">Деление уголком</h1>
+  <aside id="settingsPanel" class="w-full max-w-sm bg-cyan-400 p-4 rounded-[2.5rem] shadow-xl text-white">
+    <h1 class="text-xl font-black mb-3 uppercase tracking-tight text-gray-900 text-center">Деление уголком</h1>
     
-    <!-- Информация о лимитах -->
-    <div class="bg-white/20 rounded-xl p-3 mb-6 text-[11px] font-bold border border-white/30 uppercase leading-relaxed text-blue-800">
+    <div class="bg-white/20 rounded-xl p-2 mb-4 font-bold border border-white/30 leading-relaxed text-blue-800 text-center" style="font-size: clamp(11px, 2vw, 14px);">
       Лимиты разрядности:<br>
       Делимое: 3-7 | Делитель: 2-4
     </div>
     
     <!-- Чекбокс подсказок -->
-    <div class="mb-6">
+    <div class="mb-4">
       <label class="flex items-center gap-3 p-3 rounded-2xl bg-yellow-400 text-slate-800 cursor-pointer hover:bg-yellow-300 transition-all shadow-md">
         <input type="checkbox" id="checkHints" class="w-5 h-5 accent-blue-600">
         <span class="font-black text-xs uppercase">Включить подсказки</span>
       </label>
     </div>
     
-    <!-- Переключатель режима -->
-    <div class="flex flex-col gap-2 mb-6 text-sm">
+    <div class="flex flex-col gap-2 mb-4 text-sm">
       <label class="flex items-center gap-3 p-3 rounded-2xl bg-white/10 cursor-pointer hover:bg-white/20 transition-all">
         <input type="radio" name="mode" value="auto" checked class="w-4 h-4 accent-blue-600">
         <span class="font-bold text-blue-800">Придумай пример за меня</span>
@@ -48,7 +44,6 @@
       </label>
     </div>
     
-    <!-- Режим "Автоматический" -->
     <div id="ui-auto" class="space-y-4">
       <select id="selectDividend" class="w-full p-3 rounded-xl text-slate-800 font-bold outline-none border-none shadow-lg">
         <option value="3">3-значное делимое</option>
@@ -62,12 +57,11 @@
         <option value="3">3-значное делитель</option>
         <option value="4">4-значное делитель</option>
       </select>
-      <button id="btnGen" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-xl uppercase text-sm active:scale-95 transition-all">
+      <button id="btnGen" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-xl text-sm active:scale-95 transition-all">
         Создать пример
       </button>
     </div>
     
-    <!-- Режим "Ручной" -->
     <div id="ui-manual" class="space-y-4 hidden text-slate-800">
       <div class="bg-yellow-200 text-yellow-800 text-xs p-2 rounded mb-2">
         ⚠️ Делимое должно делиться на делитель без остатка
@@ -79,8 +73,7 @@
       </button>
     </div>
     
-    <!-- Кнопки перехода -->
-    <div class="flex gap-3 mt-6">
+    <div class="flex gap-3 mt-4">
       <a href="multiplication.html" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-4 rounded-xl shadow-xl text-xs text-center transition-all leading-tight">
         🔢 Перейти<br>к умножению
       </a>
@@ -90,10 +83,8 @@
     </div>
   </aside>
   
-  <!-- Рабочая область (скрыта в начале) -->
   <div id="workspace" class="hidden flex-col items-center">
-    <!-- Заголовок модуля -->
-    <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tight mb-6">Деление уголком</h2>
+    <h2 class="text-2xl font-bold text-gray-900 tracking-tight mb-6">Деление уголком</h2>
     
     <div class="bg-white rounded-[3rem] shadow-2xl p-4 border-8 border-white overflow-auto">
       <div id="mathGrid" class="font-mono w-fit"></div>
@@ -101,17 +92,17 @@
     
     <div id="checkMessage" class="text-xl font-bold text-center mt-2"></div>
     
-    <button id="btnClearAll" class="bg-cyan-400 hover:bg-cyan-500 text-blue-800 font-black py-2 px-8 rounded-xl shadow-lg uppercase text-sm transition-all mt-2">
+    <button id="btnClearAll" class="bg-cyan-400 hover:bg-cyan-500 text-blue-800 font-black py-2 px-8 rounded-xl shadow-lg text-sm transition-all mt-2">
       Очистить всё
     </button>
     
-    <!-- Кнопки "Новый пример" и "Перейти к умножению" рядом -->
+    <!-- Кнопки навигации -->
     <div class="flex gap-4 mt-6">
-      <button id="btnNewExample" class="bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
+      <button id="btnNewExample" class="bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-10 rounded-xl shadow-xl text-sm transition-all">
         Новый пример
       </button>
       
-      <button onclick="window.location.href='multiplication.html'" class="bg-orange-500 hover:bg-orange-600 text-white font-black py-3 px-10 rounded-xl shadow-xl uppercase text-base transition-all">
+      <button onclick="window.location.href='multiplication.html'" class="bg-orange-500 hover:bg-orange-600 text-white font-black py-3 px-10 rounded-xl shadow-xl text-sm transition-all">
         🔢 Перейти к умножению
       </button>
     </div>
