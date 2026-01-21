@@ -7,7 +7,17 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   workspace.classList.add('flex');
   
   checkMessage.textContent = '';
-  hintPopup.classList.remove('hidden');
+  
+  // Определяем размер экрана
+  const isMobile = window.innerWidth < 768;
+  
+  // НА МОБИЛЬНЫХ СКРЫВАЕМ ПОДСКАЗКИ, на десктопе показываем
+  if (isMobile) {
+    hintPopup.classList.add('hidden');
+    sideHint.classList.add('hidden');
+  } else {
+    hintPopup.classList.remove('hidden');
+  }
   
   const sA = multiplicand.toString();
   const sB = multiplier.toString();
@@ -15,30 +25,34 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   
   const totalCols = Math.max(sA.length, result.length) + 1;
   
-  let html = `<div class="bg-gray-100 border-2 border-gray-400 rounded-lg shadow p-4 grid gap-x-1 items-start" style="grid-template-columns: repeat(${totalCols}, 32px);">`;
+  // АДАПТИВНЫЙ РАЗМЕР ЯЧЕЕК
+  const cellSize = `clamp(28px, calc(85vw / ${totalCols}), 40px)`;
+  const fontSize = `clamp(14px, calc(60vw / ${totalCols}), 18px)`;
+  
+  let html = `<div class="bg-gray-100 border-2 border-gray-400 rounded-lg shadow p-2 md:p-4 grid gap-x-1 items-start mx-auto" style="grid-template-columns: repeat(${totalCols}, ${cellSize});">`;
   
   // Строка 1: Множимое
   sA.split('').forEach((d, i) => {
     const col = totalCols - sA.length + i + 1;
     html += `<div 
       data-multiplicand-digit="${i}" 
-      style="grid-row: 1; grid-column: ${col}; margin-bottom: 4px;" 
-      class="w-8 h-8 bg-cyan-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center">${d}</div>`;
+      style="grid-row: 1; grid-column: ${col}; margin-bottom: 4px; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};" 
+      class="bg-cyan-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center">${d}</div>`;
   });
   
   // Строка 2: Знак × и множитель
   const mulCol = totalCols - sB.length - 1;
-  html += `<div style="grid-row: 2; grid-column: ${mulCol}; margin-bottom: 4px;" class="w-8 h-8 mr-2 text-gray-600 font-semibold flex items-center justify-center">×</div>`;
+  html += `<div style="grid-row: 2; grid-column: ${mulCol}; margin-bottom: 4px; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};" class="mr-2 text-gray-600 font-semibold flex items-center justify-center">×</div>`;
   html += `<div 
     data-multiplier 
-    style="grid-row: 2; grid-column: ${totalCols}; margin-bottom: 4px;" 
-    class="w-8 h-8 bg-gray-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center">${sB}</div>`;
+    style="grid-row: 2; grid-column: ${totalCols}; margin-bottom: 4px; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};" 
+    class="bg-gray-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center">${sB}</div>`;
   
   // Строка 3: Переносы (в уме)
   for (let i = 1; i <= totalCols; i++) {
     html += `<div class="relative group" style="grid-row: 3; grid-column: ${i};">
-      <input type="text" maxlength="1" readonly class="w-8 h-6 text-center bg-gray-200 text-orange-600 font-bold text-sm outline-none rounded" placeholder="·" data-carry="${i - 1}">
-      <div class="absolute hidden group-hover:block bottom-full left-0 mb-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-xl whitespace-nowrap z-50">💭 Цифры в уме</div>
+      <input type="text" maxlength="1" readonly style="width: ${cellSize}; height: calc(${cellSize} * 0.75); font-size: calc(${fontSize} * 0.85);" class="text-center bg-gray-200 text-orange-600 font-bold outline-none rounded" placeholder="·" data-carry="${i - 1}">
+      <div class="absolute hidden md:group-hover:block bottom-full left-0 mb-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-xl whitespace-nowrap z-50">💭 Цифры в уме</div>
     </div>`;
   }
   
@@ -47,23 +61,25 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
     const col = totalCols - result.length + colIdx + 1;
     html += `<input type="text" inputmode="numeric" maxlength="1" 
       data-correct="${c}" data-col="${col - 1}"
-      style="grid-row: 4; grid-column: ${col};"
-      class="math-input w-8 h-8 text-center border-2 border-yellow-300 bg-yellow-200 rounded font-black text-base outline-none focus:border-blue-400 transition-all shadow-sm">`;
+      style="grid-row: 4; grid-column: ${col}; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};"
+      class="math-input text-center border-2 border-yellow-300 bg-yellow-200 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm">`;
   });
   
   html += `</div>`;
   mathGrid.innerHTML = html;
-  setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows);
+  setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows, isMobile);
   
   // Фокус на последнюю ячейку (начинаем справа)
   const inputs = document.querySelectorAll('.math-input');
   if (inputs.length) {
     inputs[inputs.length - 1].focus();
-    updateHint(inputs.length - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+    if (!isMobile) {
+      updateHint(inputs.length - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+    }
   }
 }
 
-function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows) {
+function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows, isMobile) {
   const inputs = document.querySelectorAll('.math-input');
   const carries = {};
   const sA = multiplicand.toString().split('').reverse();
@@ -75,7 +91,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
       const correct = e.target.dataset.correct;
       const col = parseInt(e.target.dataset.col);
       
-      e.target.className = 'math-input w-8 h-8 text-center border-2 rounded font-black text-base outline-none transition-all shadow-sm';
+      e.target.className = 'math-input text-center border-2 rounded font-black outline-none transition-all shadow-sm';
       
       if (!val) {
         e.target.classList.add('border-yellow-300', 'bg-yellow-200');
@@ -88,13 +104,17 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
         // Обновляем перенос
         const carryValue = updateCarry(idx, sA, mult, carries, totalCols, result.length);
         
-        // Показываем боковую подсказку с объяснением
-        showSideHint(idx, sA, mult, carryValue, val, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, carries, result.length, totalCols);
+        // Показываем боковую подсказку ТОЛЬКО НА ДЕСКТОПЕ
+        if (!isMobile) {
+          showSideHint(idx, sA, mult, carryValue, val, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, carries, result.length, totalCols);
+        }
         
         // Переходим к следующей ячейке (влево)
         if (idx > 0) {
           inputs[idx - 1].focus();
-          updateHint(idx - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+          if (!isMobile) {
+            updateHint(idx - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+          }
         } else {
           // Все заполнено - проверяем результат
           checkResult(inputs, checkMessage);
@@ -107,7 +127,9 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
     };
     
     el.onfocus = () => {
-      updateHint(idx, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+      if (!isMobile) {
+        updateHint(idx, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+      }
     };
   });
 }

@@ -60,11 +60,11 @@ export function buildGrid(
   const quotientCols = Math.max(quotientStr.length, divisorDigits.length);
   const totalGridCols = dividendCols + 1 + quotientCols;
   
-  const cellWidth = `clamp(25px, calc(50vw / ${totalGridCols}), 32px)`;
-  const fontSize = `clamp(12px, calc(25vw / ${totalGridCols}), 16px)`;
+  const cellWidth = `clamp(24px, calc(85vw / ${totalGridCols}), 32px)`;
+  const fontSize = `clamp(11px, calc(60vw / ${totalGridCols}), 16px)`;
   
   // Построение HTML (ТОЧНАЯ структура из Laravel)
-  let html = `<div class="bg-gray-100 border-2 border-gray-400 rounded-lg shadow p-4 mx-auto grid gap-x-1 items-start" 
+  let html = `<div class="bg-gray-100 border-2 border-gray-400 rounded-lg shadow p-2 md:p-4 mx-auto grid gap-x-1 items-start" 
     style="grid-template-columns: repeat(${dividendCols}, ${cellWidth}) 2px repeat(${quotientCols}, ${cellWidth});">`;
   
   // Делимое (розовые ячейки)
