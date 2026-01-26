@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Математический Тренажёр 🎓</title>
+  <meta name="description" content="Математический тренажёр для детей 8-10 лет. Научите ребёнка умножать и делить столбиком за 2 недели без слёз и репетиторов." />
+  <title>Математический Тренажёр - Умножение и деление столбиком для детей 2-4 класса</title>
+  
   <style>
     * {
       margin: 0;
@@ -12,506 +14,690 @@
     }
     
     body {
-      visibility: hidden;
-      overflow: hidden;
-      font-family: 'Comic Sans MS', 'Arial', sans-serif;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
+      font-family: 'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+      background: #f9fafb;
     }
     
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
-    }
-    
+    /* Container */
     .container {
-      width: 100vw;
-      height: 100vh;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #87CEEB;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
     
-    .image-wrapper {
-      position: relative;
-      display: inline-block;
-      max-width: 100%;
-      max-height: 100vh;
-    }
-    
-    .background-image {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 100vh;
-    }
-    
-    .clickable-zones {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding: 3%;
-      pointer-events: none;
-      z-index: 2;
-    }
-    
-    .zone {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      pointer-events: all;
-    }
-    
-    /* Видимые кнопки - адаптивный размер относительно картинки */
-    .btn {
-      width: 15%;
-      min-width: 100px;
-      max-width: 180px;
-      padding: 2% 2%;
-      background: linear-gradient(135deg, #FFD700, #FFA500);
-      border: 3px solid #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      font-size: clamp(9px, 2.5vw, 16px);
-      font-weight: 900;
-      color: #020004;
-      text-align: center;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-      transition: all 0.3s ease;
-      animation: bounce 2s infinite;
-    }
-    
-    @media (min-width: 768px) {
-      .btn {
-        min-width: 120px;
-        padding: 2% 3%;
-        border: 4px solid #fff;
-        border-radius: 20px;
-        font-size: clamp(11px, 1.3vw, 16px);
-      }
-    }
-    
-    .zone-left .btn {
-      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-    }
-    
-    .zone-left:hover .btn {
-      background: linear-gradient(135deg, #FFF59D, #FFEB3B);
-    }
-    
-    .zone-right .btn {
-      background: linear-gradient(135deg, #4ECDC4, #44A08D);
-    }
-    
-    .zone-right:hover .btn {
-      background: linear-gradient(135deg, #81D4FA, #4FC3F7);
-    }
-    
-    .zone:hover .btn {
-      transform: scale(1.15) rotate(-2deg);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-    }
-    
-    .zone:active .btn {
-      transform: scale(0.95);
-    }
-    
-    /* Смена текста при hover */
-    .zone:hover .btn-text {
-      display: none;
-    }
-    
-    .zone:hover .btn-text-hover {
-      display: block;
-    }
-    
-    .btn-emoji {
-      font-size: clamp(12px, 3vw, 20px);
-      display: block;
-      margin-bottom: 2px;
-    }
-    
-    .btn-text {
-      font-size: clamp(8px, 2.5vw, 14px);
-      line-height: 1.1;
-      display: block;
-      font-weight: 900;
-    }
-    
-    /* Текст при наведении */
-    .btn-text-hover {
-      display: none;
-      font-size: clamp(9px, 2.5vw, 15px);
-      line-height: 1.2;
-      font-weight: 800;
-    }
-    
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-8px);
-      }
-    }
-    
-    /* Адаптивность для мобильных */
-    @media (max-width: 768px) {
-      .clickable-zones {
-        padding: 15px;
-      }
-      
-      .btn {
-        width: 140px;
-        padding: 12px 15px;
-        font-size: 14px;
-      }
-      
-      .btn-emoji {
-        font-size: 24px;
-        margin-bottom: 3px;
-      }
-      
-      .btn-text {
-        font-size: 11px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .clickable-zones {
-        padding: 10px;
-      }
-      
-      .btn {
-        width: 120px;
-        padding: 10px 12px;
-      }
-      
-      .btn-emoji {
-        font-size: 20px;
-      }
-      
-      .btn-text {
-        font-size: 10px;
-      }
-    }
-    
-    /* Центральная кнопка внизу */
-    .center-button-wrapper {
-      position: absolute;
-      bottom: 3%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 3;
-      pointer-events: all;
-    }
-    
-    .center-btn {
-      background: linear-gradient(135deg, #10B981, #059669);
-      border: 4px solid #fff;
-      border-radius: 20px;
-      padding: 10px 8px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      animation: bounce 2s infinite;
-      min-width: 120px;
-      max-width: 180px;
-      text-align: center;
-    }
-    
-    @media (min-width: 768px) {
-      .center-btn {
-        min-width: 180px;
-        padding: 12px 20px;
-      }
-    }
-    
-    .center-btn:hover {
-      transform: scale(1.15) rotate(-2deg);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-      background: linear-gradient(135deg, #34D399, #10B981);
-    }
-    
-    .center-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .center-btn-emoji {
-      font-size: clamp(18px, 2vw, 24px);
-      display: block;
-      margin-bottom: 3px;
-    }
-    
-    .center-btn-text {
-      font-size: clamp(8px, 2.5vw, 12px);
-      line-height: 1.1;
-      display: block;
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* === BLUR OVERLAY === */
-    .blur-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      backdrop-filter: blur(15px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.5s ease, backdrop-filter 0.5s ease;
-    }
-    
-    .blur-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-      backdrop-filter: blur(0px);
-    }
-    
-    /* Форма входа */
-    .login-form {
+    /* Hero Section */
+    .hero {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40px;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      min-width: 320px;
-      max-width: 400px;
-      text-align: center;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    .login-form h2 {
       color: white;
-      font-size: 28px;
-      font-weight: 900;
-      margin-bottom: 10px;
-      text-transform: uppercase;
+      padding: clamp(60px, 10vh, 120px) 20px clamp(40px, 8vh, 80px);
+      text-align: center;
     }
     
-    .login-form p {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
+    .hero h1 {
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 900;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .hero .subtitle {
+      font-size: clamp(16px, 3vw, 22px);
+      margin-bottom: 15px;
+      opacity: 0.95;
+      font-weight: 600;
+    }
+    
+    .hero .for-grade {
+      font-size: clamp(14px, 2.5vw, 18px);
+      opacity: 0.9;
       margin-bottom: 30px;
     }
     
-    .login-form input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 16px;
-      border: none;
+    .hero-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    @media (min-width: 640px) {
+      .hero-buttons {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: clamp(14px, 2.5vh, 18px) clamp(28px, 5vw, 40px);
       border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      outline: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-weight: 900;
+      font-size: clamp(16px, 3vw, 20px);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     
-    .login-form input:focus {
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
-    }
-    
-    .login-form button {
-      width: 100%;
-      padding: 16px;
+    .btn-primary {
       background: linear-gradient(135deg, #10B981, #059669);
       color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-      transition: all 0.3s ease;
     }
     
-    .login-form button:hover {
+    .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     }
     
-    .login-form button:active {
-      transform: translateY(0);
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
     }
     
-    /* Блокировка кнопок пока не залогинен */
-    body.locked .zone,
-    body.locked .center-btn {
-      pointer-events: none;
-      opacity: 0.6;
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    /* Section */
+    section {
+      padding: clamp(40px, 8vh, 80px) 20px;
+    }
+    
+    .section-title {
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: clamp(30px, 5vh, 50px);
+      color: #1f2937;
+    }
+    
+    /* Problems Section */
+    .problems {
+      background: white;
+    }
+    
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .problem-item {
+      background: #FEF2F2;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid #EF4444;
+    }
+    
+    .problem-item::before {
+      content: "❌";
+      font-size: 24px;
+      margin-right: 10px;
+    }
+    
+    .problem-item p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #991B1B;
+      font-weight: 600;
+    }
+    
+    /* Solution Section */
+    .solution {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .feature-item {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .feature-item::before {
+      content: "✅";
+      font-size: 28px;
+      margin-right: 10px;
+    }
+    
+    .feature-item p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #065F46;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    
+    /* Modules Section */
+    .modules {
+      background: white;
+    }
+    
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .module-card {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .module-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    
+    .module-title {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: #4338CA;
+    }
+    
+    .module-desc {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #4B5563;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    
+    .module-level {
+      display: inline-block;
+      background: #10B981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+    
+    /* Pricing Section */
+    .pricing {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+    
+    .pricing .section-title {
+      color: white;
+    }
+    
+    .price-card {
+      background: white;
+      color: #1f2937;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: clamp(30px, 5vw, 50px);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    
+    .price-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    
+    .price-amount {
+      font-size: clamp(48px, 10vw, 72px);
+      font-weight: 900;
+      color: #10B981;
+      margin-bottom: 10px;
+    }
+    
+    .price-period {
+      font-size: clamp(18px, 3vw, 24px);
+      color: #6B7280;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    
+    .price-compare {
+      background: #F3F4F6;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 30px 0;
+      text-align: left;
+    }
+    
+    .price-compare p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #4B5563;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .price-compare p::before {
+      content: "📌";
+      margin-right: 8px;
+    }
+    
+    .bonus {
+      background: #FEF3C7;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border-left: 4px solid #F59E0B;
+    }
+    
+    .bonus p {
+      font-size: clamp(13px, 2.5vw, 15px);
+      color: #92400E;
+      font-weight: 700;
+    }
+    
+    .bonus p::before {
+      content: "🎁";
+      margin-right: 8px;
+    }
+    
+    .payment-info {
+      margin-top: 25px;
+      font-size: clamp(13px, 2.5vw, 14px);
+      color: #6B7280;
+    }
+    
+    .payment-info p {
+      margin: 5px 0;
+    }
+    
+    /* FAQ Section */
+    .faq {
+      background: white;
+    }
+    
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      background: #F9FAFB;
+      padding: 25px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .faq-question {
+      font-size: clamp(16px, 3vw, 18px);
+      font-weight: 900;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+    
+    .faq-question::before {
+      content: "❓";
+      margin-right: 10px;
+    }
+    
+    .faq-answer {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #4B5563;
+      line-height: 1.6;
+    }
+    
+    /* CTA Section */
+    .cta {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      text-align: center;
+    }
+    
+    .cta .section-title {
+      color: white;
+    }
+    
+    .cta-text {
+      font-size: clamp(16px, 3vw, 20px);
+      margin-bottom: 30px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    
+    .cta-note {
+      margin-top: 25px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      opacity: 0.9;
+      font-weight: 600;
+    }
+    
+    /* Footer */
+    footer {
+      background: #1f2937;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    footer a {
+      color: #10B981;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .login-link {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .login-link a {
+      color: #60A5FA;
+      font-size: clamp(14px, 2.5vw, 16px);
     }
   </style>
-  
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="locked">
-  <!-- BLUR OVERLAY с формой входа -->
-  <div class="blur-overlay" id="loginOverlay">
-    <div class="login-form">
-      <h2>🎓 Вход</h2>
-      <p>Введите логин и пароль</p>
-      <input type="text" id="loginInput" placeholder="Логин" autocomplete="username">
-      <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="current-password">
-      <button onclick="handleLogin()">Войти</button>
-    </div>
-  </div>
-  
-  <div class="container">
-    <div class="image-wrapper">
-      <!-- Фоновая картинка -->
-      <img 
-        src="math-trainer_start.jpg" 
-        alt="Математический тренажёр" 
-        class="background-image"
-      />
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>🎓 Ваш ребёнок освоит умножение и деление столбиком за 2 недели</h1>
+      <p class="subtitle">Без слёз над домашкой и скандалов с родителями</p>
+      <p class="for-grade">Интерактивный тренажёр для 2-4 класса</p>
       
-      <!-- Кликабельные зоны -->
-      <div class="clickable-zones">
-        <!-- Левая зона - Умножение -->
-        <div 
-          class="zone zone-left" 
-          onclick="window.location.href='multiplication.html'"
-        >
-          <div class="btn">
-            <span class="btn-emoji">✖️</span>
-            <span class="btn-text">УМНОЖЕНИЕ<br>СТОЛБИКОМ</span>
-            <span class="btn-text-hover">Нажми—перейдёшь<br>к умножению</span>
-          </div>
+      <div class="hero-buttons">
+        <a href="#pricing" class="btn btn-primary">Купить за 990₽</a>
+        <a href="#modules" class="btn btn-secondary">Посмотреть модули</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problems Section -->
+  <section class="problems">
+    <div class="container">
+      <h2 class="section-title">😤 Знакомые ситуации?</h2>
+      
+      <div class="problems-grid">
+        <div class="problem-item">
+          <p>Ребёнок путается в столбиках и переносах</p>
+        </div>
+        <div class="problem-item">
+          <p>Учитель объяснил раз — и всё, дальше сам</p>
+        </div>
+        <div class="problem-item">
+          <p>Сидите с ним по вечерам, нервы сдают</p>
+        </div>
+        <div class="problem-item">
+          <p>Репетиторы стоят 1500₽/час</p>
+        </div>
+        <div class="problem-item">
+          <p>YouTube-уроки смотрит, но не понимает</p>
+        </div>
+        <div class="problem-item">
+          <p>Контрольные приближаются, оценки падают</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="solution">
+    <div class="container">
+      <h2 class="section-title">✨ Тренажёр учит КАК В ШКОЛЕ, но понятно!</h2>
+      
+      <div class="features-grid">
+        <div class="feature-item">
+          <p>Пошаговые подсказки на КАЖДОМ шаге<br>"Умножь 7×3, напиши 1, запомни 2"</p>
+        </div>
+        <div class="feature-item">
+          <p>Нельзя ошибиться и "застрять"<br>Система сама покажет где ошибка</p>
+        </div>
+        <div class="feature-item">
+          <p>Работает везде: дома, в дороге, на даче<br>Телефон, планшет, компьютер</p>
+        </div>
+        <div class="feature-item">
+          <p>3 уровня: от простого к сложному<br>Как в школьной программе 2-4 класса</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules Section -->
+  <section class="modules" id="modules">
+    <div class="container">
+      <h2 class="section-title">📚 3 модуля обучения (как в школе)</h2>
+      
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-icon">🌱</div>
+          <h3 class="module-title">УРОВЕНЬ 1: Первые шаги</h3>
+          <p class="module-desc">Умножение на одну цифру. Учим переносы и запоминание. Идеально для начинающих.</p>
+          <span class="module-level">✓ Для 2-3 класса</span>
         </div>
         
-        <!-- Правая зона - Деление -->
-        <div 
-          class="zone zone-right" 
-          onclick="window.location.href='division.html'"
-        >
-          <div class="btn">
-            <span class="btn-emoji">➗</span>
-            <span class="btn-text">ДЕЛЕНИЕ<br>УГОЛКОМ</span>
-            <span class="btn-text-hover">Нажми—перейдёшь<br>к делению</span>
-          </div>
+        <div class="module-card">
+          <div class="module-icon">🔢</div>
+          <h3 class="module-title">УРОВЕНЬ 2: Умножение столбиком</h3>
+          <p class="module-desc">Многозначные числа. Полный алгоритм с подсказками на каждом этапе.</p>
+          <span class="module-level">✓ Для 3-4 класса</span>
         </div>
-      </div>
-      
-      <!-- Центральная кнопка внизу - Основы -->
-      <div class="center-button-wrapper">
-        <div 
-          class="center-btn"
-          onclick="window.location.href='basics.html'"
-        >
-          <span class="center-btn-emoji">🌱</span>
-          <span class="center-btn-text">СТАРТ:<br>УМНОЖАЕМ НА<br>ОДНО ЧИСЛО</span>
+        
+        <div class="module-card">
+          <div class="module-icon">➗</div>
+          <h3 class="module-title">УРОВЕНЬ 3: Деление уголком</h3>
+          <p class="module-desc">Самое сложное — просто! Пошаговое объяснение каждого действия.</p>
+          <span class="module-level">✓ Для 3-4 класса</span>
         </div>
       </div>
     </div>
-  </div>
-  
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <h2 class="section-title">💰 ВСЕГО 990₽ - ДОСТУП НАВСЕГДА</h2>
+      
+      <div class="price-card">
+        <span class="price-badge">⭐ ЛУЧШЕЕ ПРЕДЛОЖЕНИЕ</span>
+        
+        <div class="price-amount">990₽</div>
+        <div class="price-period">Доступ навсегда • Для всех детей в семье</div>
+        
+        <button class="btn btn-primary" onclick="openOrderForm()" style="width: 100%; max-width: 400px; margin: 0 auto;">
+          Купить доступ
+        </button>
+        
+        <div class="price-compare">
+          <p>Это дешевле чем:</p>
+          <p>1 занятие с репетитором (1500₽/час)</p>
+          <p>Комплект тетрадей и пособий (800₽)</p>
+          <p>Онлайн-курс на месяц (2500₽)</p>
+        </div>
+        
+        <div class="bonus">
+          <p>БОНУС: Персонализированные поздравления с именем ребёнка</p>
+        </div>
+        
+        <div class="payment-info">
+          <p>💳 Оплата картой или СБП</p>
+          <p>🔒 Безопасная передача данных</p>
+          <p>✓ Доступ открывается в течение 1-2 часов</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq">
+    <div class="container">
+      <h2 class="section-title">❓ Частые вопросы</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">С какого возраста можно начинать?</div>
+          <div class="faq-answer">От 8 лет (2 класс), если ребёнок знает таблицу умножения хотя бы частично. Есть модуль "Первые шаги" для начинающих.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">А если ребёнок совсем не понимает математику?</div>
+          <div class="faq-answer">Модуль "Первые шаги" начинается с самых основ. Каждое действие сопровождается подсказками. Система не даст ошибиться и застрять.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">Нужно устанавливать программу?</div>
+          <div class="faq-answer">Нет! Работает прямо в браузере. Любое устройство с интернетом — телефон, планшет или компьютер.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">Сколько времени нужно заниматься?</div>
+          <div class="faq-answer">15-20 минут в день достаточно. Можно больше — дети сами захотят продолжать, потому что это интересно!</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">На сколько детей один доступ?</div>
+          <div class="faq-answer">Неограниченно! Все дети в семье могут заниматься. Можно даже настроить имя каждого ребёнка для персонализированных поздравлений.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">Как получить доступ после оплаты?</div>
+          <div class="faq-answer">После оплаты вы получите логин и пароль на email в течение 1-2 часов. Можно сразу начинать заниматься!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <h2 class="section-title">⏰ Начните СЕГОДНЯ!</h2>
+      
+      <p class="cta-text">
+        Пока вы думаете, другие дети уже учатся и получают пятёрки.<br>
+        Дайте вашему ребёнку инструмент для успеха в математике!
+      </p>
+      
+      <button class="btn btn-primary" onclick="openOrderForm()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">
+        Купить за 990₽
+      </button>
+      
+      <p class="cta-note">
+        P.S. Это НЕ подписка. Оплата один раз — пользуйтесь вечно.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Математический тренажёр © 2025</p>
+      <p>Email: <a href="mailto:tzsharipov@gmail.com">tzsharipov@gmail.com</a></p>
+      <p>Telegram: <a href="https://t.me/SharipovT" target="_blank">@SharipovT</a></p>
+      
+      <div class="login-link">
+        <p><a href="app.html">Уже есть доступ? Войти в приложение →</a></p>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    // Инициализация Supabase
-    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-    // Обработка входа (НАСТОЯЩАЯ проверка через БД)
-    async function handleLogin() {
-      const login = document.getElementById('loginInput').value.trim();
-      const password = document.getElementById('passwordInput').value.trim();
+    // Открытие формы заявки
+    function openOrderForm() {
+      // ВРЕМЕННО: показываем реквизиты напрямую
+      // Потом заменим на Google Form
       
-      // Проверка что поля не пустые
-      if (!login || !password) {
-        alert('Введите логин и пароль!');
-        return;
-      }
+      const message = `
+╔══════════════════════════════════════╗
+║   ОФОРМЛЕНИЕ ЗАКАЗА                  ║
+╚══════════════════════════════════════╝
+
+Спасибо за интерес к Математическому тренажёру! 🎓
+
+📝 Чтобы получить доступ:
+
+1️⃣ Переведите 990₽ одним из способов:
+
+   📱 По номеру телефона (СБП):
+   +7 925 090 72 41
+   (Тахир Жураевич Ш.)
+
+   💳 На карту МИР:
+   2202 2056 3073 0999
+   (Шарипов Тахир Жураевич)
+
+2️⃣ После оплаты напишите нам:
+
+   📧 Email: tzsharipov@gmail.com
+   💬 Telegram: @SharipovT
+
+   Укажите:
+   • Ваше имя
+   • Email для отправки доступа
+   • Имя ребёнка (для персонализации)
+
+3️⃣ Получите логин и пароль в течение 1-2 часов!
+
+═══════════════════════════════════════
+
+Есть вопросы? Пишите — с радостью ответим!
+      `.trim();
       
-      try {
-        // Запрос к БД: ищем пользователя с таким логином и паролем
-        const { data, error } = await supabaseClient
-          .from('users')
-          .select('*')
-          .eq('login', login)
-          .eq('password', password)
-          .eq('is_active', true)
-          .single();
-        
-        if (error || !data) {
-          // Пользователь не найден или пароль неверный
-          alert('Неверный логин или пароль!');
-          console.error('Ошибка входа:', error);
-          return;
-        }
-        
-        // Успешный вход!
-        console.log('Вход выполнен:', data);
-        
-        // Сохраняем в localStorage что пользователь залогинен
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userId', data.id);
-        localStorage.setItem('userLogin', data.login);
-        
-        // Убираем overlay с анимацией
-        const overlay = document.getElementById('loginOverlay');
-        overlay.classList.add('hidden');
-        
-        // Разблокируем кнопки
-        document.body.classList.remove('locked');
-        
-      } catch (err) {
-        alert('Произошла ошибка при входе. Попробуйте ещё раз.');
-        console.error('Ошибка:', err);
-      }
+      alert(message);
+      
+      // Копируем номер телефона в буфер обмена
+      navigator.clipboard.writeText('+79250907241').then(() => {
+        console.log('Номер телефона скопирован в буфер обмена');
+      }).catch(err => {
+        console.log('Не удалось скопировать номер:', err);
+      });
     }
     
-    // Ждём полной загрузки DOM
-    window.addEventListener('DOMContentLoaded', () => {
-      // Проверка - залогинен ли уже пользователь
-      const isLoggedIn = localStorage.getItem('isLoggedIn');
-      
-      if (isLoggedIn === 'true') {
-        // Пользователь уже залогинен - скрываем форму
-        const overlay = document.getElementById('loginOverlay');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('locked');
-      }
-      
-      // Enter для отправки формы
-      const passwordInput = document.getElementById('passwordInput');
-      if (passwordInput) {
-        passwordInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') handleLogin();
-        });
-      }
-      
-      // Показываем страницу ТОЛЬКО после полной загрузки изображения
-      const backgroundImg = document.querySelector('.background-image');
-      
-      if (backgroundImg) {
-        if (backgroundImg.complete) {
-          document.body.classList.add('loaded');
-        } else {
-          backgroundImg.addEventListener('load', () => {
-            document.body.classList.add('loaded');
+    // Плавная прокрутка к якорям
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
           });
-          
-          setTimeout(() => {
-            document.body.classList.add('loaded');
-          }, 1000);
         }
-      } else {
-        document.body.classList.add('loaded');
-      }
+      });
     });
   </script>
+
 </body>
 </html>

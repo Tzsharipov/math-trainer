@@ -20,6 +20,7 @@ const checkMessage = document.querySelector('#checkMessage');
 const btnClearAll = document.querySelector('#btnClearAll');
 const settingsPanel = document.querySelector('#settingsPanel');
 const btnNewExample = document.querySelector('#btnNewExample');
+const btnBackToSettings = document.querySelector('#btnBackToSettings');
 
 // Глобальное состояние
 let currentA = 0;
@@ -62,8 +63,32 @@ btnClearAll.onclick = () => {
   }
 };
 
-// Новый пример
+// Новый пример (генерирует с теми же разрядностями)
 btnNewExample.onclick = () => {
+  if (currentA && currentB) {
+    // Определяем текущий режим
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    
+    if (mode === 'auto') {
+      // Генерируем новые числа с той же разрядностью
+      const digitsA = String(currentA).length;
+      const digitsB = String(currentB).length;
+      currentA = getRandom(digitsA);
+      currentB = getRandom(digitsB);
+    } else {
+      // В ручном режиме тоже генерируем с той же разрядностью
+      const digitsA = String(currentA).length;
+      const digitsB = String(currentB).length;
+      currentA = getRandom(digitsA);
+      currentB = getRandom(digitsB);
+    }
+    
+    buildGridWrapper();
+  }
+};
+
+// Назад к настройкам
+btnBackToSettings.onclick = () => {
   workspace.classList.add('hidden');
   workspace.classList.remove('flex');
   settingsPanel.classList.remove('hidden');

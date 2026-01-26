@@ -5,9 +5,9 @@ import { checkProduct, checkDifference, checkQuotient } from './division/divisio
 import { updateHighlights, updateHighlightsForStep } from './division/divisionHighlights.js';
 import { updateHintMessage, clearHintMessage } from './division/divisionHints.js';
 
-console.log('DIVISION.JS LOADED v4 (полный порт из Laravel)');
+console.log('DIVISION.JS LOADED v4 (Ð¿Ð¾Ð»Ð½Ñ‹Ð¹ Ð¿Ð¾Ñ€Ñ‚ Ð¸Ð· Laravel)');
 
-// DOM элементы
+// DOM ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹
 const workspace = document.querySelector('#workspace');
 const mathGrid = document.querySelector('#mathGrid');
 const checkHints = document.querySelector('#checkHints');
@@ -23,8 +23,9 @@ const checkMessage = document.querySelector('#checkMessage');
 const btnClearAll = document.querySelector('#btnClearAll');
 const settingsPanel = document.querySelector('#settingsPanel');
 const btnNewExample = document.querySelector('#btnNewExample');
+const btnBackToSettings = document.querySelector('#btnBackToSettings');
 
-// Глобальное состояние
+// Ð“Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ð¾Ðµ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ
 let dividend = 0;
 let divisor = 0;
 let quotientInputs = [];
@@ -35,7 +36,7 @@ let focusedRow = { step: null, type: null };
 let hintsEnabled = false;
 let mode = 'auto';
 
-// Переключение режимов
+// ÐŸÐµÑ€ÐµÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ñ€ÐµÐ¶Ð¸Ð¼Ð¾Ð²
 document.querySelectorAll('input[name="mode"]').forEach(radio => {
   radio.onchange = (e) => {
     mode = e.target.value;
@@ -44,22 +45,22 @@ document.querySelectorAll('input[name="mode"]').forEach(radio => {
   };
 });
 
-// Генерация примера
+// Ð“ÐµÐ½ÐµÑ€Ð°Ñ†Ð¸Ñ Ð¿Ñ€Ð¸Ð¼ÐµÑ€Ð°
 btnGen.onclick = () => {
   if (mode === 'manual') {
     const num1 = parseInt(inDividend.value);
     const num2 = parseInt(inDivisor.value);
     
     if (!num1 || !num2 || num1 < 100 || num2 < 10) {
-      alert('Введите корректные числа (делимое минимум 3-значное, делитель минимум 2-значное)');
+      alert('Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ñ‹Ðµ Ñ‡Ð¸ÑÐ»Ð° (Ð´ÐµÐ»Ð¸Ð¼Ð¾Ðµ Ð¼Ð¸Ð½Ð¸Ð¼ÑƒÐ¼ 3-Ð·Ð½Ð°Ñ‡Ð½Ð¾Ðµ, Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»ÑŒ Ð¼Ð¸Ð½Ð¸Ð¼ÑƒÐ¼ 2-Ð·Ð½Ð°Ñ‡Ð½Ð¾Ðµ)');
       return;
     }
     if (num1 <= num2) {
-      alert('Делимое должно быть больше делителя');
+      alert('Ð”ÐµÐ»Ð¸Ð¼Ð¾Ðµ Ð´Ð¾Ð»Ð¶Ð½Ð¾ Ð±Ñ‹Ñ‚ÑŒ Ð±Ð¾Ð»ÑŒÑˆÐµ Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»Ñ');
       return;
     }
     if (num1 % num2 !== 0) {
-      alert('Делимое должно делиться на делитель без остатка');
+      alert('Ð”ÐµÐ»Ð¸Ð¼Ð¾Ðµ Ð´Ð¾Ð»Ð¶Ð½Ð¾ Ð´ÐµÐ»Ð¸Ñ‚ÑŒÑÑ Ð½Ð° Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»ÑŒ Ð±ÐµÐ· Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ°');
       return;
     }
     
@@ -100,7 +101,7 @@ btnGen.onclick = () => {
 
 btnStartMan.onclick = btnGen.onclick;
 
-// Очистить всё
+// ÐžÑ‡Ð¸ÑÑ‚Ð¸Ñ‚ÑŒ Ð²ÑÑ‘
 btnClearAll.onclick = () => {
   if (dividend && divisor) {
     quotientInputs.fill('');
@@ -115,12 +116,12 @@ btnClearAll.onclick = () => {
     checkHints.checked = false;
     focusedRow = { step: null, type: null };
     
-    // Очищаем визуально все инпуты
+    // ÐžÑ‡Ð¸Ñ‰Ð°ÐµÐ¼ Ð²Ð¸Ð·ÑƒÐ°Ð»ÑŒÐ½Ð¾ Ð²ÑÐµ Ð¸Ð½Ð¿ÑƒÑ‚Ñ‹
     for (const k in inputRefs) {
       const el = inputRefs[k];
       if (el) {
-        el.value = ''; // Очищаем значение в HTML
-        el.style.backgroundColor = ''; // Убираем подсветку
+        el.value = ''; // ÐžÑ‡Ð¸Ñ‰Ð°ÐµÐ¼ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð² HTML
+        el.style.backgroundColor = ''; // Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÑƒ
       }
     }
     
@@ -128,8 +129,76 @@ btnClearAll.onclick = () => {
   }
 };
 
-// Новый пример
+// ÐÐ¾Ð²Ñ‹Ð¹ Ð¿Ñ€Ð¸Ð¼ÐµÑ€
+// Новый пример (генерирует с теми же разрядностями)
 btnNewExample.onclick = () => {
+  if (dividend && divisor) {
+    if (mode === 'manual') {
+      // В ручном режиме генерируем с той же разрядностью
+      const dividendDigits = String(dividend).length;
+      const divisorDigits = String(divisor).length;
+      
+      let attempts = 0;
+      let validExample = false;
+      
+      while (!validExample && attempts < 100) {
+        attempts++;
+        
+        divisor = generateNumber(divisorDigits);
+        const quotientDigitsCount = dividendDigits - divisorDigits + 1;
+        const q = generateNumber(quotientDigitsCount);
+        dividend = q * divisor;
+        
+        if (String(dividend).length !== dividendDigits) continue;
+        if (hasZeroInside(dividend) || hasZeroInside(divisor)) continue;
+        if (String(q).includes('0')) continue;
+        
+        validExample = true;
+      }
+      
+      if (!validExample) {
+        divisor = generateNumber(divisorDigits);
+        const quotientDigitsCount = dividendDigits - divisorDigits + 1;
+        const q = generateNumber(quotientDigitsCount);
+        dividend = q * divisor;
+      }
+    } else {
+      // В автоматическом режиме - генерируем с текущими настройками
+      const dividendDigits = parseInt(selectDividend.value);
+      const divisorDigits = parseInt(selectDivisor.value);
+      
+      let attempts = 0;
+      let validExample = false;
+      
+      while (!validExample && attempts < 100) {
+        attempts++;
+        
+        divisor = generateNumber(divisorDigits);
+        const quotientDigitsCount = dividendDigits - divisorDigits + 1;
+        const q = generateNumber(quotientDigitsCount);
+        dividend = q * divisor;
+        
+        if (String(dividend).length !== dividendDigits) continue;
+        if (hasZeroInside(dividend) || hasZeroInside(divisor)) continue;
+        if (String(q).includes('0')) continue;
+        
+        validExample = true;
+      }
+      
+      if (!validExample) {
+        divisor = generateNumber(divisorDigits);
+        const quotientDigitsCount = dividendDigits - divisorDigits + 1;
+        const q = generateNumber(quotientDigitsCount);
+        dividend = q * divisor;
+      }
+    }
+    
+    buildGridWrapper();
+  }
+};
+
+// Назад к настройкам
+btnBackToSettings.onclick = () => {
   workspace.classList.add('hidden');
   workspace.classList.remove('flex');
   settingsPanel.classList.remove('hidden');
@@ -137,7 +206,8 @@ btnNewExample.onclick = () => {
   checkMessage.textContent = '';
 };
 
-// Включение подсказок
+
+// Ð’ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ð¿Ð¾Ð´ÑÐºÐ°Ð·Ð¾Ðº
 checkHints.onchange = () => {
   hintsEnabled = checkHints.checked;
   const dividendDigitsArray = String(dividend).split('').map(Number);
@@ -150,14 +220,14 @@ checkHints.onchange = () => {
       updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
     }, 0);
   } else {
-    // При выключении подсказок - убираем голубую/жёлтую подсветку и текст подсказки
+    // ÐŸÑ€Ð¸ Ð²Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ð¸ Ð¿Ð¾Ð´ÑÐºÐ°Ð·Ð¾Ðº - ÑƒÐ±Ð¸Ñ€Ð°ÐµÐ¼ Ð³Ð¾Ð»ÑƒÐ±ÑƒÑŽ/Ð¶Ñ‘Ð»Ñ‚ÑƒÑŽ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÑƒ Ð¸ Ñ‚ÐµÐºÑÑ‚ Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÐ¸
     clearHintMessage();
     for (const k in inputRefs) {
       const el = inputRefs[k];
       if (el) {
         const bg = el.style.backgroundColor;
-        // Убираем только голубую и жёлтую подсветку (подсказки)
-        // НЕ трогаем зелёную и красную (результаты проверки)
+        // Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð³Ð¾Ð»ÑƒÐ±ÑƒÑŽ Ð¸ Ð¶Ñ‘Ð»Ñ‚ÑƒÑŽ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÑƒ (Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÐ¸)
+        // ÐÐ• Ñ‚Ñ€Ð¾Ð³Ð°ÐµÐ¼ Ð·ÐµÐ»Ñ‘Ð½ÑƒÑŽ Ð¸ ÐºÑ€Ð°ÑÐ½ÑƒÑŽ (Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ñ‹ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ¸)
         if (bg === 'rgb(68, 214, 232)' || bg === 'rgb(255, 245, 157)') {
           el.style.backgroundColor = '';
         }
@@ -173,10 +243,10 @@ function buildGridWrapper() {
 function setupLogic() {
   const dividendDigitsArray = String(dividend).split('').map(Number);
   
-  // Синхронизируем hintsEnabled с реальным состоянием чекбокса
+  // Ð¡Ð¸Ð½Ñ…Ñ€Ð¾Ð½Ð¸Ð·Ð¸Ñ€ÑƒÐµÐ¼ hintsEnabled Ñ Ñ€ÐµÐ°Ð»ÑŒÐ½Ñ‹Ð¼ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸ÐµÐ¼ Ñ‡ÐµÐºÐ±Ð¾ÐºÑÐ°
   hintsEnabled = checkHints.checked;
   
-  // Частное
+  // Ð§Ð°ÑÑ‚Ð½Ð¾Ðµ
   document.querySelectorAll('.quotient-input').forEach(input => {
     const index = parseInt(input.dataset.quotientIndex);
     inputRefs[`q:${index}`] = input;
@@ -190,7 +260,7 @@ function setupLogic() {
     };
   });
   
-  // Шаги
+  // Ð¨Ð°Ð³Ð¸
   document.querySelectorAll('.step-input').forEach(input => {
     const step = parseInt(input.dataset.step);
     const type = input.dataset.type;
@@ -207,7 +277,7 @@ function setupLogic() {
     };
   });
   
-  // Вызываем начальную подсветку ТОЛЬКО если подсказки включены
+  // Ð’Ñ‹Ð·Ñ‹Ð²Ð°ÐµÐ¼ Ð½Ð°Ñ‡Ð°Ð»ÑŒÐ½ÑƒÑŽ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÑƒ Ð¢ÐžÐ›Ð¬ÐšÐž ÐµÑÐ»Ð¸ Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÐ¸ Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½Ñ‹
   if (hintsEnabled) {
     updateHighlightsForStep(0, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
     updateHintMessage({ step: null, type: null, quotientIndex: 0 }, stepsData, dividend, divisor, hintsEnabled);
@@ -226,7 +296,7 @@ function handleQuotientInput(e, index) {
   e.target.style.backgroundColor = '';
   
   if (value === correctDigit) {
-    // Зелёный фон ВСЕГДА при правильном ответе
+    // Ð—ÐµÐ»Ñ‘Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½ Ð’Ð¡Ð•Ð“Ð”Ð Ð¿Ñ€Ð¸ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ð¼ Ð¾Ñ‚Ð²ÐµÑ‚Ðµ
     e.target.style.backgroundColor = '#86efac';
     
     const stepIndex = stepsData.findIndex(s => s.quotientIndex === index);

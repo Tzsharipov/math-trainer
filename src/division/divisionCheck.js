@@ -1,4 +1,4 @@
-// Проверка правильности ответов (из Laravel/useDivisionChecks.js)
+// ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ÑÑ‚Ð¸ Ð¾Ñ‚Ð²ÐµÑ‚Ð¾Ð² (Ð¸Ð· Laravel/useDivisionChecks.js)
 import { getUserNumber } from './divisionHelpers.js';
 import { highlightElement } from './divisionHighlights.js';
 
@@ -28,16 +28,16 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
   const isCorrect = userProduct === correctProduct
   step.productStatus = isCorrect ? 'correct' : 'wrong'
   
-  // Если это последний шаг и всё правильно
+  // Ð•ÑÐ»Ð¸ ÑÑ‚Ð¾ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ ÑˆÐ°Ð³ Ð¸ Ð²ÑÑ‘ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾
   if (isCorrect && stepIndex === stepsData.length - 1 && hintsEnabled) {
     const allQuotientFilled = quotientInputs.every(q => q !== '')
     if (allQuotientFilled) {
       quotientStatus.value = 'correct'
-      checkMessage.textContent = '🥳 Частное введено верно!'
+      const childName = localStorage.getItem('childName'); const message = childName ? `🥳 Умничка, ${childName}! Частное введено верно!` : '🥳 Частное введено верно!'; checkMessage.textContent = message;
       
       // Confetti
       if (window.confetti) {
-        // Первый залп
+        // ÐŸÐµÑ€Ð²Ñ‹Ð¹ Ð·Ð°Ð»Ð¿
         confetti({
           particleCount: 200,
           spread: 120,
@@ -46,7 +46,7 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
           scalar: 1.5
         });
         
-        // Второй залп (через 300мс)
+        // Ð’Ñ‚Ð¾Ñ€Ð¾Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 300Ð¼Ñ)
         setTimeout(() => {
           confetti({
             particleCount: 150,
@@ -57,7 +57,7 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
           });
         }, 300);
         
-        // Третий залп (через 600мс)
+        // Ð¢Ñ€ÐµÑ‚Ð¸Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 600Ð¼Ñ)
         setTimeout(() => {
           confetti({
             particleCount: 150,
@@ -71,7 +71,7 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
     }
   }
   
-  // Подсветка только заполненных ячеек
+  // ÐŸÐ¾Ð´ÑÐ²ÐµÑ‚ÐºÐ° Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð·Ð°Ð¿Ð¾Ð»Ð½ÐµÐ½Ð½Ñ‹Ñ… ÑÑ‡ÐµÐµÐº
   for (let c = 0; c < step.productInput.length; c++) {
     const key = `${stepIndex}:product:${c}`
     if (step.productInput[c] !== '') {
@@ -105,7 +105,7 @@ export function checkDifference(stepIndex, steps, stepsData, inputRefs, hintsEna
   
   step.differenceStatus = isCorrect ? 'correct' : 'wrong'
   
-  // Подсветка только заполненных ячеек
+  // ÐŸÐ¾Ð´ÑÐ²ÐµÑ‚ÐºÐ° Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð·Ð°Ð¿Ð¾Ð»Ð½ÐµÐ½Ð½Ñ‹Ñ… ÑÑ‡ÐµÐµÐº
   for (let c = 0; c < step.differenceInput.length; c++) {
     const key = `${stepIndex}:difference:${c}`
     if (step.differenceInput[c] !== '') {
@@ -115,7 +115,7 @@ export function checkDifference(stepIndex, steps, stepsData, inputRefs, hintsEna
     }
   }
   
-  // Если правильно и это последний шаг
+  // Ð•ÑÐ»Ð¸ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ Ð¸ ÑÑ‚Ð¾ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ ÑˆÐ°Ð³
   if (isCorrect && stepIndex === stepsData.length - 1 && onComplete) {
     onComplete()
   }
@@ -126,17 +126,17 @@ export function checkQuotient(dividend, divisor, quotientInputs, inputRefs, chec
   const userQuotient = quotientInputs.join('')
   
   if (userQuotient.length === correctQuotient.length && userQuotient === correctQuotient) {
-    checkMessage.textContent = '🥳 Частное введено верно!'
+    const childName = localStorage.getItem('childName'); const message = childName ? `🥳 Умничка, ${childName}! Частное введено верно!` : '🥳 Частное введено верно!'; checkMessage.textContent = message;
     checkMessage.className = 'text-xl font-bold text-center min-h-[2rem] text-green-600'
     
-    console.log('✅ Частное правильное!');
+    console.log('âœ… Ð§Ð°ÑÑ‚Ð½Ð¾Ðµ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ðµ!');
     console.log('window.confetti:', window.confetti);
     console.log('typeof window.confetti:', typeof window.confetti);
     
-    // Confetti (точно как в умножении)
+    // Confetti (Ñ‚Ð¾Ñ‡Ð½Ð¾ ÐºÐ°Ðº Ð² ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ð¸)
     if (window.confetti) {
-      console.log('🎉 Запускаю конфетти!');
-      // Первый залп
+      console.log('ðŸŽ‰ Ð—Ð°Ð¿ÑƒÑÐºÐ°ÑŽ ÐºÐ¾Ð½Ñ„ÐµÑ‚Ñ‚Ð¸!');
+      // ÐŸÐµÑ€Ð²Ñ‹Ð¹ Ð·Ð°Ð»Ð¿
       confetti({
         particleCount: 200,
         spread: 120,
@@ -145,7 +145,7 @@ export function checkQuotient(dividend, divisor, quotientInputs, inputRefs, chec
         scalar: 1.5
       });
       
-      // Второй залп (через 300мс)
+      // Ð’Ñ‚Ð¾Ñ€Ð¾Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 300Ð¼Ñ)
       setTimeout(() => {
         confetti({
           particleCount: 150,
@@ -156,7 +156,7 @@ export function checkQuotient(dividend, divisor, quotientInputs, inputRefs, chec
         });
       }, 300);
       
-      // Третий залп (через 600мс)
+      // Ð¢Ñ€ÐµÑ‚Ð¸Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 600Ð¼Ñ)
       setTimeout(() => {
         confetti({
           particleCount: 150,
@@ -167,13 +167,13 @@ export function checkQuotient(dividend, divisor, quotientInputs, inputRefs, chec
         });
       }, 600);
     } else {
-      console.error('❌ window.confetti НЕ НАЙДЕН!');
+      console.error('âŒ window.confetti ÐÐ• ÐÐÐ™Ð”Ð•Ð!');
     }
   } else {
-    checkMessage.textContent = 'Пока неверно. Проверьте цифры частного.'
+    const childName = localStorage.getItem('childName'); const message = childName ? `Попробуй ещё раз, ${childName}! Проверь цифры частного.` : 'Пока неверно. Проверьте цифры частного.'; checkMessage.textContent = message;
     checkMessage.className = 'text-xl font-bold text-center min-h-[2rem] text-red-600'
     
-    // Подсветка ошибочных цифр
+    // ÐŸÐ¾Ð´ÑÐ²ÐµÑ‚ÐºÐ° Ð¾ÑˆÐ¸Ð±Ð¾Ñ‡Ð½Ñ‹Ñ… Ñ†Ð¸Ñ„Ñ€
     const correct = correctQuotient.split('')
     for (let i = 0; i < quotientInputs.length; i++) {
       const key = `q:${i}`

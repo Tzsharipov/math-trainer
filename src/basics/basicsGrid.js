@@ -365,7 +365,13 @@ function checkResult(inputs, checkMessage) {
   const allCorrect = Array.from(inputs).every(inp => inp.value === inp.dataset.correct);
   
   if (allCorrect) {
-    checkMessage.textContent = 'Правильно! Молодец! 🎉';
+    // Персонализированное сообщение с именем ребёнка
+    const childName = localStorage.getItem('childName');
+    const message = childName 
+      ? `Правильно! Умничка, ${childName}! 🎉` 
+      : 'Правильно! Молодец! 🎉';
+    
+    checkMessage.textContent = message;
     checkMessage.className = 'text-xl font-bold text-center mt-2 text-green-600';
     
     // Конфетти
@@ -399,7 +405,13 @@ function checkResult(inputs, checkMessage) {
       }, 600);
     }
   } else {
-    checkMessage.textContent = 'Попробуй ещё раз!';
+    // Персонализированное сообщение с именем ребёнка
+    const childName = localStorage.getItem('childName');
+    const message = childName 
+      ? `Попробуй ещё раз, ${childName}! 💪` 
+      : 'Попробуй ещё раз!';
+    
+    checkMessage.textContent = message;
     checkMessage.className = 'text-xl font-bold text-center mt-2 text-red-600';
   }
 }
