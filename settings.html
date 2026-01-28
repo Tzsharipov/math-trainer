@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Настройки аккаунта</title>
   
-  <!-- Проверка авторизации -->
   <script>
     if (localStorage.getItem('isLoggedIn') !== 'true') {
       window.location.href = 'index.html';
@@ -73,7 +72,6 @@
       font-weight: 900;
     }
     
-    /* Блок устройств */
     .devices-section {
       margin-bottom: clamp(20px, 3vh, 30px);
       padding: clamp(15px, 2vh, 20px);
@@ -130,28 +128,6 @@
     .device-date {
       color: #6b7280;
       font-size: clamp(10px, 2vw, 11px);
-    }
-    
-    .device-unlink-btn {
-      background: linear-gradient(135deg, #EF4444, #DC2626);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: clamp(11px, 2vw, 12px);
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-    }
-    
-    .device-unlink-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-    }
-    
-    .device-unlink-btn:active {
-      transform: translateY(0);
     }
     
     .devices-loading,
@@ -289,7 +265,6 @@
     }
   </style>
   
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -297,14 +272,13 @@
     <h1>⚙️ Настройки</h1>
     
     <div class="user-info">
-      <p>Текущий логин: <span id="currentLogin"></span></p>
+      <p>Текущий email: <span id="currentLogin"></span></p>
     </div>
     
     <div id="message" class="message"></div>
     
-    <!-- Блок устройств -->
     <div class="devices-section">
-      <h2>🔒 Привязанные устройства</h2>
+      <h2>🔐 Привязанные устройства</h2>
       <p>Максимум 3 устройства на один аккаунт</p>
       
       <div id="devicesList">
@@ -323,14 +297,8 @@
       </div>
       
       <div class="form-group">
-        <label>Новый логин</label>
-        <input type="text" id="newLogin" placeholder="Оставьте пустым чтобы не менять">
-        <p class="help-text">Минимум 3 символа</p>
-      </div>
-      
-      <div class="form-group">
         <label>Имя ребёнка 👶</label>
-        <input type="text" id="childName" placeholder="Например: Машенька, Саша, Даша">
+        <input type="text" id="childName" placeholder="Например: Маша, Саша, Даша">
         <p class="help-text">Будет использоваться в поздравлениях</p>
       </div>
       
@@ -357,27 +325,20 @@
   </div>
   
   <script>
-    // Инициализация Supabase
     const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    // Показываем текущий логин
-    document.getElementById('currentLogin').textContent = localStorage.getItem('userLogin') || 'Неизвестно';
+    document.getElementById('currentLogin').textContent = localStorage.getItem('userEmail') || 'Неизвестно';
     
-    // Загружаем текущее имя ребёнка из localStorage и заполняем поле
     const currentChildName = localStorage.getItem('childName');
     if (currentChildName) {
       document.getElementById('childName').value = currentChildName;
     }
     
-    // Загрузка списка устройств
     async function loadDevices() {
       const userId = localStorage.getItem('userId');
       const currentFingerprint = localStorage.getItem('deviceFingerprint');
-      
-      console.log('📱 Загрузка устройств для пользователя:', userId);
-      console.log('🔐 Текущий fingerprint:', currentFingerprint);
       
       try {
         const { data: devices, error } = await supabaseClient
@@ -387,19 +348,15 @@
           .order('created_at', { ascending: false });
         
         if (error) {
-          console.error('❌ Ошибка загрузки устройств:', error);
           document.getElementById('devicesList').innerHTML = '<p class="devices-error">Ошибка загрузки устройств</p>';
           return;
         }
-        
-        console.log('✅ Загружено устройств:', devices.length);
         
         if (devices.length === 0) {
           document.getElementById('devicesList').innerHTML = '<p class="devices-empty">Нет привязанных устройств</p>';
           return;
         }
         
-        // Формируем список устройств
         let html = '';
         devices.forEach(device => {
           const isCurrentDevice = device.device_fingerprint === currentFingerprint;
@@ -414,14 +371,6 @@
                 </div>
                 <div class="device-date">Добавлено: ${date}</div>
               </div>
-              ${!isCurrentDevice ? `
-                <button 
-                  onclick="unlinkDevice(${device.id})" 
-                  class="device-unlink-btn"
-                >
-                  Отвязать
-                </button>
-              ` : ''}
             </div>
           `;
         });
@@ -429,42 +378,12 @@
         document.getElementById('devicesList').innerHTML = html;
         
       } catch (err) {
-        console.error('❌ Критическая ошибка:', err);
         document.getElementById('devicesList').innerHTML = '<p class="devices-error">Ошибка загрузки</p>';
       }
     }
     
-    // Отвязка устройства
-    async function unlinkDevice(deviceId) {
-      if (!confirm('Вы уверены что хотите отвязать это устройство?\n\nВладелец устройства больше не сможет войти в приложение.')) {
-        return;
-      }
-      
-      try {
-        const { error } = await supabaseClient
-          .from('user_devices')
-          .delete()
-          .eq('id', deviceId);
-        
-        if (error) {
-          alert('Ошибка отвязки устройства!');
-          console.error(error);
-          return;
-        }
-        
-        alert('✅ Устройство успешно отвязано!');
-        loadDevices(); // Обновляем список
-        
-      } catch (err) {
-        alert('Произошла ошибка. Попробуйте ещё раз.');
-        console.error(err);
-      }
-    }
-    
-    // Загружаем устройства при открытии страницы
     loadDevices();
     
-    // Переключение видимости пароля
     function togglePassword(inputId) {
       const input = document.getElementById(inputId);
       const currentToggle = input.nextElementSibling;
@@ -478,7 +397,6 @@
       }
     }
     
-    // Показать сообщение
     function showMessage(text, type) {
       const message = document.getElementById('message');
       message.textContent = text;
@@ -489,29 +407,22 @@
       }, 5000);
     }
     
-    // Обработка формы
     document.getElementById('settingsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const currentPassword = document.getElementById('currentPassword').value.trim();
-      const newLogin = document.getElementById('newLogin').value.trim();
       const childName = document.getElementById('childName').value.trim();
       const newPassword = document.getElementById('newPassword').value.trim();
       const confirmPassword = document.getElementById('confirmPassword').value.trim();
+      const userEmail = localStorage.getItem('userEmail');
       
-      // Валидация
       if (!currentPassword) {
         showMessage('Введите текущий пароль!', 'error');
         return;
       }
       
-      if (!newLogin && !newPassword && !childName) {
-        showMessage('Введите новый логин, имя ребёнка и/или новый пароль!', 'error');
-        return;
-      }
-      
-      if (newLogin && newLogin.length < 3) {
-        showMessage('Новый логин должен быть минимум 3 символа!', 'error');
+      if (!childName && !newPassword) {
+        showMessage('Введите имя ребёнка и/или новый пароль!', 'error');
         return;
       }
       
@@ -526,60 +437,39 @@
       }
       
       try {
-        const userId = localStorage.getItem('userId');
+        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+          email: userEmail,
+          password: currentPassword
+        });
         
-        // Проверяем текущий пароль
-        const { data: userData, error: checkError } = await supabaseClient
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .eq('password', currentPassword)
-          .single();
-        
-        if (checkError || !userData) {
+        if (authError || !authData.user) {
           showMessage('Неверный текущий пароль!', 'error');
           return;
         }
         
-        // Формируем данные для обновления
-        const updates = {};
-        if (newLogin) updates.login = newLogin;
-        if (childName) updates.child_name = childName;
-        if (newPassword) updates.password = newPassword;
-        
-        // Обновляем в БД
-        const { error: updateError } = await supabaseClient
-          .from('users')
-          .update(updates)
-          .eq('id', userId);
-        
-        if (updateError) {
-          showMessage('Ошибка обновления данных!', 'error');
-          console.error(updateError);
-          return;
+        if (newPassword) {
+          const { error: updateError } = await supabaseClient.auth.updateUser({
+            password: newPassword
+          });
+          
+          if (updateError) {
+            showMessage('Ошибка смены пароля!', 'error');
+            return;
+          }
         }
         
-        // Обновляем localStorage
-        if (newLogin) {
-          localStorage.setItem('userLogin', newLogin);
-          document.getElementById('currentLogin').textContent = newLogin;
-        }
         if (childName) {
           localStorage.setItem('childName', childName);
         }
         
         showMessage('✅ Данные успешно обновлены!', 'success');
-        
-        // Очищаем форму
         document.getElementById('settingsForm').reset();
-        // Восстанавливаем имя ребёнка после reset
         if (childName) {
           document.getElementById('childName').value = childName;
         }
         
       } catch (err) {
         showMessage('Произошла ошибка. Попробуйте ещё раз.', 'error');
-        console.error(err);
       }
     });
   </script>

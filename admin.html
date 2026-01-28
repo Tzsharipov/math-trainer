@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админ-панель - Математический Тренажёр</title>
+  
+  <script>
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = 'app.html';
+    }
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: clamp(15px, 3vh, 30px);
+    }
+    
+    .admin-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: clamp(30px, 5vw, 50px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 20px;
+    }
+    
+    h1 {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    
+    .back-btn {
+      background: #e5e7eb;
+      color: #374151;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: #d1d5db;
+    }
+    
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* ФОРМА СОЗДАНИЯ */
+    .create-section {
+      background: #f9fafb;
+      padding: 30px;
+      border-radius: 16px;
+      border: 2px solid #e5e7eb;
+    }
+    
+    .create-section h2 {
+      color: #374151;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    input[type="email"]:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .create-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+    
+    .create-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .create-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .result {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .result.show {
+      display: block;
+    }
+    
+    .result.success {
+      background: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+    
+    .result.error {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+    
+    .result-title {
+      font-weight: 900;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    
+    .result-item {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    
+    .password-display {
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: bold;
+      color: #667eea;
+      word-break: break-all;
+      margin: 8px 0;
+    }
+    
+    .copy-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+    
+    /* СПИСОК ПОЛЬЗОВАТЕЛЕЙ */
+    .users-section {
+      background: #f9fafb;
+      padding: 30px;
+      border-radius: 16px;
+      border: 2px solid #e5e7eb;
+    }
+    
+    .users-section h2 {
+      color: #374151;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .users-table th {
+      background: #e5e7eb;
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #374151;
+      font-size: 13px;
+      border-bottom: 2px solid #d1d5db;
+    }
+    
+    .users-table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+      color: #4b5563;
+    }
+    
+    .users-table tr:hover {
+      background: #f3f4f6;
+    }
+    
+    .users-loading,
+    .users-empty,
+    .users-error {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+    }
+    
+    .users-error {
+      color: #dc2626;
+    }
+    
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .message.show {
+      display: block;
+    }
+    
+    .message.success {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      color: #065f46;
+    }
+    
+    .message.error {
+      background: #fee2e2;
+      border: 2px solid #ef4444;
+      color: #991b1b;
+    }
+  </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="header">
+      <h1>⚙️ Админ-панель</h1>
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+    </div>
+    
+    <div id="message" class="message"></div>
+    
+    <div class="content">
+      <!-- ФОРМА СОЗДАНИЯ ПОЛЬЗОВАТЕЛЯ -->
+      <div class="create-section">
+        <h2>➕ Создать пользователя</h2>
+        
+        <form id="createForm" onsubmit="handleCreateUser(event)">
+          <div class="form-group">
+            <label for="emailInput">Email нового пользователя *</label>
+            <input 
+              type="email" 
+              id="emailInput" 
+              placeholder="client@example.com"
+              required
+            >
+          </div>
+          
+          <button type="submit" class="create-btn" id="createBtn">
+            Создать пользователя
+          </button>
+        </form>
+        
+        <div id="result" class="result">
+          <div class="result-title" id="resultTitle"></div>
+          <div class="result-item" id="resultEmail"></div>
+          <div class="result-item">
+            Пароль:
+            <div class="password-display" id="resultPassword"></div>
+          </div>
+          <button class="copy-btn" onclick="copyPassword()">📋 Скопировать пароль</button>
+        </div>
+      </div>
+      
+      <!-- СПИСОК ПОЛЬЗОВАТЕЛЕЙ -->
+      <div class="users-section">
+        <h2>👥 Все пользователи</h2>
+        
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Создан</th>
+            </tr>
+          </thead>
+          <tbody id="usersList">
+            <tr>
+              <td colspan="2" class="users-loading">Загрузка...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
+    const FUNCTION_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/create_user';
+    
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let lastPassword = '';
+    
+    async function handleCreateUser(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('emailInput').value.trim();
+      const btn = document.getElementById('createBtn');
+      const resultDiv = document.getElementById('result');
+      
+      if (!email) {
+        showMessage('Введите email!', 'error');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.textContent = '⏳ Создаю...';
+      
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (!session) {
+          showMessage('Сессия истекла. Пожалуйста, войдите снова.', 'error');
+          return;
+        }
+        
+        const response = await fetch(FUNCTION_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ email: email })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Ошибка создания пользователя');
+        }
+        
+        // Показываем результат
+        lastPassword = data.password;
+        document.getElementById('resultTitle').textContent = '✅ Пользователь успешно создан!';
+        document.getElementById('resultEmail').textContent = `Email: ${data.email}`;
+        document.getElementById('resultPassword').textContent = data.password;
+        resultDiv.classList.add('show', 'success');
+        
+        showMessage('✅ Пользователь создан! Скопируй пароль и отправь клиенту.', 'success');
+        
+        // Очищаем форму
+        document.getElementById('createForm').reset();
+        document.getElementById('emailInput').focus();
+        
+        // Обновляем список пользователей
+        loadUsers();
+        
+      } catch (error) {
+        document.getElementById('resultTitle').textContent = '❌ Ошибка';
+        document.getElementById('resultEmail').textContent = error.message;
+        resultDiv.classList.add('show', 'error');
+        
+        showMessage(`Ошибка: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Создать пользователя';
+      }
+    }
+    
+    function copyPassword() {
+      if (lastPassword) {
+        navigator.clipboard.writeText(lastPassword).then(() => {
+          showMessage('✅ Пароль скопирован в буфер обмена!', 'success');
+        }).catch(() => {
+          showMessage('❌ Не удалось скопировать пароль', 'error');
+        });
+      }
+    }
+    
+    async function loadUsers() {
+      const usersList = document.getElementById('usersList');
+      
+      try {
+        const { data: { users }, error } = await supabaseClient.auth.admin.listUsers();
+        
+        if (error) {
+          usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+          return;
+        }
+        
+        if (!users || users.length === 0) {
+          usersList.innerHTML = '<tr><td colspan="2" class="users-empty">Нет пользователей</td></tr>';
+          return;
+        }
+        
+        let html = '';
+        users.forEach(user => {
+          const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
+          html += `
+            <tr>
+              <td>${user.email}</td>
+              <td>${createdDate}</td>
+            </tr>
+          `;
+        });
+        
+        usersList.innerHTML = html;
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+      }
+    }
+    
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message show ${type}`;
+      
+      setTimeout(() => {
+        msg.classList.remove('show');
+      }, 5000);
+    }
+    
+    function goBack() {
+      window.location.href = 'app.html';
+    }
+    
+    // Загружаем список пользователей при открытии
+    loadUsers();
+  </script>
+</body>
+</html>
