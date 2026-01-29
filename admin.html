@@ -438,20 +438,34 @@
       const usersList = document.getElementById('usersList');
       
       try {
-        const { data: { users }, error } = await supabaseClient.auth.admin.listUsers();
+        const { data: { session } } = await supabaseClient.auth.getSession();
         
-        if (error) {
+        if (!session) {
+          usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка сессии</td></tr>';
+          return;
+        }
+        
+        const response = await fetch('https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/list_users', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
           usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
           return;
         }
         
-        if (!users || users.length === 0) {
+        if (!data.users || data.users.length === 0) {
           usersList.innerHTML = '<tr><td colspan="2" class="users-empty">Нет пользователей</td></tr>';
           return;
         }
         
         let html = '';
-        users.forEach(user => {
+        data.users.forEach(user => {
           const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
           html += `
             <tr>
