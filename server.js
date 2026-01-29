@@ -15,12 +15,15 @@ const supabase = createClient(
 
 app.get('/api/users', async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('admin_users')
-      .select('*');
+    const { data: { users }, error } = await supabase.auth.admin.listUsers();
     
     if (error) throw error;
-    res.json(data);
+    
+    res.json(users.map(u => ({
+      id: u.id,
+      email: u.email,
+      created_at: u.created_at
+    })));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
