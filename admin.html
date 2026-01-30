@@ -374,7 +374,9 @@
         const response = await fetch(CREATE_USER_FUNCTION, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,             // ОБЯЗАТЕЛЬНО
+            'Authorization': `Bearer ${SUPABASE_KEY}` // ОБЯЗАТЕЛЬНО
           },
           body: JSON.stringify({ email: email })
         });
@@ -420,19 +422,22 @@
       }
     }
     
-    async function loadUsers() {
+async function loadUsers() {
       const usersList = document.getElementById('usersList');
       
       try {
         const response = await fetch(LIST_USERS_FUNCTION, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,             // ОБЯЗАТЕЛЬНО
+            'Authorization': `Bearer ${SUPABASE_KEY}` // ОБЯЗАТЕЛЬНО
           }
         });
         
         if (!response.ok) {
-          usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+          console.error('Ошибка сервера:', response.status);
+          usersList.innerHTML = `<tr><td colspan="2" class="users-error">Ошибка загрузки: ${response.status}</td></tr>`;
           return;
         }
         
@@ -446,19 +451,13 @@
         let html = '';
         users.forEach(user => {
           const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
-          html += `
-            <tr>
-              <td>${user.email}</td>
-              <td>${createdDate}</td>
-            </tr>
-          `;
+          html += `<tr><td>${user.email}</td><td>${createdDate}</td></tr>`;
         });
-        
         usersList.innerHTML = html;
         
       } catch (error) {
         console.error('Ошибка:', error);
-        usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+        usersList.innerHTML = '<tr><td colspan="2" class="users-error">Сетевая ошибка</td></tr>';
       }
     }
     
