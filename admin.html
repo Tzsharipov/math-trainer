@@ -348,14 +348,67 @@
   <script>
     const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
-    const FUNCTION_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/create_user';
-    const RAILWAY_URL = 'https://math-trainer-production.up.railway.app';
+    const CREATE_USER_FUNCTION = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/create_user';
+    const LIST_USERS_FUNCTION = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/list_users';
     
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     let lastPassword = '';
     
     async function handleCreateUser(event) {
+  event.preventDefault();
+  
+  const email = document.getElementById('emailInput').value.trim();
+  const btn = document.getElementById('createBtn');
+  const resultDiv = document.getElementById('result');
+  
+  if (!email) {
+    showMessage('Введите email!', 'error');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = '⏳ Создаю...';
+  
+  try {
+    const response = await fetch(CREATE_USER_FUNCTION, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Ошибка создания пользователя');
+    }
+    
+    lastPassword = data.password;
+    document.getElementById('resultTitle').textContent = '✅ Пользователь успешно создан!';
+    document.getElementById('resultEmail').textContent = `Email: ${data.email}`;
+    document.getElementById('resultPassword').textContent = data.password;
+    resultDiv.classList.add('show', 'success');
+    
+    showMessage('✅ Пользователь создан! Скопируй пароль и отправь клиенту.', 'success');
+    
+    document.getElementById('createForm').reset();
+    document.getElementById('emailInput').focus();
+    
+    loadUsers();
+    
+  } catch (error) {
+    document.getElementById('resultTitle').textContent = '❌ Ошибка';
+    document.getElementById('resultEmail').textContent = error.message;
+    resultDiv.classList.add('show', 'error');
+    
+    showMessage(`Ошибка: ${error.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Создать пользователя';
+  }
+}
       event.preventDefault();
       
       const email = document.getElementById('emailInput').value.trim();
@@ -429,6 +482,46 @@
     }
     
     async function loadUsers() {
+  const usersList = document.getElementById('usersList');
+  
+  try {
+    const response = await fetch(LIST_USERS_FUNCTION, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+      return;
+    }
+    
+    const users = await response.json();
+    
+    if (!users || users.length === 0) {
+      usersList.innerHTML = '<tr><td colspan="2" class="users-empty">Нет пользователей</td></tr>';
+      return;
+    }
+    
+    let html = '';
+    users.forEach(user => {
+      const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
+      html += `
+        <tr>
+          <td>${user.email}</td>
+          <td>${createdDate}</td>
+        </tr>
+      `;
+    });
+    
+    usersList.innerHTML = html;
+    
+  } catch (error) {
+    console.error('Ошибка:', error);
+    usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+  }
+}
       const usersList = document.getElementById('usersList');
       
       try {
