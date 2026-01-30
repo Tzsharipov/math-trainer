@@ -77,7 +77,6 @@
       }
     }
     
-    /* ФОРМА СОЗДАНИЯ */
     .create-section {
       background: #f9fafb;
       padding: 30px;
@@ -208,7 +207,6 @@
       background: #5568d3;
     }
     
-    /* СПИСОК ПОЛЬЗОВАТЕЛЕЙ */
     .users-section {
       background: #f9fafb;
       padding: 30px;
@@ -297,7 +295,6 @@
     <div id="message" class="message"></div>
     
     <div class="content">
-      <!-- ФОРМА СОЗДАНИЯ ПОЛЬЗОВАТЕЛЯ -->
       <div class="create-section">
         <h2>➕ Создать пользователя</h2>
         
@@ -328,7 +325,6 @@
         </div>
       </div>
       
-      <!-- СПИСОК ПОЛЬЗОВАТЕЛЕЙ -->
       <div class="users-section">
         <h2>👥 Все пользователи</h2>
         
@@ -352,7 +348,8 @@
   <script>
     const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
-    const FUNCTION_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/create_user';
+    const CREATE_USER_FUNCTION = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/create_user';
+    const LIST_USERS_FUNCTION = 'https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/list_users';
     
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
@@ -374,20 +371,13 @@
       btn.textContent = '⏳ Создаю...';
       
       try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        
-        if (!session) {
-          showMessage('Сессия истекла. Пожалуйста, войдите снова.', 'error');
-          return;
-        }
-        
         const response = await fetch(CREATE_USER_FUNCTION, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ email: email })
-});
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: email })
+        });
         
         const data = await response.json();
         
@@ -395,7 +385,6 @@
           throw new Error(data.error || 'Ошибка создания пользователя');
         }
         
-        // Показываем результат
         lastPassword = data.password;
         document.getElementById('resultTitle').textContent = '✅ Пользователь успешно создан!';
         document.getElementById('resultEmail').textContent = `Email: ${data.email}`;
@@ -404,11 +393,9 @@
         
         showMessage('✅ Пользователь создан! Скопируй пароль и отправь клиенту.', 'success');
         
-        // Очищаем форму
         document.getElementById('createForm').reset();
         document.getElementById('emailInput').focus();
         
-        // Обновляем список пользователей
         loadUsers();
         
       } catch (error) {
@@ -434,46 +421,46 @@
     }
     
     async function loadUsers() {
-  const usersList = document.getElementById('usersList');
-  
-  try {
-    const response = await fetch(LIST_USERS_FUNCTION, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+      const usersList = document.getElementById('usersList');
+      
+      try {
+        const response = await fetch(LIST_USERS_FUNCTION, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
+          return;
+        }
+        
+        const users = await response.json();
+        
+        if (!users || users.length === 0) {
+          usersList.innerHTML = '<tr><td colspan="2" class="users-empty">Нет пользователей</td></tr>';
+          return;
+        }
+        
+        let html = '';
+        users.forEach(user => {
+          const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
+          html += `
+            <tr>
+              <td>${user.email}</td>
+              <td>${createdDate}</td>
+            </tr>
+          `;
+        });
+        
+        usersList.innerHTML = html;
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
       }
-    });
-    
-    if (!response.ok) {
-      usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
-      return;
     }
-    
-    const users = await response.json();
-    
-    if (!users || users.length === 0) {
-      usersList.innerHTML = '<tr><td colspan="2" class="users-empty">Нет пользователей</td></tr>';
-      return;
-    }
-    
-    let html = '';
-    users.forEach(user => {
-      const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
-      html += `
-        <tr>
-          <td>${user.email}</td>
-          <td>${createdDate}</td>
-        </tr>
-      `;
-    });
-    
-    usersList.innerHTML = html;
-    
-  } catch (error) {
-    console.error('Ошибка:', error);
-    usersList.innerHTML = '<tr><td colspan="2" class="users-error">Ошибка загрузки пользователей</td></tr>';
-  }
-}
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
@@ -489,7 +476,6 @@
       window.location.href = 'app.html';
     }
     
-    // Загружаем список пользователей при открытии
     loadUsers();
   </script>
 </body>
