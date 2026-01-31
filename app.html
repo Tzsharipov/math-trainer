@@ -549,88 +549,96 @@
       }
     }
     
-    async function handleLogin() {
-      const email = document.getElementById('loginInput').value.trim();
-      const password = document.getElementById('passwordInput').value.trim();
-      
-      if (!email || !password) {
-        alert('Введите email и пароль!');
+async function handleLogin() {
+  const email = document.getElementById('loginInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
+  
+  if (!email || !password) {
+    alert('Введите email и пароль!');
+    return;
+  }
+  
+  try {
+    // Вызываем нашу функцию login_check
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/login_check`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      // Если пароль неверный или в базе стоит is_paid: false
+      alert(result.error || 'Ошибка входа');
+      return;
+    }
+
+    // Если функция подтвердила вход и оплату, создаем сессию
+    const { error: sessionError } = await supabaseClient.auth.setSession({
+      access_token: result.session.access_token,
+      refresh_token: result.session.refresh_token
+    });
+
+    if (sessionError) throw sessionError;
+
+    // Дальше идет твоя родная логика проверки устройств
+    const userId = result.session.user.id;
+    const deviceFingerprint = getDeviceFingerprint();
+    const deviceName = getDeviceName();
+    
+    const { data: devices, error: devicesError } = await supabaseClient
+      .from('user_devices')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (devicesError) {
+      alert('Ошибка проверки устройств. Попробуйте позже.');
+      return;
+    }
+    
+    const existingDevice = devices.find(d => d.device_fingerprint === deviceFingerprint);
+    
+    if (existingDevice) {
+      await supabaseClient
+        .from('user_devices')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', existingDevice.id);
+    } else {
+      if (devices.length >= 3) {
+        alert('⚠️ Лимит устройств достигнут!');
         return;
       }
-      
-      try {
-        const { data, error: authError } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-        
-        if (authError || !data.user) {
-          alert('Неверный email или пароль!');
-          return;
-        }
-        
-        const userId = data.user.id;
-        const deviceFingerprint = getDeviceFingerprint();
-        const deviceName = getDeviceName();
-        
-        const { data: devices, error: devicesError } = await supabaseClient
-          .from('user_devices')
-          .select('*')
-          .eq('user_id', userId);
-        
-        if (devicesError) {
-          alert('Ошибка проверки устройств. Попробуйте позже.');
-          return;
-        }
-        
-        const existingDevice = devices.find(d => d.device_fingerprint === deviceFingerprint);
-        
-        if (existingDevice) {
-          await supabaseClient
-            .from('user_devices')
-            .update({ last_login: new Date().toISOString() })
-            .eq('id', existingDevice.id);
-        } else {
-          if (devices.length >= 3) {
-            alert('⚠️ Лимит устройств достигнут!\n\nНа вашем аккаунте зарегистрировано максимум 3 устройства. Это ограничение установлено в целях защиты от раздачи логинов.\n\nОбратитесь в поддержку если вам нужна помощь.');
-            return;
-          }
-          
-          const { error: insertError } = await supabaseClient
-            .from('user_devices')
-            .insert({
-              user_id: userId,
-              device_fingerprint: deviceFingerprint,
-              device_name: deviceName
-            });
-          
-          if (insertError) {
-            alert('Ошибка регистрации устройства. Попробуйте позже.');
-            return;
-          }
-        }
-        
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userId', userId);
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('childName', '');
-        localStorage.setItem('deviceFingerprint', deviceFingerprint);
-        
-        const overlay = document.getElementById('loginOverlay');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('locked');
-        
-        document.getElementById('settingsBtn').classList.add('show');
-        document.getElementById('logoutBtn').classList.add('show');
-        
-        if (email === 'tzsharipov@gmail.com') {
-          document.getElementById('adminBtn').style.display = 'block';
-        }
-        
-      } catch (err) {
-        alert('Произошла ошибка при входе. Попробуйте ещё раз.');
-      }
+      await supabaseClient.from('user_devices').insert({
+          user_id: userId,
+          device_fingerprint: deviceFingerprint,
+          device_name: deviceName
+      });
     }
+    
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('userEmail', email);
+    
+    const overlay = document.getElementById('loginOverlay');
+    overlay.classList.add('hidden');
+    document.body.classList.remove('locked');
+    
+    document.getElementById('settingsBtn').classList.add('show');
+    document.getElementById('logoutBtn').classList.add('show');
+    
+    if (email === 'tzsharipov@gmail.com') {
+      document.getElementById('adminBtn').style.display = 'block';
+    }
+    
+  } catch (err) {
+    console.error(err);
+    alert('Произошла ошибка при входе. Попробуйте ещё раз.');
+  }
+}
     
     function handleLogout() {
       if (!confirm('Вы уверены что хотите выйти?')) {
@@ -644,20 +652,28 @@
       window.location.reload();
     }
     
-    window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
       const isLoggedIn = localStorage.getItem('isLoggedIn');
       
       if (isLoggedIn === 'true') {
-        const overlay = document.getElementById('loginOverlay');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('locked');
-        
+        // Сразу показываем кнопки, так как пользователь "свой"
         document.getElementById('settingsBtn').classList.add('show');
         document.getElementById('logoutBtn').classList.add('show');
         
         const userEmail = localStorage.getItem('userEmail');
         if (userEmail === 'tzsharipov@gmail.com') {
           document.getElementById('adminBtn').style.display = 'block';
+        }
+
+        // ПРОВЕРКА: Если уже залогинены, проверяем оплату СРАЗУ
+        const isAccessOk = await checkAccessStrict();
+        
+        if (isAccessOk) {
+          const overlay = document.getElementById('loginOverlay');
+          if (overlay) {
+            overlay.classList.add('hidden');
+            document.body.classList.remove('locked');
+          }
         }
       }
       
@@ -669,23 +685,46 @@
       }
       
       const backgroundImg = document.querySelector('.background-image');
-      
       if (backgroundImg) {
-        if (backgroundImg.complete) {
-          document.body.classList.add('loaded');
-        } else {
-          backgroundImg.addEventListener('load', () => {
-            document.body.classList.add('loaded');
-          });
-          
-          setTimeout(() => {
-            document.body.classList.add('loaded');
-          }, 1000);
-        }
+        if (backgroundImg.complete) document.body.classList.add('loaded');
+        else backgroundImg.addEventListener('load', () => document.body.classList.add('loaded'));
       } else {
         document.body.classList.add('loaded');
       }
     });
+
+    // ЖЕСТКАЯ ПРОВЕРКА: Если оплаты нет — выкидываем немедленно
+    async function checkAccessStrict() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) return false;
+
+        const { data: profile, error } = await supabaseClient
+          .from('profiles')
+          .select('is_paid')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error || !profile || profile.is_paid !== true) {
+          console.log("Доступ закрыт админом. Выход...");
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('userEmail');
+          await supabaseClient.auth.signOut();
+          
+          // Если мы уже внутри — перезагружаем страницу, чтобы появилось окно входа
+          if (!document.getElementById('loginOverlay').classList.contains('hidden')) {
+             return false;
+          }
+          window.location.reload();
+          return false;
+        }
+        return true;
+      } catch (e) {
+        console.error("Ошибка проверки доступа:", e);
+        return true; // В случае ошибки сети не выкидываем
+      }
+    }
   </script>
 </body>
 </html>
