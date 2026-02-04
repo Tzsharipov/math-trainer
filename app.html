@@ -622,6 +622,7 @@ async function handleLogin() {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userId', userId);
     localStorage.setItem('userEmail', email);
+    localStorage.setItem('deviceFingerprint', deviceFingerprint);
     
     const overlay = document.getElementById('loginOverlay');
     overlay.classList.add('hidden');
