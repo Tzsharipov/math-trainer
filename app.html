@@ -615,7 +615,8 @@ async function handleLogin() {
       await supabaseClient.from('user_devices').insert({
           user_id: userId,
           device_fingerprint: deviceFingerprint,
-          device_name: deviceName
+          device_name: deviceName,
+          email: email  // ← ДОБАВИТЬ ЭТО
       });
     }
     
