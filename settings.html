@@ -130,6 +130,28 @@
       font-size: clamp(10px, 2vw, 11px);
     }
     
+    .device-unlink-btn {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: clamp(11px, 2vw, 12px);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .device-unlink-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+    
+    .device-unlink-btn:active {
+      transform: translateY(0);
+    }
+    
     .devices-loading,
     .devices-empty,
     .devices-error {
@@ -336,6 +358,32 @@
       document.getElementById('childName').value = currentChildName;
     }
     
+    async function unlinkDevice(deviceId) {
+      if (!confirm('Вы уверены что хотите отвязать это устройство?\n\nВладелец устройства больше не сможет войти в приложение.')) {
+        return;
+      }
+      
+      try {
+        const { error } = await supabaseClient
+          .from('user_devices')
+          .delete()
+          .eq('id', deviceId);
+        
+        if (error) {
+          alert('Ошибка отвязки устройства!');
+          console.error(error);
+          return;
+        }
+        
+        alert('✅ Устройство успешно отвязано!');
+        loadDevices();
+        
+      } catch (err) {
+        alert('Произошла ошибка. Попробуйте ещё раз.');
+        console.error(err);
+      }
+    }
+    
     async function loadDevices() {
       const userId = localStorage.getItem('userId');
       const currentFingerprint = localStorage.getItem('deviceFingerprint');
@@ -371,6 +419,7 @@
                 </div>
                 <div class="device-date">Добавлено: ${date}</div>
               </div>
+              ${!isCurrentDevice ? `<button onclick="unlinkDevice(${device.id})" class="device-unlink-btn">Отвязать</button>` : ''}
             </div>
           `;
         });
