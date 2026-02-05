@@ -462,29 +462,35 @@
       }
     }
     
-    async function togglePaymentStatus(userId, email, currentStatus) {
-      const newStatus = !currentStatus;
-      const statusText = newStatus ? 'Оплачено' : 'Не оплачено';
-      
-      try {
-        const { error } = await supabaseClient
-          .from('profiles')
-          .update({ is_paid: newStatus })
-          .eq('id', userId);
-        
-        if (error) {
-          showMessage(`❌ Ошибка: ${error.message}`, 'error');
-          return;
-        }
-        
-        showMessage(`✅ ${email} → "${statusText}"`, 'success');
-        loadUsers();
-        
-      } catch (err) {
-        showMessage('❌ Ошибка обновления статуса', 'error');
-        console.error(err);
-      }
+async function togglePaymentStatus(userId, email, currentStatus) {
+  const newStatus = !currentStatus;
+  const statusText = newStatus ? 'Оплачено' : 'Не оплачено';
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/update_user_status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY
+      },
+      body: JSON.stringify({ userId, isPaid: newStatus })
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      showMessage(`❌ Ошибка: ${result.error}`, 'error');
+      return;
     }
+    
+    showMessage(`✅ ${email} → "${statusText}"`, 'success');
+    loadUsers();
+    
+  } catch (err) {
+    showMessage('❌ Ошибка обновления статуса', 'error');
+    console.error(err);
+  }
+}
     
     async function loadUsers() {
       const usersList = document.getElementById('usersList');
@@ -525,7 +531,7 @@
             <td>${user.email}</td>
             <td>${createdDate}</td>
             <td>${statusBadge}</td>
-            <td><button class="status-btn" onclick="togglePaymentStatus('${user.id}', '${user.email}', ${isPaid})">${btnText}</button></td>
+           <td><button class="status-btn" onclick='togglePaymentStatus("${user.id}", "${user.email}", ${isPaid})'>${btnText}</button></td>
           </tr>`;
         });
         usersList.innerHTML = html;

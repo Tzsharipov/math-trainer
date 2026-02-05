@@ -559,15 +559,18 @@ async function handleLogin() {
   }
   
   try {
-    // Вызываем нашу функцию login_check
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/login_check`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY
-      },
-      body: JSON.stringify({ email, password })
-    });
+  // СНАЧАЛА генерируем fingerprint
+  const deviceFingerprint = getDeviceFingerprint();
+  
+  // Вызываем нашу функцию login_check
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/login_check`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY
+    },
+    body: JSON.stringify({ email, password, deviceFingerprint })
+  });
 
     const result = await response.json();
 
@@ -587,7 +590,9 @@ async function handleLogin() {
 
     // Дальше идет твоя родная логика проверки устройств
     const userId = result.session.user.id;
-    const deviceFingerprint = getDeviceFingerprint();
+    // const deviceFingerprint = getDeviceFingerprint();
+
+    
     const deviceName = getDeviceName();
     
     const { data: devices, error: devicesError } = await supabaseClient
