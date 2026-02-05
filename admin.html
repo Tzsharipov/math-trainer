@@ -247,6 +247,44 @@
       background: #f3f4f6;
     }
     
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    
+    .status-paid {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+    
+    .status-unpaid {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+    
+    .status-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 8px;
+    }
+    
+    .status-btn:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+    }
+    
     .users-loading,
     .users-empty,
     .users-error {
@@ -333,11 +371,13 @@
             <tr>
               <th>Email</th>
               <th>Создан</th>
+              <th>Статус оплаты</th>
+              <th>Действие</th>
             </tr>
           </thead>
           <tbody id="usersList">
             <tr>
-              <td colspan="2" class="users-loading">Загрузка...</td>
+              <td colspan="4" class="users-loading">Загрузка...</td>
             </tr>
           </tbody>
         </table>
@@ -375,8 +415,8 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'apikey': SUPABASE_KEY,             // ОБЯЗАТЕЛЬНО
-            'Authorization': `Bearer ${SUPABASE_KEY}` // ОБЯЗАТЕЛЬНО
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
           },
           body: JSON.stringify({ email: email })
         });
@@ -422,7 +462,31 @@
       }
     }
     
-async function loadUsers() {
+    async function togglePaymentStatus(userId, email, currentStatus) {
+      const newStatus = !currentStatus;
+      const statusText = newStatus ? 'Оплачено' : 'Не оплачено';
+      
+      try {
+        const { error } = await supabaseClient
+          .from('profiles')
+          .update({ is_paid: newStatus })
+          .eq('id', userId);
+        
+        if (error) {
+          showMessage(`❌ Ошибка: ${error.message}`, 'error');
+          return;
+        }
+        
+        showMessage(`✅ ${email} → "${statusText}"`, 'success');
+        loadUsers();
+        
+      } catch (err) {
+        showMessage('❌ Ошибка обновления статуса', 'error');
+        console.error(err);
+      }
+    }
+    
+    async function loadUsers() {
       const usersList = document.getElementById('usersList');
       
       try {
@@ -430,34 +494,45 @@ async function loadUsers() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'apikey': SUPABASE_KEY,             // ОБЯЗАТЕЛЬНО
-            'Authorization': `Bearer ${SUPABASE_KEY}` // ОБЯЗАТЕЛЬНО
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
           }
         });
         
         if (!response.ok) {
           console.error('Ошибка сервера:', response.status);
-          usersList.innerHTML = `<tr><td colspan="2" class="users-error">Ошибка загрузки: ${response.status}</td></tr>`;
+          usersList.innerHTML = `<tr><td colspan="4" class="users-error">Ошибка загрузки: ${response.status}</td></tr>`;
           return;
         }
         
         const users = await response.json();
         
         if (!users || users.length === 0) {
-          usersList.innerHTML = '<tr><td colspan="2" class="users-empty">Нет пользователей</td></tr>';
+          usersList.innerHTML = '<tr><td colspan="4" class="users-empty">Нет пользователей</td></tr>';
           return;
         }
         
         let html = '';
         users.forEach(user => {
           const createdDate = new Date(user.created_at).toLocaleDateString('ru-RU');
-          html += `<tr><td>${user.email}</td><td>${createdDate}</td></tr>`;
+          const isPaid = user.is_paid === true;
+          const statusBadge = isPaid 
+            ? '<span class="status-badge status-paid">✅ Оплачено</span>'
+            : '<span class="status-badge status-unpaid">❌ Не оплачено</span>';
+          const btnText = isPaid ? 'Отменить' : 'Активировать';
+          
+          html += `<tr>
+            <td>${user.email}</td>
+            <td>${createdDate}</td>
+            <td>${statusBadge}</td>
+            <td><button class="status-btn" onclick="togglePaymentStatus('${user.id}', '${user.email}', ${isPaid})">${btnText}</button></td>
+          </tr>`;
         });
         usersList.innerHTML = html;
         
       } catch (error) {
         console.error('Ошибка:', error);
-        usersList.innerHTML = '<tr><td colspan="2" class="users-error">Сетевая ошибка</td></tr>';
+        usersList.innerHTML = '<tr><td colspan="4" class="users-error">Сетевая ошибка</td></tr>';
       }
     }
     
