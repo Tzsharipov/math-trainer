@@ -51,9 +51,10 @@
     }
     
     .hero .for-grade {
-      font-size: clamp(14px, 2.5vw, 18px);
+      font-size: clamp(16px, 3vw, 22px);
       opacity: 0.9;
       margin-bottom: 30px;
+      font-weight: 600;
     }
     
     .hero-buttons {
@@ -89,6 +90,7 @@
     .btn-primary {
       background: linear-gradient(135deg, #10B981, #059669);
       color: white;
+      border: 2px solid #047857;
     }
     
     .btn-primary:hover {
@@ -330,10 +332,15 @@
       margin-top: 25px;
       font-size: clamp(13px, 2.5vw, 14px);
       color: #6B7280;
+      text-align: center;
     }
     
     .payment-info p {
       margin: 5px 0;
+    }
+    
+    .promo-block .payment-info {
+      text-align: center;
     }
     
     /* FAQ Section */
@@ -427,6 +434,271 @@
       color: #60A5FA;
       font-size: clamp(14px, 2.5vw, 16px);
     }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(30px, 5vw, 50px);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #9ca3af;
+      transition: color 0.3s;
+    }
+    
+    .modal-close:hover {
+      color: #374151;
+    }
+    
+    .modal-title {
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 900;
+      color: #667eea;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .form-group label .required {
+      color: #ef4444;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .success-screen {
+      display: none;
+      text-align: center;
+    }
+    
+    .success-screen.active {
+      display: block;
+    }
+    
+    .application-number {
+      background: #f3f4f6;
+      border: 2px solid #667eea;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 900;
+      color: #667eea;
+    }
+    
+    .payment-info {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .payment-info h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 15px;
+    }
+    
+    .payment-method {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .payment-method strong {
+      display: block;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+    
+    .copy-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+    
+    .warning-box {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-weight: 600;
+      color: #92400e;
+    }
+    
+    .contact-info {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f0f9ff;
+      border-radius: 8px;
+    }
+    
+    .telegram-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 12px 24px;
+      background: #0088cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    
+    .telegram-btn:hover {
+      background: #006699;
+      transform: translateY(-2px);
+    }
+    
+    /* Promo Block Styles */
+    .promo-block {
+      background: white;
+      max-width: 950px;
+      margin: 60px auto;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    .promo-banner {
+      background: linear-gradient(135deg, #92400e, #b45309);
+      color: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    
+    .promo-cta-btn {
+      display: inline-block;
+      padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: 2px solid #047857;
+      border-radius: 12px;
+      font-size: clamp(18px, 3.5vw, 24px);
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: none;
+      letter-spacing: 0;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .promo-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .promo-price-note {
+      background: #f3f4f6;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: #b91c1c;
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: 600;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -434,13 +706,13 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <h1>🎓 Ваш ребёнок освоит умножение и деление столбиком за 2 недели</h1>
-      <p class="subtitle">Без слёз над домашкой и скандалов с родителями</p>
-      <p class="for-grade">Интерактивный тренажёр для 2-4 класса</p>
+      <h1>🎓 Умножение столбиком и деление уголком — это просто. Полное освоение алгоритмов за 2 недели</h1>
+      <p class="subtitle">Без слёз над домашкой и споров с родителями</p>
+      <p class="for-grade">Интерактивный тренажёр для учеников 2-4 класса</p>
       
       <div class="hero-buttons">
-        <a href="#pricing" class="btn btn-primary">Купить за 990₽</a>
-        <a href="#modules" class="btn btn-secondary">Посмотреть модули</a>
+        <a href="javascript:void(0)" class="btn btn-primary" onclick="openOrderModal()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Оформить доступ для обучения</a>
+        <a href="#modules" class="btn btn-secondary" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Посмотреть модули</a>
       </div>
     </div>
   </section>
@@ -528,17 +800,20 @@
   <!-- Pricing Section -->
   <section class="pricing" id="pricing">
     <div class="container">
-      <h2 class="section-title">💰 ВСЕГО 990₽ - ДОСТУП НАВСЕГДА</h2>
       
-      <div class="price-card">
-        <span class="price-badge">⭐ ЛУЧШЕЕ ПРЕДЛОЖЕНИЕ</span>
+      <div class="promo-block" style="margin-bottom: 40px;">
+        <div class="promo-banner">
+          ВАШ РЕБЁНОК ОСВОИТ ЭТИ ОПЕРАЦИИ ЗА 2 НЕДЕЛИ<br>БЕЗ СЛЁЗ И СПОРОВ С РОДИТЕЛЯМИ
+        </div>
         
-        <div class="price-amount">990₽</div>
-        <div class="price-period">Доступ навсегда • Для всех детей в семье</div>
-        
-        <button class="btn btn-primary" onclick="openOrderForm()" style="width: 100%; max-width: 400px; margin: 0 auto;">
-          Купить доступ
+        <button class="promo-cta-btn" onclick="openOrderModal()">
+          Оформить доступ для обучения
         </button>
+        
+        <div class="promo-price-note">
+          Стоимость полного доступа - 990 руб.<br>
+          Навсегда для всей семьи
+        </div>
         
         <div class="price-compare">
           <p>Это дешевле чем:</p>
@@ -557,6 +832,7 @@
           <p>✓ Доступ открывается в течение 1-2 часов</p>
         </div>
       </div>
+      
     </div>
   </section>
 
@@ -609,8 +885,8 @@
         Дайте вашему ребёнку инструмент для успеха в математике!
       </p>
       
-      <button class="btn btn-primary" onclick="openOrderForm()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">
-        Купить за 990₽
+      <button class="btn btn-primary" onclick="openOrderModal()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">
+        Оформить доступ для обучения
       </button>
       
       <p class="cta-note">
@@ -634,54 +910,88 @@
 
   <script>
     // Открытие формы заявки
-    function openOrderForm() {
-      // ВРЕМЕННО: показываем реквизиты напрямую
-      // Потом заменим на Google Form
+    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
+    
+    function openOrderModal() {
+      document.getElementById('orderModal').classList.add('active');
+      document.getElementById('registrationForm').style.display = 'block';
+      document.getElementById('successScreen').classList.remove('active');
+      document.getElementById('applicationForm').reset();
+    }
+    
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.remove('active');
+    }
+    
+    async function submitApplication(event) {
+      event.preventDefault();
       
-      const message = `
-╔══════════════════════════════════════╗
-║   ОФОРМЛЕНИЕ ЗАКАЗА                  ║
-╚══════════════════════════════════════╝
-
-Спасибо за интерес к Математическому тренажёру! 🎓
-
-📝 Чтобы получить доступ:
-
-1️⃣ Переведите 990₽ одним из способов:
-
-   📱 По номеру телефона (СБП):
-   +7 925 090 72 41
-   (Тахир Жураевич Ш.)
-
-   💳 На карту МИР:
-   2202 2056 3073 0999
-   (Шарипов Тахир Жураевич)
-
-2️⃣ После оплаты напишите нам:
-
-   📧 Email: tzsharipov@gmail.com
-   💬 Telegram: @SharipovT
-
-   Укажите:
-   • Ваше имя
-   • Email для отправки доступа
-   • Имя ребёнка (для персонализации)
-
-3️⃣ Получите логин и пароль в течение 1-2 часов!
-
-═══════════════════════════════════════
-
-Есть вопросы? Пишите — с радостью ответим!
-      `.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка...';
       
-      alert(message);
+      const email = document.getElementById('emailInput').value.trim();
+      const childName = document.getElementById('childNameInput').value.trim();
+      const payerName = document.getElementById('payerNameInput').value.trim();
+      const telegram = document.getElementById('telegramInput').value.trim();
       
-      // Копируем номер телефона в буфер обмена
-      navigator.clipboard.writeText('+79250907241').then(() => {
-        console.log('Номер телефона скопирован в буфер обмена');
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/submit_application`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY
+          },
+          body: JSON.stringify({
+            email,
+            childName,
+            payerName,
+            telegram: telegram || null
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+          alert('❌ ' + (result.error || 'Ошибка отправки заявки'));
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Отправить заявку';
+          return;
+        }
+        
+        // Показываем экран успеха
+        document.getElementById('registrationForm').style.display = 'none';
+        document.getElementById('successScreen').classList.add('active');
+        document.getElementById('appNumberDisplay').textContent = result.applicationNumber;
+        document.getElementById('appNumberComment').textContent = 'Заявка ' + result.applicationNumber;
+        
+      } catch (err) {
+        console.error('Error:', err);
+        alert('❌ Ошибка соединения. Попробуйте позже.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить заявку';
+      }
+    }
+    
+    function copyToClipboard(text, button) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = '✅ Скопировано!';
+        button.style.background = '#10B981';
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.background = '#667eea';
+        }, 2000);
       }).catch(err => {
-        console.log('Не удалось скопировать номер:', err);
+        console.error('Ошибка копирования:', err);
+        alert('Не удалось скопировать. Скопируйте вручную.');
       });
+    }
+    
+    // Старая функция для совместимости
+    function openOrderForm() {
+      openOrderModal();
     }
     
     // Плавная прокрутка к якорям
@@ -698,6 +1008,101 @@
       });
     });
   </script>
+
+  <!-- Modal Window -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeOrderModal()">✕</button>
+      
+      <!-- Registration Form -->
+      <div id="registrationForm">
+        <h2 class="modal-title">📝 Оформление доступа</h2>
+        
+        <form id="applicationForm" onsubmit="submitApplication(event)">
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" id="emailInput" required placeholder="ivanov@mail.ru">
+          </div>
+          
+          <div class="form-group">
+            <label>Имя ребёнка <span class="required">*</span></label>
+            <input type="text" id="childNameInput" required placeholder="Ваня">
+          </div>
+          
+          <div class="form-group">
+            <label>Ваше ФИО (как в банке) <span class="required">*</span></label>
+            <input type="text" id="payerNameInput" required placeholder="Иванов Иван Борисович">
+          </div>
+          
+          <div class="form-group">
+            <label>Telegram (необязательно)</label>
+            <input type="text" id="telegramInput" placeholder="@ivan_ivanov">
+          </div>
+          
+          <button type="submit" class="submit-btn" id="submitBtn">
+            Отправить заявку
+          </button>
+        </form>
+      </div>
+      
+      <!-- Success Screen -->
+      <div id="successScreen" class="success-screen">
+        <h2 class="modal-title">✅ Заявка создана!</h2>
+        
+        <div class="application-number">
+          📋 Ваш номер заявки:<br>
+          <span id="appNumberDisplay"></span>
+        </div>
+        
+        <div class="payment-info">
+          <h3>Для активации доступа:</h3>
+          
+          <p><strong>1️⃣ Переведите 990₽:</strong></p>
+          
+          <div class="payment-method">
+            <strong>📱 СБП (по номеру телефона):</strong>
+            +7 925 090 72 41<br>
+            <small>(Тахир Жураевич Ш.)</small>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('+79250907241', this)">
+              📋 Скопировать номер
+            </button>
+          </div>
+          
+          <div class="payment-method">
+            <strong>💳 Карта МИР:</strong>
+            2202 2056 3073 0999<br>
+            <small>(Шарипов Тахир Жураевич)</small>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('2202205630730999', this)">
+              📋 Скопировать номер
+            </button>
+          </div>
+        </div>
+        
+        <div class="warning-box">
+          ⚠️ В комментарии к платежу укажите:<br>
+          <strong id="appNumberComment"></strong>
+        </div>
+        
+        <div class="contact-info">
+          <p><strong>2️⃣ После оплаты напишите:</strong></p>
+          <a href="https://t.me/SharipovT" target="_blank" class="telegram-btn">
+            💬 Написать в Telegram
+          </a>
+          <p style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+            или на email: tzsharipov@gmail.com
+          </p>
+        </div>
+        
+        <p style="margin-top: 20px; font-weight: 600; color: #059669;">
+          3️⃣ Получите доступ в течение 1-2 часов!
+        </p>
+        
+        <button type="button" class="submit-btn" onclick="closeOrderModal()" style="margin-top: 30px;">
+          Понятно
+        </button>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
