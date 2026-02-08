@@ -658,7 +658,7 @@
     }
     
     .promo-banner {
-      background: linear-gradient(135deg, #8516a4, #ae6933);
+      background: linear-gradient(135deg, #92400e, #b45309);
       color: white;
       padding: 25px 35px;
       border-radius: 12px;
@@ -918,6 +918,11 @@
       document.getElementById('registrationForm').style.display = 'block';
       document.getElementById('successScreen').classList.remove('active');
       document.getElementById('applicationForm').reset();
+      
+      // Сброс состояния кнопки
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Отправить заявку';
     }
     
     function closeOrderModal() {
