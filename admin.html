@@ -65,11 +65,31 @@
     
     /* Сообщения */
     .message {
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      min-width: 400px;
+      max-width: 600px;
+      padding: 20px 30px;
+      border-radius: 12px;
       font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       display: none;
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
     }
     
     .message.show {
@@ -663,6 +683,7 @@
           
         const response = await fetch(url, {
           headers: {
+            'Cache-Control': 'no-cache',
             'apikey': SUPABASE_KEY,
             'Content-Type': 'application/json'
           }
@@ -789,7 +810,11 @@
         if (!response.ok) throw new Error('Ошибка подтверждения оплаты');
         
         showMessage('Оплата подтверждена!', 'success');
-        loadApplications();
+        
+        // Задержка чтобы увидеть сообщение
+        setTimeout(() => {
+          loadApplications();
+        }, 1500);
         
       } catch (error) {
         console.error('Ошибка:', error);
@@ -817,11 +842,17 @@
         
         const data = await response.json();
         
-        showMessage(`Пользователь создан! Пароль: ${data.password}`, 'success');
-        loadApplications();
-        loadUsers();
-        
+        // Сначала показываем alert с паролем
         alert(`Пользователь создан!\n\nEmail: ${data.email}\nПароль: ${data.password}\n\nТеперь активируйте пользователя в секции "Пользователи" для отправки Email с доступом.`);
+        
+        // Потом сообщение
+        showMessage('Пользователь создан! Заявка завершена.', 'success');
+        
+        // Перезагружаем с задержкой
+        setTimeout(() => {
+          loadApplications();
+          loadUsers();
+        }, 1000);
         
       } catch (error) {
         console.error('Ошибка:', error);
@@ -841,7 +872,10 @@
         if (error) throw error;
         
         showMessage('Заявка удалена', 'success');
-        loadApplications();
+        
+        setTimeout(() => {
+          loadApplications();
+        }, 1000);
         
       } catch (error) {
         console.error('Ошибка:', error);
@@ -905,6 +939,7 @@
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/list_users`, {
           headers: {
+            'Cache-Control': 'no-cache',
             'apikey': SUPABASE_KEY,
             'Content-Type': 'application/json'
           }
@@ -973,7 +1008,10 @@
         if (!response.ok) throw new Error('Ошибка обновления статуса');
         
         showMessage(isPaid ? 'Пользователь активирован! Email с доступом отправлен.' : 'Статус обновлён', 'success');
-        loadUsers();
+        
+        setTimeout(() => {
+          loadUsers();
+        }, 1500);
         
       } catch (error) {
         console.error('Ошибка:', error);
@@ -1084,7 +1122,7 @@
       
       setTimeout(() => {
         msg.classList.remove('show');
-      }, 5000);
+      }, 8000); // 8 секунд вместо 5
     }
     
     function goBack() {
