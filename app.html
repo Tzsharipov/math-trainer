@@ -613,7 +613,7 @@ async function handleLogin() {
         .update({ last_login: new Date().toISOString() })
         .eq('id', existingDevice.id);
     } else {
-      if (devices.length > 3) {
+      if (devices.length >= 3) {
         alert('⚠️ Лимит устройств достигнут!');
         return;
       }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Админ-панель - Математический Тренажёр</title>
+  <title>ÐÐ´Ð¼Ð¸Ð½-Ð¿Ð°Ð½ÐµÐ»ÑŒ - ÐœÐ°Ñ‚ÐµÐ¼Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ð¢Ñ€ÐµÐ½Ð°Ð¶Ñ‘Ñ€</title>
   
   <script>
     if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -24,7 +24,7 @@
       min-height: 100vh;
     }
     
-    /* Хедер */
+    /* Ð¥ÐµÐ´ÐµÑ€ */
     .admin-header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -56,14 +56,14 @@
       color: #667eea;
     }
     
-    /* Контейнер */
+    /* ÐšÐ¾Ð½Ñ‚ÐµÐ¹Ð½ÐµÑ€ */
     .admin-container {
       padding: 30px 40px;
       max-width: 1600px;
       margin: 0 auto;
     }
     
-    /* Сообщения */
+    /* Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ */
     .message {
       position: fixed;
       top: 80px;
@@ -108,7 +108,7 @@
       color: #991b1b;
     }
     
-    /* Секции */
+    /* Ð¡ÐµÐºÑ†Ð¸Ð¸ */
     .section {
       background: white;
       border-radius: 12px;
@@ -125,7 +125,7 @@
       border-bottom: 2px solid #e5e7eb;
     }
     
-    /* Фильтры */
+    /* Ð¤Ð¸Ð»ÑŒÑ‚Ñ€Ñ‹ */
     .filters {
       display: flex;
       gap: 10px;
@@ -154,7 +154,7 @@
       border-color: #667eea;
     }
     
-    /* Карточки заявок */
+    /* ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð·Ð°ÑÐ²Ð¾Ðº */
     .application-card {
       background: #f9fafb;
       border: 2px solid #e5e7eb;
@@ -274,7 +274,7 @@
       font-size: 16px;
     }
     
-    /* Форма создания пользователя */
+    /* Ð¤Ð¾Ñ€Ð¼Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ */
     .form-group {
       margin-bottom: 20px;
     }
@@ -373,7 +373,7 @@
       background: #5568d3;
     }
     
-    /* Таблица пользователей */
+    /* Ð¢Ð°Ð±Ð»Ð¸Ñ†Ð° Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹ */
     .users-table {
       width: 100%;
       border-collapse: collapse;
@@ -467,7 +467,7 @@
       background: #dc2626;
     }
     
-    /* Модальное окно устройств */
+    /* ÐœÐ¾Ð´Ð°Ð»ÑŒÐ½Ð¾Ðµ Ð¾ÐºÐ½Ð¾ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð² */
     .modal {
       display: none;
       position: fixed;
@@ -567,44 +567,44 @@
 </head>
 <body>
   <div class="admin-header">
-    <h1>⚙️ Админ-панель</h1>
-    <button class="back-btn" onclick="goBack()">← Назад</button>
+    <h1>âš™ï¸ ÐÐ´Ð¼Ð¸Ð½-Ð¿Ð°Ð½ÐµÐ»ÑŒ</h1>
+    <button class="back-btn" onclick="goBack()">â† ÐÐ°Ð·Ð°Ð´</button>
   </div>
   
   <div class="admin-container">
     <div id="message" class="message"></div>
     
-    <!-- Секция заявок -->
+    <!-- Ð¡ÐµÐºÑ†Ð¸Ñ Ð·Ð°ÑÐ²Ð¾Ðº -->
     <div class="section">
-      <h2>📋 Заявки клиентов</h2>
+      <h2>ðŸ“‹ Ð—Ð°ÑÐ²ÐºÐ¸ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð²</h2>
       
       <div class="filters">
         <button class="filter-btn active" onclick="filterApplications('all', event)">
-          Все
+          Ð’ÑÐµ
         </button>
         <button class="filter-btn" onclick="filterApplications('pending_payment', event)">
-          🟡 Ожидают оплаты
+          ðŸŸ¡ ÐžÐ¶Ð¸Ð´Ð°ÑŽÑ‚ Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹
         </button>
         <button class="filter-btn" onclick="filterApplications('paid', event)">
-          🟢 Оплачены
+          ðŸŸ¢ ÐžÐ¿Ð»Ð°Ñ‡ÐµÐ½Ñ‹
         </button>
         <button class="filter-btn" onclick="filterApplications('completed', event)">
-          ✅ Завершённые
+          âœ… Ð—Ð°Ð²ÐµÑ€ÑˆÑ‘Ð½Ð½Ñ‹Ðµ
         </button>
       </div>
       
       <div id="applicationsList">
-        <div class="no-applications">Загрузка заявок...</div>
+        <div class="no-applications">Ð—Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° Ð·Ð°ÑÐ²Ð¾Ðº...</div>
       </div>
     </div>
     
-    <!-- Секция создания пользователя -->
+    <!-- Ð¡ÐµÐºÑ†Ð¸Ñ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ -->
     <div class="section">
-      <h2>➕ Создать пользователя вручную</h2>
+      <h2>âž• Ð¡Ð¾Ð·Ð´Ð°Ñ‚ÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ Ð²Ñ€ÑƒÑ‡Ð½ÑƒÑŽ</h2>
       
       <form id="createForm" onsubmit="handleCreateUser(event)">
         <div class="form-group">
-          <label for="emailInput">Email нового пользователя *</label>
+          <label for="emailInput">Email Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ *</label>
           <input 
             type="email" 
             id="emailInput" 
@@ -614,7 +614,7 @@
         </div>
         
         <button type="submit" class="create-btn" id="createBtn">
-          Создать пользователя
+          Ð¡Ð¾Ð·Ð´Ð°Ñ‚ÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
         </button>
       </form>
       
@@ -622,41 +622,41 @@
         <div class="result-title" id="resultTitle"></div>
         <div class="result-item" id="resultEmail"></div>
         <div class="result-item">
-          Пароль:
+          ÐŸÐ°Ñ€Ð¾Ð»ÑŒ:
           <div class="password-display" id="resultPassword"></div>
         </div>
-        <button class="copy-btn" onclick="copyPassword()">📋 Скопировать пароль</button>
+        <button class="copy-btn" onclick="copyPassword()">ðŸ“‹ Ð¡ÐºÐ¾Ð¿Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð¿Ð°Ñ€Ð¾Ð»ÑŒ</button>
       </div>
     </div>
     
-    <!-- Секция пользователей -->
+    <!-- Ð¡ÐµÐºÑ†Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹ -->
     <div class="section">
-      <h2>👥 Все пользователи</h2>
+      <h2>ðŸ‘¥ Ð’ÑÐµ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ð¸</h2>
       
       <table class="users-table">
         <thead>
           <tr>
             <th>Email</th>
-            <th>Создан</th>
-            <th>Статус оплаты</th>
-            <th>Действие</th>
+            <th>Ð¡Ð¾Ð·Ð´Ð°Ð½</th>
+            <th>Ð¡Ñ‚Ð°Ñ‚ÑƒÑ Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹</th>
+            <th>Ð”ÐµÐ¹ÑÑ‚Ð²Ð¸Ðµ</th>
           </tr>
         </thead>
         <tbody id="usersList">
           <tr>
-            <td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af;">Загрузка...</td>
+            <td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af;">Ð—Ð°Ð³Ñ€ÑƒÐ·ÐºÐ°...</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
   
-  <!-- Модальное окно устройств -->
+  <!-- ÐœÐ¾Ð´Ð°Ð»ÑŒÐ½Ð¾Ðµ Ð¾ÐºÐ½Ð¾ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð² -->
   <div id="devicesModal" class="modal" onclick="if(event.target === this) closeDevicesModal()">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📱 Устройства пользователя</h3>
-        <button class="close-btn" onclick="closeDevicesModal()">×</button>
+        <h3>ðŸ“± Ð£ÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð° Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ</h3>
+        <button class="close-btn" onclick="closeDevicesModal()">Ã—</button>
       </div>
       <div id="devicesList"></div>
     </div>
@@ -673,7 +673,7 @@
     let allApplications = [];
     let currentUserEmail = '';
     
-    // ========== РАБОТА С ЗАЯВКАМИ ==========
+    // ========== Ð ÐÐ‘ÐžÐ¢Ð Ð¡ Ð—ÐÐ¯Ð’ÐšÐÐœÐ˜ ==========
     
     async function loadApplications() {
       try {
@@ -688,22 +688,22 @@
           }
         });
         
-        if (!response.ok) throw new Error('Ошибка загрузки заявок');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸ Ð·Ð°ÑÐ²Ð¾Ðº');
         
         allApplications = await response.json();
         renderApplications();
         
       } catch (error) {
-        console.error('Ошибка:', error);
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
         document.getElementById('applicationsList').innerHTML = 
-          '<div class="no-applications">Ошибка загрузки заявок</div>';
+          '<div class="no-applications">ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸ Ð·Ð°ÑÐ²Ð¾Ðº</div>';
       }
     }
     
     function filterApplications(status, event) {
       currentFilter = status;
       
-      // Обновляем активную кнопку
+      // ÐžÐ±Ð½Ð¾Ð²Ð»ÑÐµÐ¼ Ð°ÐºÑ‚Ð¸Ð²Ð½ÑƒÑŽ ÐºÐ½Ð¾Ð¿ÐºÑƒ
       document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
       });
@@ -716,7 +716,7 @@
       const container = document.getElementById('applicationsList');
       
       if (allApplications.length === 0) {
-        container.innerHTML = '<div class="no-applications">Заявок не найдено</div>';
+        container.innerHTML = '<div class="no-applications">Ð—Ð°ÑÐ²Ð¾Ðº Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾</div>';
         return;
       }
       
@@ -730,9 +730,9 @@
         });
         
         const statusLabel = {
-          'pending_payment': { text: '🟡 Ожидает оплаты', class: 'pending' },
-          'paid': { text: '🟢 Оплачена', class: 'paid' },
-          'completed': { text: '✅ Завершена', class: 'completed' }
+          'pending_payment': { text: 'ðŸŸ¡ ÐžÐ¶Ð¸Ð´Ð°ÐµÑ‚ Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹', class: 'pending' },
+          'paid': { text: 'ðŸŸ¢ ÐžÐ¿Ð»Ð°Ñ‡ÐµÐ½Ð°', class: 'paid' },
+          'completed': { text: 'âœ… Ð—Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð°', class: 'completed' }
         }[app.status] || { text: app.status, class: 'pending' };
         
         const showConfirmBtn = app.status === 'pending_payment';
@@ -751,11 +751,11 @@
                 ${app.email}
               </div>
               <div class="app-detail">
-                <strong>Ребёнок</strong>
+                <strong>Ð ÐµÐ±Ñ‘Ð½Ð¾Ðº</strong>
                 ${app.child_name}
               </div>
               <div class="app-detail">
-                <strong>Плательщик</strong>
+                <strong>ÐŸÐ»Ð°Ñ‚ÐµÐ»ÑŒÑ‰Ð¸Ðº</strong>
                 ${app.payer_name}
               </div>
               ${app.telegram ? `
@@ -765,7 +765,7 @@
                 </div>
               ` : ''}
               <div class="app-detail">
-                <strong>Создана</strong>
+                <strong>Ð¡Ð¾Ð·Ð´Ð°Ð½Ð°</strong>
                 ${date}
               </div>
             </div>
@@ -773,17 +773,19 @@
             <div class="app-actions">
               ${showConfirmBtn ? `
                 <button class="app-btn confirm" onclick="confirmPayment(${app.id})">
-                  ✓ Подтвердить оплату
+                  âœ“ ÐŸÐ¾Ð´Ñ‚Ð²ÐµÑ€Ð´Ð¸Ñ‚ÑŒ Ð¾Ð¿Ð»Ð°Ñ‚Ñƒ
                 </button>
               ` : ''}
               ${showCreateBtn ? `
                 <button class="app-btn create" onclick="createUserFromApplication(${app.id}, '${app.email}')">
-                  ➕ Создать пользователя
+                  âž• Ð¡Ð¾Ð·Ð´Ð°Ñ‚ÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
                 </button>
               ` : ''}
+              ${app.status === 'pending_payment' ? `
               <button class="app-btn delete" onclick="deleteApplication(${app.id})">
-                🗑️ Удалить
+                ðŸ—‘ï¸ Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ
               </button>
+              ` : ''}
             </div>
           </div>
         `;
@@ -791,7 +793,7 @@
     }
     
     async function confirmPayment(applicationId) {
-      if (!confirm('Подтвердить оплату этой заявки?')) return;
+      if (!confirm('ÐŸÐ¾Ð´Ñ‚Ð²ÐµÑ€Ð´Ð¸Ñ‚ÑŒ Ð¾Ð¿Ð»Ð°Ñ‚Ñƒ ÑÑ‚Ð¾Ð¹ Ð·Ð°ÑÐ²ÐºÐ¸?')) return;
       
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/update_application_status`, {
@@ -806,23 +808,23 @@
           })
         });
         
-        if (!response.ok) throw new Error('Ошибка подтверждения оплаты');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´ÐµÐ½Ð¸Ñ Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹');
         
-        showMessage('Оплата подтверждена!', 'success');
+        showMessage('ÐžÐ¿Ð»Ð°Ñ‚Ð° Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´ÐµÐ½Ð°!', 'success');
         
-        // Задержка чтобы увидеть сообщение
+        // Ð—Ð°Ð´ÐµÑ€Ð¶ÐºÐ° Ñ‡Ñ‚Ð¾Ð±Ñ‹ ÑƒÐ²Ð¸Ð´ÐµÑ‚ÑŒ ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ
         setTimeout(() => {
           loadApplications();
         }, 1500);
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка подтверждения оплаты', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´ÐµÐ½Ð¸Ñ Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹', 'error');
       }
     }
     
     async function createUserFromApplication(applicationId, email) {
-      if (!confirm(`Создать пользователя для ${email}?`)) return;
+      if (!confirm(`Ð¡Ð¾Ð·Ð´Ð°Ñ‚ÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ Ð´Ð»Ñ ${email}?`)) return;
       
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/create_user`, {
@@ -837,30 +839,30 @@
           })
         });
         
-        if (!response.ok) throw new Error('Ошибка создания пользователя');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ');
         
         const data = await response.json();
         
-        // Сначала показываем alert с паролем
-        alert(`Пользователь создан!\n\nEmail: ${data.email}\nПароль: ${data.password}\n\nТеперь активируйте пользователя в секции "Пользователи" для отправки Email с доступом.`);
+        // Ð¡Ð½Ð°Ñ‡Ð°Ð»Ð° Ð¿Ð¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼ alert Ñ Ð¿Ð°Ñ€Ð¾Ð»ÐµÐ¼
+        alert(`ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ ÑÐ¾Ð·Ð´Ð°Ð½!\n\nEmail: ${data.email}\nÐŸÐ°Ñ€Ð¾Ð»ÑŒ: ${data.password}\n\nÐ¢ÐµÐ¿ÐµÑ€ÑŒ Ð°ÐºÑ‚Ð¸Ð²Ð¸Ñ€ÑƒÐ¹Ñ‚Ðµ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ Ð² ÑÐµÐºÑ†Ð¸Ð¸ "ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ð¸" Ð´Ð»Ñ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²ÐºÐ¸ Email Ñ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð¾Ð¼.`);
         
-        // Потом сообщение
-        showMessage('Пользователь создан! Заявка завершена.', 'success');
+        // ÐŸÐ¾Ñ‚Ð¾Ð¼ ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ
+        showMessage('ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ ÑÐ¾Ð·Ð´Ð°Ð½! Ð—Ð°ÑÐ²ÐºÐ° Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð°.', 'success');
         
-        // Перезагружаем с задержкой
+        // ÐŸÐµÑ€ÐµÐ·Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÐ¼ Ñ Ð·Ð°Ð´ÐµÑ€Ð¶ÐºÐ¾Ð¹
         setTimeout(() => {
           loadApplications();
           loadUsers();
         }, 1000);
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка создания пользователя', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ', 'error');
       }
     }
     
     async function deleteApplication(applicationId) {
-      if (!confirm('Удалить эту заявку? Это действие нельзя отменить.')) return;
+      if (!confirm('Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ ÑÑ‚Ñƒ Ð·Ð°ÑÐ²ÐºÑƒ? Ð­Ñ‚Ð¾ Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ðµ Ð½ÐµÐ»ÑŒÐ·Ñ Ð¾Ñ‚Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ.')) return;
       
       try {
         const { error } = await supabaseClient
@@ -870,19 +872,19 @@
         
         if (error) throw error;
         
-        showMessage('Заявка удалена', 'success');
+        showMessage('Ð—Ð°ÑÐ²ÐºÐ° ÑƒÐ´Ð°Ð»ÐµÐ½Ð°', 'success');
         
         setTimeout(() => {
           loadApplications();
         }, 1000);
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка удаления заявки', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ñ Ð·Ð°ÑÐ²ÐºÐ¸', 'error');
       }
     }
     
-    // ========== СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ ВРУЧНУЮ ==========
+    // ========== Ð¡ÐžÐ—Ð”ÐÐÐ˜Ð• ÐŸÐžÐ›Ð¬Ð—ÐžÐ’ÐÐ¢Ð•Ð›Ð¯ Ð’Ð Ð£Ð§ÐÐ£Ð® ==========
     
     async function handleCreateUser(event) {
       event.preventDefault();
@@ -892,7 +894,7 @@
       const originalText = createBtn.textContent;
       
       createBtn.disabled = true;
-      createBtn.textContent = 'Создание...';
+      createBtn.textContent = 'Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ...';
       
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/create_user`, {
@@ -904,22 +906,22 @@
           body: JSON.stringify({ email })
         });
         
-        if (!response.ok) throw new Error('Ошибка создания');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ');
         
         const data = await response.json();
         
-        document.getElementById('resultTitle').textContent = '✅ Пользователь создан!';
+        document.getElementById('resultTitle').textContent = 'âœ… ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ ÑÐ¾Ð·Ð´Ð°Ð½!';
         document.getElementById('resultEmail').textContent = `Email: ${data.email}`;
         document.getElementById('resultPassword').textContent = data.password;
         document.getElementById('result').classList.add('show');
         
         document.getElementById('createForm').reset();
-        showMessage('Пользователь создан успешно!', 'success');
+        showMessage('ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ ÑÐ¾Ð·Ð´Ð°Ð½ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾!', 'success');
         loadUsers();
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка создания пользователя', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ', 'error');
       } finally {
         createBtn.disabled = false;
         createBtn.textContent = originalText;
@@ -929,10 +931,10 @@
     function copyPassword() {
       const password = document.getElementById('resultPassword').textContent;
       navigator.clipboard.writeText(password);
-      showMessage('Пароль скопирован!', 'success');
+      showMessage('ÐŸÐ°Ñ€Ð¾Ð»ÑŒ ÑÐºÐ¾Ð¿Ð¸Ñ€Ð¾Ð²Ð°Ð½!', 'success');
     }
     
-    // ========== РАБОТА С ПОЛЬЗОВАТЕЛЯМИ ==========
+    // ========== Ð ÐÐ‘ÐžÐ¢Ð Ð¡ ÐŸÐžÐ›Ð¬Ð—ÐžÐ’ÐÐ¢Ð•Ð›Ð¯ÐœÐ˜ ==========
     
     async function loadUsers() {
       try {
@@ -943,15 +945,15 @@
           }
         });
         
-        if (!response.ok) throw new Error('Ошибка загрузки пользователей');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹');
         
         const users = await response.json();
         renderUsers(users);
         
       } catch (error) {
-        console.error('Ошибка:', error);
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
         document.getElementById('usersList').innerHTML = 
-          '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #ef4444;">Ошибка загрузки пользователей</td></tr>';
+          '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #ef4444;">ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹</td></tr>';
       }
     }
     
@@ -959,15 +961,15 @@
       const tbody = document.getElementById('usersList');
       
       if (users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af;">Пользователей нет</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af;">ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¹ Ð½ÐµÑ‚</td></tr>';
         return;
       }
       
       tbody.innerHTML = users.map(user => {
         const date = new Date(user.created_at).toLocaleDateString('ru-RU');
         const statusBadge = user.is_paid 
-          ? '<span class="status-badge paid">✅ Оплачено</span>'
-          : '<span class="status-badge unpaid">❌ Не оплачено</span>';
+          ? '<span class="status-badge paid">âœ… ÐžÐ¿Ð»Ð°Ñ‡ÐµÐ½Ð¾</span>'
+          : '<span class="status-badge unpaid">âŒ ÐÐµ Ð¾Ð¿Ð»Ð°Ñ‡ÐµÐ½Ð¾</span>';
         
         return `
           <tr>
@@ -977,11 +979,10 @@
             <td>
               <div class="action-btns">
                 ${user.is_paid 
-                  ? `<button class="btn-sm deactivate" onclick="toggleUserStatus('${user.id}', false)">Отменить</button>`
-                  : `<button class="btn-sm activate" onclick="toggleUserStatus('${user.id}', true)">Активировать</button>`
+                  : `<button class="btn-sm activate" onclick="toggleUserStatus('${user.id}', true)">ÐÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ</button>`
                 }
-                <button class="btn-sm devices" onclick="showDevices('${user.email}')">Устройства</button>
-                <button class="btn-sm delete" onclick="deleteUser('${user.id}', '${user.email}')">Удалить</button>
+                <button class="btn-sm devices" onclick="showDevices('${user.email}')">Ð£ÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð°</button>
+                <button class="btn-sm delete" onclick="deleteUser('${user.id}', '${user.email}')">Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ</button>
               </div>
             </td>
           </tr>
@@ -990,8 +991,8 @@
     }
     
     async function toggleUserStatus(userId, isPaid) {
-      const action = isPaid ? 'активировать' : 'деактивировать';
-      if (!confirm(`Вы уверены что хотите ${action} пользователя?`)) return;
+      const action = isPaid ? 'Ð°ÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ' : 'Ð´ÐµÐ°ÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ';
+      if (!confirm(`Ð’Ñ‹ ÑƒÐ²ÐµÑ€ÐµÐ½Ñ‹ Ñ‡Ñ‚Ð¾ Ñ…Ð¾Ñ‚Ð¸Ñ‚Ðµ ${action} Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ?`)) return;
       
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/update_user_status`, {
@@ -1003,22 +1004,22 @@
           body: JSON.stringify({ userId, isPaid })
         });
         
-        if (!response.ok) throw new Error('Ошибка обновления статуса');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ñ ÑÑ‚Ð°Ñ‚ÑƒÑÐ°');
         
-        showMessage(isPaid ? 'Пользователь активирован! Email с доступом отправлен.' : 'Статус обновлён', 'success');
+        showMessage(isPaid ? 'ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ð°ÐºÑ‚Ð¸Ð²Ð¸Ñ€Ð¾Ð²Ð°Ð½! Email Ñ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð¾Ð¼ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½.' : 'Ð¡Ñ‚Ð°Ñ‚ÑƒÑ Ð¾Ð±Ð½Ð¾Ð²Ð»Ñ‘Ð½', 'success');
         
         setTimeout(() => {
           loadUsers();
         }, 1500);
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка обновления статуса', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ñ ÑÑ‚Ð°Ñ‚ÑƒÑÐ°', 'error');
       }
     }
     
     async function deleteUser(userId, email) {
-      if (!confirm(`Удалить пользователя ${email}? Это действие нельзя отменить.`)) return;
+      if (!confirm(`Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ ${email}? Ð­Ñ‚Ð¾ Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ðµ Ð½ÐµÐ»ÑŒÐ·Ñ Ð¾Ñ‚Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ.`)) return;
       
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/delete_user`, {
@@ -1030,14 +1031,14 @@
           body: JSON.stringify({ userId })
         });
         
-        if (!response.ok) throw new Error('Ошибка удаления');
+        if (!response.ok) throw new Error('ÐžÑˆÐ¸Ð±ÐºÐ° ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ñ');
         
-        showMessage('Пользователь удалён', 'success');
+        showMessage('ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ ÑƒÐ´Ð°Ð»Ñ‘Ð½', 'success');
         loadUsers();
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка удаления пользователя', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ', 'error');
       }
     }
     
@@ -1056,23 +1057,23 @@
         const devicesList = document.getElementById('devicesList');
         
         if (data.length === 0) {
-          devicesList.innerHTML = '<div class="no-applications">У пользователя нет зарегистрированных устройств</div>';
+          devicesList.innerHTML = '<div class="no-applications">Ð£ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ Ð½ÐµÑ‚ Ð·Ð°Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ñ… ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²</div>';
         } else {
           devicesList.innerHTML = data.map(device => {
             const createdDate = new Date(device.created_at).toLocaleString('ru-RU');
             const lastLogin = device.last_login 
               ? new Date(device.last_login).toLocaleString('ru-RU')
-              : 'Никогда';
+              : 'ÐÐ¸ÐºÐ¾Ð³Ð´Ð°';
             
             return `
               <div class="device-item">
                 <div class="device-name">${device.device_name}</div>
                 <div class="device-info">
-                  Создано: ${createdDate}<br>
-                  Последний вход: ${lastLogin}
+                  Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¾: ${createdDate}<br>
+                  ÐŸÐ¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ Ð²Ñ…Ð¾Ð´: ${lastLogin}
                 </div>
                 <button class="unbind-btn" onclick="unbindDevice(${device.id})">
-                  Отвязать устройство
+                  ÐžÑ‚Ð²ÑÐ·Ð°Ñ‚ÑŒ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð¾
                 </button>
               </div>
             `;
@@ -1082,8 +1083,8 @@
         document.getElementById('devicesModal').classList.add('active');
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка загрузки устройств', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²', 'error');
       }
     }
     
@@ -1092,7 +1093,7 @@
     }
     
     async function unbindDevice(deviceId) {
-      if (!confirm('Отвязать это устройство?')) return;
+      if (!confirm('ÐžÑ‚Ð²ÑÐ·Ð°Ñ‚ÑŒ ÑÑ‚Ð¾ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð¾?')) return;
       
       try {
         const { error } = await supabaseClient
@@ -1102,16 +1103,16 @@
         
         if (error) throw error;
         
-        showMessage('Устройство отвязано', 'success');
+        showMessage('Ð£ÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð¾ Ð¾Ñ‚Ð²ÑÐ·Ð°Ð½Ð¾', 'success');
         showDevices(currentUserEmail);
         
       } catch (error) {
-        console.error('Ошибка:', error);
-        showMessage('Ошибка отвязки устройства', 'error');
+        console.error('ÐžÑˆÐ¸Ð±ÐºÐ°:', error);
+        showMessage('ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚Ð²ÑÐ·ÐºÐ¸ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð°', 'error');
       }
     }
     
-    // ========== УТИЛИТЫ ==========
+    // ========== Ð£Ð¢Ð˜Ð›Ð˜Ð¢Ð« ==========
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
@@ -1120,14 +1121,14 @@
       
       setTimeout(() => {
         msg.classList.remove('show');
-      }, 8000); // 8 секунд вместо 5
+      }, 8000); // 8 ÑÐµÐºÑƒÐ½Ð´ Ð²Ð¼ÐµÑÑ‚Ð¾ 5
     }
     
     function goBack() {
       window.location.href = 'app.html';
     }
     
-    // Загружаем данные при загрузке страницы
+    // Ð—Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÐ¼ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¿Ñ€Ð¸ Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐµ ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ñ‹
     loadApplications();
     loadUsers();
   </script>
