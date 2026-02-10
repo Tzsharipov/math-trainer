@@ -1024,7 +1024,8 @@ async function deleteApplication(applicationId) {
             'apikey': SUPABASE_KEY,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ userId })
+          body: JSON.stringify({ userId,
+  adminEmail: 'tzsharipov@gmail.com' })
         });
         
         if (!response.ok) throw new Error('Ошибка удаления');
