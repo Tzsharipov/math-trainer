@@ -625,7 +625,10 @@
           Пароль:
           <div class="password-display" id="resultPassword"></div>
         </div>
-        <button class="copy-btn" onclick="copyPassword()">📋 Скопировать пароль</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="copy-btn" onclick="copyPassword()" style="flex: 1;">📋 Скопировать пароль</button>
+          <button class="copy-btn" onclick="closeResult()" style="flex: 1; background: #6b7280;">✕ Закрыть</button>
+        </div>
       </div>
     </div>
     
@@ -664,7 +667,7 @@
   
   <script>
     const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllbGNuYmN2c2xsb3F6bXJ6enFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5OTUzMzcsImV4cCI6MjA4NDU3MTMzN30.DmcEB8n9_d2VcNKPvfYpUPh160OyX4Ja0al2n4kh1KM';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllbGNuYmN2c2xsb3F6bXJ6enFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc5MDUxMjUsImV4cCI6MjA1MzQ4MTEyNX0.sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
     
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -859,25 +862,32 @@
       }
     }
     
-async function deleteApplication(applicationId) {
-    if (!confirm('Удалить заявку?')) return;
-    
-    try {
-        const { error } = await supabaseClient
-            .from('applications')
-            .delete()
-            .eq('id', Number(applicationId));
+    async function deleteApplication(applicationId) {
+      if (!confirm('Удалить эту заявку? Это действие нельзя отменить.')) return;
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/delete_application`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ applicationId })
+        });
         
-        if (error) {
-            alert('Ошибка: ' + error.message);
-        } else {
-            alert('Заявка удалена!');
-            loadApplications();
-        }
-    } catch (err) {
-        alert('Ошибка: ' + err.message);
+        if (!response.ok) throw new Error('Ошибка удаления заявки');
+        
+        showMessage('Заявка удалена', 'success');
+        
+        setTimeout(() => {
+          loadApplications();
+        }, 1000);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка удаления заявки', 'error');
+      }
     }
-}
     
     // ========== СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ ВРУЧНУЮ ==========
     
@@ -927,6 +937,11 @@ async function deleteApplication(applicationId) {
       const password = document.getElementById('resultPassword').textContent;
       navigator.clipboard.writeText(password);
       showMessage('Пароль скопирован!', 'success');
+    }
+    
+    function closeResult() {
+      document.getElementById('result').classList.remove('show');
+      document.getElementById('createForm').reset();
     }
     
     // ========== РАБОТА С ПОЛЬЗОВАТЕЛЯМИ ==========
@@ -1024,14 +1039,16 @@ async function deleteApplication(applicationId) {
             'apikey': SUPABASE_KEY,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ userId,
-  adminEmail: 'tzsharipov@gmail.com' })
+          body: JSON.stringify({ userId })
         });
         
         if (!response.ok) throw new Error('Ошибка удаления');
         
         showMessage('Пользователь удалён', 'success');
-        loadUsers();
+        
+        setTimeout(() => {
+          loadUsers();
+        }, 1000);
         
       } catch (error) {
         console.error('Ошибка:', error);
