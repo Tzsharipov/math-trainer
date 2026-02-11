@@ -38,6 +38,46 @@
     .side-hint-animate {
       animation: fadeInSlide 0.5s ease-out forwards;
     }
+    
+    /* Анимация мигания для подсвеченных ячеек - ЖЁЛТЫЙ */
+    @keyframes pulseYellow {
+      0%, 100% {
+        background-color: rgb(250 204 21); /* yellow-400 */
+        border-color: transparent;
+        transform: scale(1.05);
+      }
+      50% {
+        background-color: rgb(253 224 71); /* yellow-300 - светлее */
+        border-color: rgb(202 138 4); /* yellow-600 - тёмная рамка */
+        transform: scale(1.1);
+      }
+    }
+    
+    /* Анимация мигания для подсвеченных ячеек - ОРАНЖЕВЫЙ */
+    @keyframes pulseOrange {
+      0%, 100% {
+        background-color: rgb(253 186 116); /* orange-300 */
+        border-color: transparent;
+        transform: scale(1.05);
+      }
+      50% {
+        background-color: rgb(254 215 170); /* orange-200 - светлее */
+        border-color: rgb(249 115 22); /* orange-500 - тёмная рамка */
+        transform: scale(1.1);
+      }
+    }
+    
+    .cell-pulse-yellow {
+      animation: pulseYellow 1.5s ease-in-out infinite;
+      border-width: 3px;
+      border-style: solid;
+    }
+    
+    .cell-pulse-orange {
+      animation: pulseOrange 1.5s ease-in-out infinite;
+      border-width: 3px;
+      border-style: solid;
+    }
   </style>
 </head>
 <body>
@@ -117,9 +157,9 @@
       </div>
       
       <!-- Боковая подсказка БЕЗ стрелок - АБСОЛЮТНАЯ ПОЗИЦИЯ справа от сетки - ТОЛЬКО НА ДЕСКТОПЕ -->
-      <div id="sideHint" class="hidden absolute left-full" style="top: clamp(40px, 8vh, 80px); margin-left: clamp(12px, 2vw, 24px);">
+      <div id="sideHint" class="hidden absolute left-full" style="top: clamp(100px, 15vh, 160px); margin-left: clamp(12px, 2vw, 24px);">
         <div class="bg-gradient-to-r from-orange-300 to-orange-400 shadow-2xl" style="border-width: clamp(2px, 0.3vw, 3px); border-style: solid; border-color: rgb(234 88 12); border-radius: clamp(8px, 1.5vw, 16px); padding: clamp(8px, 1.5vw, 16px); max-width: clamp(180px, 25vw, 320px); min-width: clamp(150px, 20vw, 200px);">
-          <p id="sideHintText" class="font-bold text-gray-900 text-center" style="font-size: clamp(11px, 1.6vw, 14px); line-height: 1.4;"></p>
+          <p id="sideHintText" class="font-bold text-gray-900 text-center" style="font-size: clamp(12px, 1.8vw, 16px); line-height: 1.4;"></p>
         </div>
       </div>
     </div>

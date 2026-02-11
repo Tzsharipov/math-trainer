@@ -167,26 +167,26 @@ function updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGri
     const digit = sA[digitIndex];
     hintText.textContent = `Умножь ${digit} × ${multiplier}`;
     
-    // Подсвечиваем цифру множимого ЯРКО-ЖЁЛТЫМ
+    // Подсвечиваем цифру множимого ЯРКО-ЖЁЛТЫМ + МИГАНИЕ
     const multiplicandDigit = mathGrid.querySelector(`[data-multiplicand-digit="${digitIndex}"]`);
     if (multiplicandDigit) {
       multiplicandDigit.classList.remove('bg-cyan-400');
-      multiplicandDigit.classList.add('bg-yellow-400', 'scale-110');
+      multiplicandDigit.classList.add('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
     }
     
-    // Подсвечиваем множитель ЯРКО-ЖЁЛТЫМ
+    // Подсвечиваем множитель ЯРКО-ЖЁЛТЫМ + МИГАНИЕ
     const multiplierDigit = mathGrid.querySelector('[data-multiplier]');
     if (multiplierDigit) {
       multiplierDigit.classList.remove('bg-gray-400');
-      multiplierDigit.classList.add('bg-yellow-400', 'scale-110');
+      multiplierDigit.classList.add('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
     }
     
-    // Подсвечиваем ячейку результата СВЕТЛО-ОРАНЖЕВЫМ
+    // Подсвечиваем ячейку результата СВЕТЛО-ОРАНЖЕВЫМ + МИГАНИЕ
     const inputs = document.querySelectorAll('.math-input');
     const resultInput = inputs[idx];
     if (resultInput) {
       resultInput.classList.remove('bg-yellow-200');
-      resultInput.classList.add('bg-orange-300');
+      resultInput.classList.add('bg-orange-300', 'cell-pulse-orange');
     }
   } else {
     hintText.textContent = 'Введи результат';
@@ -195,28 +195,28 @@ function updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGri
 
 // Убирает всю подсветку
 function clearHighlights(mathGrid) {
-  // Возвращаем голубой цвет множимому
+  // Возвращаем голубой цвет множимому + убираем мигание
   mathGrid.querySelectorAll('[data-multiplicand-digit]').forEach(el => {
-    el.classList.remove('bg-yellow-400', 'scale-110');
+    el.classList.remove('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
     el.classList.add('bg-cyan-400');
   });
   
-  // Возвращаем серый цвет множителю
+  // Возвращаем серый цвет множителю + убираем мигание
   mathGrid.querySelectorAll('[data-multiplier]').forEach(el => {
-    el.classList.remove('bg-yellow-400', 'scale-110');
+    el.classList.remove('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
     el.classList.add('bg-gray-400');
   });
   
-  // Возвращаем бледно-жёлтый ячейкам результата
+  // Возвращаем бледно-жёлтый ячейкам результата + убираем мигание
   mathGrid.querySelectorAll('.math-input').forEach(el => {
-    el.classList.remove('bg-orange-300', 'bg-orange-400');
+    el.classList.remove('bg-orange-300', 'bg-orange-400', 'cell-pulse-orange');
     if (!el.classList.contains('bg-green-500') && !el.classList.contains('bg-red-500')) {
       el.classList.add('bg-yellow-200');
     }
   });
   
   mathGrid.querySelectorAll('[data-carry]').forEach(el => {
-    el.classList.remove('bg-orange-300', 'bg-orange-400', 'scale-110');
+    el.classList.remove('bg-orange-300', 'bg-orange-400', 'scale-110', 'cell-pulse-orange');
     el.classList.add('bg-gray-200');
   });
 }
@@ -272,20 +272,20 @@ function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, m
   sideHint.classList.remove('hidden');
   sideHint.classList.add('side-hint-animate');
   
-  // Подсвечиваем ячейку переноса СВЕТЛО-ОРАНЖЕВЫМ если есть
+  // Подсвечиваем ячейку переноса СВЕТЛО-ОРАНЖЕВЫМ + МИГАНИЕ если есть
   if (prevCarry > 0) {
     const carryInput = mathGrid.querySelector(`[data-carry="${col}"]`);
     if (carryInput && carryInput.value) {
       carryInput.classList.remove('bg-gray-200');
-      carryInput.classList.add('bg-orange-300', 'scale-110');
+      carryInput.classList.add('bg-orange-300', 'scale-110', 'cell-pulse-orange');
     }
   }
   
-  // Подсвечиваем текущую ячейку для ввода СВЕТЛО-ОРАНЖЕВЫМ
+  // Подсвечиваем текущую ячейку для ввода СВЕТЛО-ОРАНЖЕВЫМ + МИГАНИЕ
   const resultInput = inputs[idx];
   if (resultInput) {
     resultInput.classList.remove('bg-yellow-200');
-    resultInput.classList.add('bg-orange-300');
+    resultInput.classList.add('bg-orange-300', 'cell-pulse-orange');
   }
 }
 
