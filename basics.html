@@ -102,14 +102,11 @@
     <!-- Заголовок модуля -->
     <h2 class="text-lg md:text-2xl font-bold text-gray-900 uppercase tracking-tight mb-3 md:mb-6">🌱 Умножаем на одно число</h2>
     
-    <!-- Всплывающая подсказка со стрелками -->
+    <!-- Всплывающая подсказка БЕЗ стрелок -->
     <div id="hintPopup" class="hidden relative mb-4">
       <div class="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-2xl relative" style="border-width: clamp(2px, 0.4vw, 4px); border-style: solid; border-color: rgb(202 138 4); border-radius: clamp(12px, 2vw, 24px); padding: clamp(6px, 1vw, 12px); z-index: 100;">
         <p id="hintText" class="font-bold text-gray-900 text-center" style="font-size: clamp(12px, 1.8vw, 16px);"></p>
       </div>
-      <svg id="hintArrows" class="absolute top-full left-1/2 -translate-x-1/2 pointer-events-none" style="width: clamp(600px, 80vw, 900px); height: clamp(150px, 20vh, 250px); overflow: visible; z-index: 999;">
-        <!-- Стрелки будут добавляться динамически -->
-      </svg>
     </div>
     
     <!-- Контейнер для сетки и боковой подсказки -->
@@ -119,14 +116,11 @@
         <div id="mathGrid" class="font-mono w-fit mx-auto"></div>
       </div>
       
-      <!-- Боковая подсказка - АБСОЛЮТНАЯ ПОЗИЦИЯ справа от сетки - ТОЛЬКО НА ДЕСКТОПЕ -->
+      <!-- Боковая подсказка БЕЗ стрелок - АБСОЛЮТНАЯ ПОЗИЦИЯ справа от сетки - ТОЛЬКО НА ДЕСКТОПЕ -->
       <div id="sideHint" class="hidden absolute left-full" style="top: clamp(40px, 8vh, 80px); margin-left: clamp(12px, 2vw, 24px);">
-        <div class="bg-gradient-to-r from-pink-400 to-purple-400 shadow-2xl" style="border-width: clamp(2px, 0.3vw, 3px); border-style: solid; border-color: rgb(219 39 119); border-radius: clamp(8px, 1.5vw, 16px); padding: clamp(8px, 1.5vw, 16px); max-width: clamp(180px, 25vw, 320px); min-width: clamp(150px, 20vw, 200px);">
+        <div class="bg-gradient-to-r from-orange-300 to-orange-400 shadow-2xl" style="border-width: clamp(2px, 0.3vw, 3px); border-style: solid; border-color: rgb(234 88 12); border-radius: clamp(8px, 1.5vw, 16px); padding: clamp(8px, 1.5vw, 16px); max-width: clamp(180px, 25vw, 320px); min-width: clamp(150px, 20vw, 200px);">
           <p id="sideHintText" class="font-bold text-gray-900 text-center" style="font-size: clamp(11px, 1.6vw, 14px); line-height: 1.4;"></p>
         </div>
-        <svg id="sideHintArrows" class="absolute top-0 right-full pointer-events-none" style="width: clamp(150px, 15vw, 220px); height: clamp(300px, 40vh, 450px); overflow: visible;">
-          <!-- Стрелки будут добавляться динамически -->
-        </svg>
       </div>
     </div>
     

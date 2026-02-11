@@ -1,23 +1,12 @@
-// Построение сетки для умножения на однозначное число
+// Построение сетки для умножения на однозначное число - УПРОЩЁННАЯ ВЕРСИЯ С ПОДСВЕТКОЙ
 
-// Глобальные переменные для пересчёта стрелок при зуме
+// Глобальные переменные
 let currentFocusedIndex = -1;
-let currentMultiplicandForHint = 0;
-let currentMultiplierForHint = 0;
+let currentMultiplicand = 0;
+let currentMultiplier = 0;
 let currentMathGrid = null;
-let currentHintText = null;
-let currentHintArrows = null;
-let currentSideHint = null;
-let currentSideHintText = null;
-let currentSideHintArrows = null;
-let currentSA = [];
-let currentMult = 0;
-let currentCarries = {};
-let currentInputs = [];
-let currentResultLength = 0;
-let currentTotalCols = 0;
 
-export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, mathGrid, checkMessage, hintPopup, hintText, hintArrows, sideHint, sideHintText, sideHintArrows) {
+export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, mathGrid, checkMessage, hintPopup, hintText, sideHint, sideHintText) {
   // Скрываем панель настроек, показываем workspace
   settingsPanel.classList.add('hidden');
   workspace.classList.remove('hidden');
@@ -54,7 +43,7 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
     html += `<div 
       data-multiplicand-digit="${i}" 
       style="grid-row: 1; grid-column: ${col}; margin-bottom: 4px; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};" 
-      class="bg-cyan-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center">${d}</div>`;
+      class="bg-cyan-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center transition-all duration-300">${d}</div>`;
   });
   
   // Строка 2: Знак × и множитель
@@ -63,12 +52,12 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   html += `<div 
     data-multiplier 
     style="grid-row: 2; grid-column: ${totalCols}; margin-bottom: 4px; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};" 
-    class="bg-gray-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center">${sB}</div>`;
+    class="bg-gray-400 text-gray-900 rounded-md font-bold text-center flex items-center justify-center transition-all duration-300">${sB}</div>`;
   
   // Строка 3: Переносы (в уме)
   for (let i = 1; i <= totalCols; i++) {
     html += `<div class="relative group" style="grid-row: 3; grid-column: ${i};">
-      <input type="text" maxlength="1" readonly style="width: ${cellSize}; height: calc(${cellSize} * 0.75); font-size: calc(${fontSize} * 0.85);" class="text-center bg-gray-200 text-orange-600 font-bold outline-none rounded" placeholder="·" data-carry="${i - 1}">
+      <input type="text" maxlength="1" readonly style="width: ${cellSize}; height: calc(${cellSize} * 0.75); font-size: calc(${fontSize} * 0.85);" class="text-center bg-gray-200 text-orange-600 font-bold outline-none rounded transition-all duration-300" placeholder="·" data-carry="${i - 1}">
       <div class="absolute hidden md:group-hover:block bottom-full left-0 mb-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-xl whitespace-nowrap z-50">💭 Цифры в уме</div>
     </div>`;
   }
@@ -79,79 +68,38 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
     html += `<input type="text" inputmode="numeric" maxlength="1" 
       data-correct="${c}" data-col="${col - 1}"
       style="grid-row: 4; grid-column: ${col}; width: ${cellSize}; height: ${cellSize}; font-size: ${fontSize};"
-      class="math-input text-center border-2 border-yellow-300 bg-yellow-200 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm">`;
+      class="math-input text-center border-2 border-yellow-300 bg-yellow-200 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm duration-300">`;
   });
   
   html += `</div>`;
   mathGrid.innerHTML = html;
   
-  // Сохраняем глобальные переменные для пересчёта при зуме
+  // Сохраняем переменные
   currentMathGrid = mathGrid;
-  currentHintText = hintText;
-  currentHintArrows = hintArrows;
-  currentSideHint = sideHint;
-  currentSideHintText = sideHintText;
-  currentSideHintArrows = sideHintArrows;
-  currentMultiplicandForHint = multiplicand;
-  currentMultiplierForHint = multiplier;
-  currentResultLength = result.length;
-  currentTotalCols = totalCols;
+  currentMultiplicand = multiplicand;
+  currentMultiplier = multiplier;
   
-  setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows, isMobile);
-  
-  // Добавляем слушатель resize для пересчёта стрелок при зуме
-  window.removeEventListener('resize', redrawCurrentArrows); // Удаляем старый если был
-  window.addEventListener('resize', redrawCurrentArrows);
+  setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, mathGrid, sideHint, sideHintText, isMobile);
   
   // Фокус на последнюю ячейку (начинаем справа)
   const inputs = document.querySelectorAll('.math-input');
   if (inputs.length) {
-    currentInputs = inputs;
     inputs[inputs.length - 1].focus();
     currentFocusedIndex = inputs.length - 1;
     if (!isMobile) {
-      updateHint(inputs.length - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+      updateHintAndHighlight(inputs.length - 1, multiplicand, multiplier, hintText, mathGrid);
     }
   }
 }
 
-// Функция для пересчёта стрелок при изменении масштаба
-function redrawCurrentArrows() {
-  if (currentFocusedIndex >= 0 && currentMathGrid && currentHintText && currentHintArrows) {
-    // Небольшая задержка чтобы браузер успел пересчитать позиции
-    setTimeout(() => {
-      // Пересчитываем верхние стрелки
-      updateHint(currentFocusedIndex, currentMultiplicandForHint, currentMultiplierForHint, currentHintText, currentHintArrows, currentMathGrid);
-      
-      // Пересчитываем боковые стрелки если они видны
-      if (currentSideHint && !currentSideHint.classList.contains('hidden') && currentSA.length > 0) {
-        const digitIndex = currentResultLength - 1 - currentFocusedIndex;
-        if (digitIndex >= 0 && digitIndex < currentSA.length) {
-          const digit = parseInt(currentSA[digitIndex]);
-          const col = currentTotalCols - currentResultLength + currentFocusedIndex;
-          const prevCarry = currentCarries[col] || 0;
-          const product = digit * currentMult + prevCarry;
-          const currentCarry = Math.floor(product / 10);
-          
-          drawSideArrowsAutomatic(currentFocusedIndex, currentCarry, currentSideHintArrows, currentMathGrid, currentInputs, currentCarries, col);
-        }
-      }
-    }, 10);
-  }
-}
-
-function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows, isMobile) {
+function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, mathGrid, sideHint, sideHintText, isMobile) {
   const inputs = document.querySelectorAll('.math-input');
   const carries = {};
   const sA = multiplicand.toString().split('').reverse();
   const mult = parseInt(multiplier);
   
-  // Сохраняем в глобальные переменные для пересчёта при зуме
-  currentSA = sA;
-  currentMult = mult;
-  currentCarries = carries;
-  
-  let sideHintTimer = null; // Таймер для показа боковой подсказки
+  // Таймер делаем переменной которая будет доступна во всех вызовах
+  window.currentSideHintTimer = null;
   
   inputs.forEach((el, idx) => {
     el.oninput = (e) => {
@@ -159,7 +107,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
       const correct = e.target.dataset.correct;
       const col = parseInt(e.target.dataset.col);
       
-      e.target.className = 'math-input text-center border-2 rounded font-black outline-none transition-all shadow-sm';
+      e.target.className = 'math-input text-center border-2 rounded font-black outline-none transition-all shadow-sm duration-300';
       
       if (!val) {
         e.target.classList.add('border-yellow-300', 'bg-yellow-200');
@@ -172,18 +120,20 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
         // Обновляем перенос
         updateCarry(idx, sA, mult, carries, totalCols, result.length);
         
-        // Переходим к следующей ячейке (влево)
+        // Убираем подсветку с текущих ячеек
+        clearHighlights(mathGrid);
+        
+        // Переходим к следующей ячейке
         if (idx > 0) {
-          currentFocusedIndex = idx - 1; // Обновляем текущий индекс
+          currentFocusedIndex = idx - 1;
           inputs[idx - 1].focus();
           if (!isMobile) {
-            updateHint(idx - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
-            // Запускаем таймер показа боковой подсказки для СЛЕДУЮЩЕЙ ячейки
-            scheduleSideHint(idx - 1, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, result.length, totalCols, sideHintTimer, isMobile);
+            updateHintAndHighlight(idx - 1, multiplicand, multiplier, hintText, mathGrid);
+            scheduleSideHint(idx - 1, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
           }
         } else {
           // Все заполнено - проверяем результат
-          currentFocusedIndex = -1; // Сбрасываем индекс
+          currentFocusedIndex = -1;
           checkResult(inputs, checkMessage);
           hintPopup.classList.add('hidden');
           sideHint.classList.add('hidden');
@@ -194,125 +144,98 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
     };
     
     el.onfocus = () => {
-      currentFocusedIndex = idx; // Сохраняем текущий индекс
+      currentFocusedIndex = idx;
       if (!isMobile) {
-        updateHint(idx, multiplicand, multiplier, hintText, hintArrows, mathGrid);
-        // Запускаем таймер показа боковой подсказки через 1 секунду
-        scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, result.length, totalCols, sideHintTimer, isMobile);
+        updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGrid);
+        scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
       }
     };
   });
 }
 
-function updateHint(idx, multiplicand, multiplier, hintText, hintArrows, mathGrid) {
+// Обновляет подсказку и подсвечивает нужные ячейки
+function updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGrid) {
   const sA = multiplicand.toString();
   const resultLength = (multiplicand * multiplier).toString().length;
   
-  // idx идёт справа налево (последняя ячейка = idx последний)
-  // Нам нужна цифра множимого справа налево
+  // Убираем старую подсветку
+  clearHighlights(mathGrid);
+  
   const digitIndex = sA.length - 1 - (resultLength - 1 - idx);
   
   if (digitIndex >= 0 && digitIndex < sA.length) {
     const digit = sA[digitIndex];
     hintText.textContent = `Умножь ${digit} × ${multiplier}`;
     
-    // Рисуем стрелки к цифрам
-    drawArrows(digitIndex, hintArrows, mathGrid);
+    // Подсвечиваем цифру множимого ЯРКО-ЖЁЛТЫМ
+    const multiplicandDigit = mathGrid.querySelector(`[data-multiplicand-digit="${digitIndex}"]`);
+    if (multiplicandDigit) {
+      multiplicandDigit.classList.remove('bg-cyan-400');
+      multiplicandDigit.classList.add('bg-yellow-400', 'scale-110');
+    }
+    
+    // Подсвечиваем множитель ЯРКО-ЖЁЛТЫМ
+    const multiplierDigit = mathGrid.querySelector('[data-multiplier]');
+    if (multiplierDigit) {
+      multiplierDigit.classList.remove('bg-gray-400');
+      multiplierDigit.classList.add('bg-yellow-400', 'scale-110');
+    }
+    
+    // Подсвечиваем ячейку результата СВЕТЛО-ОРАНЖЕВЫМ
+    const inputs = document.querySelectorAll('.math-input');
+    const resultInput = inputs[idx];
+    if (resultInput) {
+      resultInput.classList.remove('bg-yellow-200');
+      resultInput.classList.add('bg-orange-300');
+    }
   } else {
     hintText.textContent = 'Введи результат';
-    hintArrows.innerHTML = '';
   }
 }
 
-function drawArrows(digitIndex, hintArrows, mathGrid) {
-  // Очищаем предыдущие стрелки
-  hintArrows.innerHTML = '';
+// Убирает всю подсветку
+function clearHighlights(mathGrid) {
+  // Возвращаем голубой цвет множимому
+  mathGrid.querySelectorAll('[data-multiplicand-digit]').forEach(el => {
+    el.classList.remove('bg-yellow-400', 'scale-110');
+    el.classList.add('bg-cyan-400');
+  });
   
-  console.log('drawArrows вызвана:', digitIndex);
+  // Возвращаем серый цвет множителю
+  mathGrid.querySelectorAll('[data-multiplier]').forEach(el => {
+    el.classList.remove('bg-yellow-400', 'scale-110');
+    el.classList.add('bg-gray-400');
+  });
   
-  // Находим элементы цифр
-  const multiplicandDigit = mathGrid.querySelector(`[data-multiplicand-digit="${digitIndex}"]`);
-  const multiplierDigit = mathGrid.querySelector('[data-multiplier]');
+  // Возвращаем бледно-жёлтый ячейкам результата
+  mathGrid.querySelectorAll('.math-input').forEach(el => {
+    el.classList.remove('bg-orange-300', 'bg-orange-400');
+    if (!el.classList.contains('bg-green-500') && !el.classList.contains('bg-red-500')) {
+      el.classList.add('bg-yellow-200');
+    }
+  });
   
-  console.log('multiplicandDigit:', multiplicandDigit);
-  console.log('multiplierDigit:', multiplierDigit);
-  
-  if (!multiplicandDigit || !multiplierDigit) {
-    console.log('НЕ НАЙДЕНЫ ЦИФРЫ!');
-    return;
-  }
-  
-  // Получаем позиции относительно всплывающего окна
-  const popupRect = hintArrows.getBoundingClientRect();
-  const digit1Rect = multiplicandDigit.getBoundingClientRect();
-  const digit2Rect = multiplierDigit.getBoundingClientRect();
-  
-  // Стартовая точка (от центра верхнего края SVG)
-  const startX = popupRect.width / 2; // Динамический центр SVG
-  const startY = 0;
-  
-  // Конечные точки (центры цифр относительно SVG)
-  const end1X = digit1Rect.left + digit1Rect.width / 2 - popupRect.left;
-  const end1Y = digit1Rect.top - popupRect.top;
-  
-  const end2X = digit2Rect.left + digit2Rect.width / 2 - popupRect.left;
-  const end2Y = digit2Rect.top - popupRect.top;
-  
-  console.log(`Стрелка 1: (${startX}, ${startY}) -> (${end1X}, ${end1Y})`);
-  console.log(`Стрелка 2: (${startX}, ${startY}) -> (${end2X}, ${end2Y})`);
-  
-  // Рисуем две стрелки - ТОНКИЕ, ПОЛУПРОЗРАЧНЫЕ, МАЛЕНЬКИЕ НАКОНЕЧНИКИ
-  hintArrows.innerHTML = `
-    <!-- Стрелка к цифре множимого -->
-    <defs>
-      <marker id="arrowhead1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-        <polygon points="0 0, 6 3, 0 6" fill="#F59E0B" fill-opacity="0.6" />
-      </marker>
-    </defs>
-    <path 
-      d="M ${startX} ${startY} Q ${startX} ${(startY + end1Y) / 2}, ${end1X} ${end1Y}" 
-      stroke="#F59E0B" 
-      stroke-width="2" 
-      stroke-opacity="0.6"
-      fill="none" 
-      marker-end="url(#arrowhead1)"
-    />
-    
-    <!-- Стрелка к множителю -->
-    <defs>
-      <marker id="arrowhead2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-        <polygon points="0 0, 6 3, 0 6" fill="#F59E0B" fill-opacity="0.6" />
-      </marker>
-    </defs>
-    <path 
-      d="M ${startX} ${startY} Q ${startX} ${(startY + end2Y) / 2}, ${end2X} ${end2Y}" 
-      stroke="#F59E0B" 
-      stroke-width="2" 
-      stroke-opacity="0.6"
-      fill="none" 
-      marker-end="url(#arrowhead2)"
-    />
-  `;
+  mathGrid.querySelectorAll('[data-carry]').forEach(el => {
+    el.classList.remove('bg-orange-300', 'bg-orange-400', 'scale-110');
+    el.classList.add('bg-gray-200');
+  });
 }
 
-// Новая функция: запускает показ боковой подсказки через 1 секунду
-function scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, resultLength, totalCols, sideHintTimer, isMobile) {
-  // Очищаем предыдущий таймер если был
-  if (sideHintTimer) {
-    clearTimeout(sideHintTimer);
+// Запускает показ боковой подсказки через 1 секунду
+function scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols) {
+  if (window.currentSideHintTimer) {
+    clearTimeout(window.currentSideHintTimer);
   }
   
-  // Скрываем подсказку сразу (чтобы она плавно появилась заново)
   sideHint.classList.add('hidden');
   sideHint.classList.remove('side-hint-animate');
   
-  // Запускаем таймер на 1 секунду
-  sideHintTimer = setTimeout(() => {
-    showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, resultLength, totalCols);
+  window.currentSideHintTimer = setTimeout(() => {
+    showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols);
   }, 1000);
 }
 
-function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, resultLength, totalCols) {
+function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols) {
   const digitIndex = resultLength - 1 - idx;
   
   if (digitIndex < 0 || digitIndex >= sA.length) {
@@ -327,7 +250,7 @@ function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, s
   const currentCarry = Math.floor(product / 10);
   const writtenDigit = product % 10;
   
-  // Показываем подсказку если есть ТЕКУЩИЙ перенос ИЛИ был ПРЕДЫДУЩИЙ перенос
+  // Показываем подсказку если есть перенос
   if (currentCarry === 0 && prevCarry === 0) {
     sideHint.classList.add('hidden');
     return;
@@ -349,193 +272,24 @@ function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, s
   sideHint.classList.remove('hidden');
   sideHint.classList.add('side-hint-animate');
   
-  // Рисуем стрелки (пока БЕЗ стрелок к результату, т.к. цифра ещё не введена)
-  drawSideArrowsAutomatic(idx, currentCarry, sideHintArrows, mathGrid, inputs, carries, col);
-}
-
-function drawSideArrowsAutomatic(idx, currentCarry, sideHintArrows, mathGrid, inputs, carries, col) {
-  sideHintArrows.innerHTML = '';
-  
-  const resultInput = inputs[idx];
-  if (!resultInput) return;
-  
-  const hintRect = sideHintArrows.getBoundingClientRect();
-  const resultRect = resultInput.getBoundingClientRect();
-  
-  // Стартовая точка (из правого края SVG)
-  const startX = hintRect.width;
-  const startY = 50;
-  
-  // Конечная точка для стрелки к середине правой стороны ячейки (ИСХОДНАЯ формула!)
-  const endX1 = resultRect.left + resultRect.width / 2 - hintRect.left;
-  const endY1 = resultRect.top + resultRect.height / 2 - hintRect.top;
-  
-  let arrowsHTML = `
-    <defs>
-      <marker id="sideArrow1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-        <polygon points="0 0, 6 3, 0 6" fill="#EC4899" fill-opacity="0.6" />
-      </marker>
-    </defs>
-    <path 
-      d="M ${startX} ${startY} Q ${(startX + endX1) / 2} ${startY}, ${endX1} ${endY1}" 
-      stroke="#EC4899" 
-      stroke-width="2" 
-      stroke-opacity="0.6"
-      fill="none" 
-      marker-end="url(#sideArrow1)"
-    />
-  `;
-  
-  // Если есть предыдущий перенос, рисуем стрелку к нему
-  if (carries[col] > 0) {
-    const allCarries = document.querySelectorAll('[data-carry]');
-    let targetCarry = null;
-    
-    allCarries.forEach(carry => {
-      const carryRect = carry.getBoundingClientRect();
-      if (carryRect.right < resultRect.left && Math.abs(carryRect.right - resultRect.left) < 50) {
-        targetCarry = carry;
-      }
-    });
-    
-    if (targetCarry && targetCarry.value) {
-      const carryRect = targetCarry.getBoundingClientRect();
-      const endX2 = carryRect.left + carryRect.width / 2 - hintRect.left;
-      const endY2 = carryRect.top + carryRect.height / 2 - hintRect.top;
-      
-      arrowsHTML += `
-        <defs>
-          <marker id="sideArrow2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <polygon points="0 0, 6 3, 0 6" fill="#EC4899" fill-opacity="0.6" />
-          </marker>
-        </defs>
-        <path 
-          d="M ${startX} ${startY} Q ${(startX + endX2) / 2} ${startY - 20}, ${endX2} ${endY2}" 
-          stroke="#EC4899" 
-          stroke-width="2" 
-          stroke-opacity="0.6"
-          fill="none" 
-          marker-end="url(#sideArrow2)"
-        />
-      `;
+  // Подсвечиваем ячейку переноса СВЕТЛО-ОРАНЖЕВЫМ если есть
+  if (prevCarry > 0) {
+    const carryInput = mathGrid.querySelector(`[data-carry="${col}"]`);
+    if (carryInput && carryInput.value) {
+      carryInput.classList.remove('bg-gray-200');
+      carryInput.classList.add('bg-orange-300', 'scale-110');
     }
   }
   
-  sideHintArrows.innerHTML = arrowsHTML;
-}
-
-function showSideHint(idx, sA, mult, carryValue, writtenDigit, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, carries, resultLength, totalCols) {
-  const digitIndex = resultLength - 1 - idx;
-  
-  if (digitIndex < 0 || digitIndex >= sA.length) {
-    sideHint.classList.add('hidden');
-    return;
-  }
-  
-  const digit = parseInt(sA[digitIndex]);
-  const col = totalCols - resultLength + idx;
-  const prevCarry = carries[col] || 0;
-  const product = digit * mult + prevCarry;
-  
-  // Показываем подсказку если есть ТЕКУЩИЙ перенос ИЛИ был ПРЕДЫДУЩИЙ перенос
-  if (carryValue === 0 && prevCarry === 0) {
-    sideHint.classList.add('hidden');
-    return;
-  }
-  
-  // Формируем текст подсказки
-  let hintTextContent = `${digit}×${mult}`;
-if (prevCarry > 0) {
-  hintTextContent += ` + ${prevCarry}`;
-}
-hintTextContent += ` = ${product}<br>${writtenDigit} пишем`;
-if (carryValue > 0) {
-  hintTextContent += `, ${carryValue} в уме`;
-}
-  
-  sideHintText.innerHTML = hintTextContent;
-  sideHint.classList.remove('hidden');
-  
-  // Рисуем стрелки к введённой цифре и к переносу
-  drawSideArrows(idx, carryValue, sideHintArrows, mathGrid, inputs);
-}
-
-function drawSideArrows(idx, carryValue, sideHintArrows, mathGrid, inputs) {
-  sideHintArrows.innerHTML = '';
-  
-  // Находим введённую ячейку результата
+  // Подсвечиваем текущую ячейку для ввода СВЕТЛО-ОРАНЖЕВЫМ
   const resultInput = inputs[idx];
-  if (!resultInput) return;
-  
-  const hintRect = sideHintArrows.getBoundingClientRect();
-  const resultRect = resultInput.getBoundingClientRect();
-  
-  // Стартовая точка (ОДНА для обеих стрелок - из правого края SVG = левый край подсказки)
-  const startX = hintRect.width; // Динамическая ширина SVG
-  const startY = 50;
-  
-  // Конечная точка для стрелки к результату (правый край ячейки, не закрывает цифру)
-  const endX1 = resultRect.right - hintRect.left + 5;
-  const endY1 = resultRect.top + resultRect.height / 2 - hintRect.top;
-  
-  let arrowsHTML = `
-    <defs>
-      <marker id="sideArrow1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-        <polygon points="0 0, 6 3, 0 6" fill="#EC4899" fill-opacity="0.6" />
-      </marker>
-    </defs>
-    <path 
-      d="M ${startX} ${startY} Q ${(startX + endX1) / 2} ${startY}, ${endX1} ${endY1}" 
-      stroke="#EC4899" 
-      stroke-width="2" 
-      stroke-opacity="0.6"
-      fill="none" 
-      marker-end="url(#sideArrow1)"
-    />
-  `;
-  
-  // Рисуем стрелку к переносу (тоже из той же точки)
-  if (carryValue > 0 && idx > 0) {
-    // Находим правильный carry input (слева от текущей ячейки)
-    const allCarries = document.querySelectorAll('[data-carry]');
-    let targetCarry = null;
-    
-    allCarries.forEach(carry => {
-      const carryRect = carry.getBoundingClientRect();
-      if (carryRect.right < resultRect.left && Math.abs(carryRect.right - resultRect.left) < 50) {
-        targetCarry = carry;
-      }
-    });
-    
-    if (targetCarry && targetCarry.value) {
-      const carryRect = targetCarry.getBoundingClientRect();
-      // Указываем на правый край ячейки переноса (не закрываем цифру)
-      const endX2 = carryRect.right - hintRect.left + 5;
-      const endY2 = carryRect.top + carryRect.height / 2 - hintRect.top;
-      
-      arrowsHTML += `
-        <defs>
-          <marker id="sideArrow2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <polygon points="0 0, 6 3, 0 6" fill="#EC4899" fill-opacity="0.6" />
-          </marker>
-        </defs>
-        <path 
-          d="M ${startX} ${startY} Q ${(startX + endX2) / 2} ${startY - 20}, ${endX2} ${endY2}" 
-          stroke="#EC4899" 
-          stroke-width="2" 
-          stroke-opacity="0.6"
-          fill="none" 
-          marker-end="url(#sideArrow2)"
-        />
-      `;
-    }
+  if (resultInput) {
+    resultInput.classList.remove('bg-yellow-200');
+    resultInput.classList.add('bg-orange-300');
   }
-  
-  sideHintArrows.innerHTML = arrowsHTML;
 }
 
 function updateCarry(idx, sA, mult, carries, totalCols, resultLength) {
-  // sA - это REVERSED массив цифр множимого (справа налево)
   const digitIndex = resultLength - 1 - idx;
   
   if (digitIndex < 0 || digitIndex >= sA.length) return 0;
@@ -548,7 +302,6 @@ function updateCarry(idx, sA, mult, carries, totalCols, resultLength) {
   
   if (carry > 0) {
     carries[col - 1] = carry;
-    // Перенос должен быть НАД следующей ячейкой СЛЕВА (idx-1)
     const carryCol = col - 1;
     const carryInput = document.querySelector(`[data-carry="${carryCol}"]`);
     if (carryInput) carryInput.value = carry;
@@ -564,7 +317,6 @@ function checkResult(inputs, checkMessage) {
   const allCorrect = Array.from(inputs).every(inp => inp.value === inp.dataset.correct);
   
   if (allCorrect) {
-    // Персонализированное сообщение с именем ребёнка
     const childName = localStorage.getItem('childName');
     const message = childName 
       ? `Правильно! Умничка, ${childName}! 🎉` 
@@ -573,7 +325,6 @@ function checkResult(inputs, checkMessage) {
     checkMessage.textContent = message;
     checkMessage.className = 'text-xl font-bold text-center mt-2 text-green-600';
     
-    // Конфетти
     if (window.confetti) {
       confetti({
         particleCount: 200,
@@ -583,28 +334,23 @@ function checkResult(inputs, checkMessage) {
         scalar: 1.5
       });
       
-      setTimeout(() => {
-        confetti({
-          particleCount: 150,
-          spread: 100,
-          origin: { x: 0.5, y: 0.6 },
-          colors: ['#FFD700', '#FF6347', '#00CED1'],
-          scalar: 1.5
-        });
-      }, 300);
+      setTimeout(() => confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { x: 0.5, y: 0.6 },
+        colors: ['#FFD700', '#FF6347', '#00CED1'],
+        scalar: 1.5
+      }), 300);
       
-      setTimeout(() => {
-        confetti({
-          particleCount: 150,
-          spread: 100,
-          origin: { x: 0.5, y: 0.6 },
-          colors: ['#32CD32', '#FF69B4', '#FFD700'],
-          scalar: 1.5
-        });
-      }, 600);
+      setTimeout(() => confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { x: 0.5, y: 0.6 },
+        colors: ['#32CD32', '#FF69B4', '#FFD700'],
+        scalar: 1.5
+      }), 600);
     }
   } else {
-    // Персонализированное сообщение с именем ребёнка
     const childName = localStorage.getItem('childName');
     const message = childName 
       ? `Попробуй ещё раз, ${childName}! 💪` 
