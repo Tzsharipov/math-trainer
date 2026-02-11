@@ -1,5 +1,22 @@
 // Построение сетки для умножения на однозначное число
 
+// Глобальные переменные для пересчёта стрелок при зуме
+let currentFocusedIndex = -1;
+let currentMultiplicandForHint = 0;
+let currentMultiplierForHint = 0;
+let currentMathGrid = null;
+let currentHintText = null;
+let currentHintArrows = null;
+let currentSideHint = null;
+let currentSideHintText = null;
+let currentSideHintArrows = null;
+let currentSA = [];
+let currentMult = 0;
+let currentCarries = {};
+let currentInputs = [];
+let currentResultLength = 0;
+let currentTotalCols = 0;
+
 export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, mathGrid, checkMessage, hintPopup, hintText, hintArrows, sideHint, sideHintText, sideHintArrows) {
   // Скрываем панель настроек, показываем workspace
   settingsPanel.classList.add('hidden');
@@ -67,15 +84,59 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   
   html += `</div>`;
   mathGrid.innerHTML = html;
+  
+  // Сохраняем глобальные переменные для пересчёта при зуме
+  currentMathGrid = mathGrid;
+  currentHintText = hintText;
+  currentHintArrows = hintArrows;
+  currentSideHint = sideHint;
+  currentSideHintText = sideHintText;
+  currentSideHintArrows = sideHintArrows;
+  currentMultiplicandForHint = multiplicand;
+  currentMultiplierForHint = multiplier;
+  currentResultLength = result.length;
+  currentTotalCols = totalCols;
+  
   setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, hintPopup, hintText, hintArrows, mathGrid, sideHint, sideHintText, sideHintArrows, isMobile);
+  
+  // Добавляем слушатель resize для пересчёта стрелок при зуме
+  window.removeEventListener('resize', redrawCurrentArrows); // Удаляем старый если был
+  window.addEventListener('resize', redrawCurrentArrows);
   
   // Фокус на последнюю ячейку (начинаем справа)
   const inputs = document.querySelectorAll('.math-input');
   if (inputs.length) {
+    currentInputs = inputs;
     inputs[inputs.length - 1].focus();
+    currentFocusedIndex = inputs.length - 1;
     if (!isMobile) {
       updateHint(inputs.length - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
     }
+  }
+}
+
+// Функция для пересчёта стрелок при изменении масштаба
+function redrawCurrentArrows() {
+  if (currentFocusedIndex >= 0 && currentMathGrid && currentHintText && currentHintArrows) {
+    // Небольшая задержка чтобы браузер успел пересчитать позиции
+    setTimeout(() => {
+      // Пересчитываем верхние стрелки
+      updateHint(currentFocusedIndex, currentMultiplicandForHint, currentMultiplierForHint, currentHintText, currentHintArrows, currentMathGrid);
+      
+      // Пересчитываем боковые стрелки если они видны
+      if (currentSideHint && !currentSideHint.classList.contains('hidden') && currentSA.length > 0) {
+        const digitIndex = currentResultLength - 1 - currentFocusedIndex;
+        if (digitIndex >= 0 && digitIndex < currentSA.length) {
+          const digit = parseInt(currentSA[digitIndex]);
+          const col = currentTotalCols - currentResultLength + currentFocusedIndex;
+          const prevCarry = currentCarries[col] || 0;
+          const product = digit * currentMult + prevCarry;
+          const currentCarry = Math.floor(product / 10);
+          
+          drawSideArrowsAutomatic(currentFocusedIndex, currentCarry, currentSideHintArrows, currentMathGrid, currentInputs, currentCarries, col);
+        }
+      }
+    }, 10);
   }
 }
 
@@ -84,6 +145,11 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
   const carries = {};
   const sA = multiplicand.toString().split('').reverse();
   const mult = parseInt(multiplier);
+  
+  // Сохраняем в глобальные переменные для пересчёта при зуме
+  currentSA = sA;
+  currentMult = mult;
+  currentCarries = carries;
   
   let sideHintTimer = null; // Таймер для показа боковой подсказки
   
@@ -108,6 +174,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
         
         // Переходим к следующей ячейке (влево)
         if (idx > 0) {
+          currentFocusedIndex = idx - 1; // Обновляем текущий индекс
           inputs[idx - 1].focus();
           if (!isMobile) {
             updateHint(idx - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
@@ -116,6 +183,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
           }
         } else {
           // Все заполнено - проверяем результат
+          currentFocusedIndex = -1; // Сбрасываем индекс
           checkResult(inputs, checkMessage);
           hintPopup.classList.add('hidden');
           sideHint.classList.add('hidden');
@@ -126,6 +194,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
     };
     
     el.onfocus = () => {
+      currentFocusedIndex = idx; // Сохраняем текущий индекс
       if (!isMobile) {
         updateHint(idx, multiplicand, multiplier, hintText, hintArrows, mathGrid);
         // Запускаем таймер показа боковой подсказки через 1 секунду
@@ -293,11 +362,11 @@ function drawSideArrowsAutomatic(idx, currentCarry, sideHintArrows, mathGrid, in
   const hintRect = sideHintArrows.getBoundingClientRect();
   const resultRect = resultInput.getBoundingClientRect();
   
-  // Стартовая точка (из правого края SVG = левый край подсказки)
+  // Стартовая точка (из правого края SVG)
   const startX = hintRect.width;
   const startY = 50;
   
-  // Конечная точка для стрелки к ЦЕНТРУ ячейки результата
+  // Конечная точка для стрелки к середине правой стороны ячейки (ИСХОДНАЯ формула!)
   const endX1 = resultRect.left + resultRect.width / 2 - hintRect.left;
   const endY1 = resultRect.top + resultRect.height / 2 - hintRect.top;
   
