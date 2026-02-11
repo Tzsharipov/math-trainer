@@ -85,6 +85,8 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
   const sA = multiplicand.toString().split('').reverse();
   const mult = parseInt(multiplier);
   
+  let sideHintTimer = null; // Таймер для показа боковой подсказки
+  
   inputs.forEach((el, idx) => {
     el.oninput = (e) => {
       const val = e.target.value;
@@ -102,18 +104,15 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
         e.target.classList.add('bg-green-500', 'text-slate-900', 'border-green-600', 'font-black');
         
         // Обновляем перенос
-        const carryValue = updateCarry(idx, sA, mult, carries, totalCols, result.length);
-        
-        // Показываем боковую подсказку ТОЛЬКО НА ДЕСКТОПЕ
-        if (!isMobile) {
-          showSideHint(idx, sA, mult, carryValue, val, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, carries, result.length, totalCols);
-        }
+        updateCarry(idx, sA, mult, carries, totalCols, result.length);
         
         // Переходим к следующей ячейке (влево)
         if (idx > 0) {
           inputs[idx - 1].focus();
           if (!isMobile) {
             updateHint(idx - 1, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+            // Запускаем таймер показа боковой подсказки для СЛЕДУЮЩЕЙ ячейки
+            scheduleSideHint(idx - 1, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, result.length, totalCols, sideHintTimer, isMobile);
           }
         } else {
           // Все заполнено - проверяем результат
@@ -129,6 +128,8 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
     el.onfocus = () => {
       if (!isMobile) {
         updateHint(idx, multiplicand, multiplier, hintText, hintArrows, mathGrid);
+        // Запускаем таймер показа боковой подсказки через 1 секунду
+        scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, result.length, totalCols, sideHintTimer, isMobile);
       }
     };
   });
@@ -223,6 +224,135 @@ function drawArrows(digitIndex, hintArrows, mathGrid) {
       marker-end="url(#arrowhead2)"
     />
   `;
+}
+
+// Новая функция: запускает показ боковой подсказки через 1 секунду
+function scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, resultLength, totalCols, sideHintTimer, isMobile) {
+  // Очищаем предыдущий таймер если был
+  if (sideHintTimer) {
+    clearTimeout(sideHintTimer);
+  }
+  
+  // Скрываем подсказку сразу (чтобы она плавно появилась заново)
+  sideHint.classList.add('hidden');
+  sideHint.classList.remove('side-hint-animate');
+  
+  // Запускаем таймер на 1 секунду
+  sideHintTimer = setTimeout(() => {
+    showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, resultLength, totalCols);
+  }, 1000);
+}
+
+function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, resultLength, totalCols) {
+  const digitIndex = resultLength - 1 - idx;
+  
+  if (digitIndex < 0 || digitIndex >= sA.length) {
+    sideHint.classList.add('hidden');
+    return;
+  }
+  
+  const digit = parseInt(sA[digitIndex]);
+  const col = totalCols - resultLength + idx;
+  const prevCarry = carries[col] || 0;
+  const product = digit * mult + prevCarry;
+  const currentCarry = Math.floor(product / 10);
+  const writtenDigit = product % 10;
+  
+  // Показываем подсказку если есть ТЕКУЩИЙ перенос ИЛИ был ПРЕДЫДУЩИЙ перенос
+  if (currentCarry === 0 && prevCarry === 0) {
+    sideHint.classList.add('hidden');
+    return;
+  }
+  
+  // Формируем текст подсказки
+  let hintTextContent = `${digit}×${mult}`;
+  if (prevCarry > 0) {
+    hintTextContent += ` + ${prevCarry}`;
+  }
+  hintTextContent += ` = ${product}<br>${writtenDigit} пишем`;
+  if (currentCarry > 0) {
+    hintTextContent += `, ${currentCarry} в уме`;
+  }
+  
+  sideHintText.innerHTML = hintTextContent;
+  
+  // Показываем с анимацией
+  sideHint.classList.remove('hidden');
+  sideHint.classList.add('side-hint-animate');
+  
+  // Рисуем стрелки (пока БЕЗ стрелок к результату, т.к. цифра ещё не введена)
+  drawSideArrowsAutomatic(idx, currentCarry, sideHintArrows, mathGrid, inputs, carries, col);
+}
+
+function drawSideArrowsAutomatic(idx, currentCarry, sideHintArrows, mathGrid, inputs, carries, col) {
+  sideHintArrows.innerHTML = '';
+  
+  const resultInput = inputs[idx];
+  if (!resultInput) return;
+  
+  const hintRect = sideHintArrows.getBoundingClientRect();
+  const resultRect = resultInput.getBoundingClientRect();
+  
+  // Стартовая точка (из правого края SVG = левый край подсказки)
+  const startX = hintRect.width;
+  const startY = 50;
+  
+  // Конечная точка для стрелки к ЦЕНТРУ ячейки результата
+  const endX1 = resultRect.left + resultRect.width / 2 - hintRect.left;
+  const endY1 = resultRect.top + resultRect.height / 2 - hintRect.top;
+  
+  let arrowsHTML = `
+    <defs>
+      <marker id="sideArrow1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+        <polygon points="0 0, 6 3, 0 6" fill="#EC4899" fill-opacity="0.6" />
+      </marker>
+    </defs>
+    <path 
+      d="M ${startX} ${startY} Q ${(startX + endX1) / 2} ${startY}, ${endX1} ${endY1}" 
+      stroke="#EC4899" 
+      stroke-width="2" 
+      stroke-opacity="0.6"
+      fill="none" 
+      marker-end="url(#sideArrow1)"
+    />
+  `;
+  
+  // Если есть предыдущий перенос, рисуем стрелку к нему
+  if (carries[col] > 0) {
+    const allCarries = document.querySelectorAll('[data-carry]');
+    let targetCarry = null;
+    
+    allCarries.forEach(carry => {
+      const carryRect = carry.getBoundingClientRect();
+      if (carryRect.right < resultRect.left && Math.abs(carryRect.right - resultRect.left) < 50) {
+        targetCarry = carry;
+      }
+    });
+    
+    if (targetCarry && targetCarry.value) {
+      const carryRect = targetCarry.getBoundingClientRect();
+      const endX2 = carryRect.left + carryRect.width / 2 - hintRect.left;
+      const endY2 = carryRect.top + carryRect.height / 2 - hintRect.top;
+      
+      arrowsHTML += `
+        <defs>
+          <marker id="sideArrow2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <polygon points="0 0, 6 3, 0 6" fill="#EC4899" fill-opacity="0.6" />
+          </marker>
+        </defs>
+        <path 
+          d="M ${startX} ${startY} Q ${(startX + endX2) / 2} ${startY - 20}, ${endX2} ${endY2}" 
+          stroke="#EC4899" 
+          stroke-width="2" 
+          stroke-opacity="0.6"
+          fill="none" 
+          marker-end="url(#sideArrow2)"
+        />
+      `;
+    }
+  }
+  
+  sideHintArrows.innerHTML = arrowsHTML;
 }
 
 function showSideHint(idx, sA, mult, carryValue, writtenDigit, sideHint, sideHintText, sideHintArrows, mathGrid, inputs, carries, resultLength, totalCols) {
