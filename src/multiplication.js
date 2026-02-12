@@ -2,12 +2,16 @@ import './style.css';
 import { getRandom } from './multiplication/multiplicationHelpers.js';
 import { buildGrid, setupLogic } from './multiplication/multiplicationGrid.js';
 
-console.log('MULTIPLICATION.JS LOADED v11 (модульная версия)');
+console.log('MULTIPLICATION.JS LOADED - CORRECT PATHS');
 
 // DOM элементы
 const workspace = document.querySelector('#workspace');
 const mathGrid = document.querySelector('#mathGrid');
 const checkHints = document.querySelector('#checkHints');
+const hintPopup = document.querySelector('#hintPopup');
+const hintText = document.querySelector('#hintText');
+const sideHint = document.querySelector('#sideHint');
+const sideHintText = document.querySelector('#sideHintText');
 const btnGen = document.querySelector('#btnGen');
 const btnStartMan = document.querySelector('#btnStartMan');
 const selectA = document.querySelector('#selectA');
@@ -96,10 +100,6 @@ btnBackToSettings.onclick = () => {
   checkMessage.textContent = '';
 };
 
-// Включение/выключение подсказок
-checkHints.onchange = () => {
-  if (currentA && currentB) buildGridWrapper();
-};
 
 // Обёртка для buildGrid
 function buildGridWrapper() {
@@ -111,6 +111,10 @@ function buildGridWrapper() {
     mathGrid,
     checkMessage,
     checkHints,
+    hintPopup,
+    hintText,
+    sideHint,
+    sideHintText,
     carries,
     activeRow,
     setupLogic
