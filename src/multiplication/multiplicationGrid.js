@@ -29,7 +29,13 @@ function updateHintAndHighlight(idx, currentRowNum, valA, valB, hintText, mathGr
   
   if (digitIndex >= 0 && digitIndex < sA.length) {
     const digit = sA[digitIndex];
-    hintText.textContent = `Умножь ${digit} × ${mult}`;
+    
+    // Если умножаем на 0 или цифра = 0 - другая подсказка
+    if (mult === 0 || digit === "0") {
+      hintText.textContent = `Запиши цифру 0 в результат`;
+    } else {
+      hintText.textContent = `Умножь ${digit} × ${mult}`;
+    }
     
     // Подсвечиваем цифру множимого ЯРКО-ЖЁЛТЫМ + МИГАНИЕ
     const multiplicandDigit = mathGrid.querySelector(`[data-multiplicand-digit="${digitIndex}"]`);
@@ -58,6 +64,7 @@ function updateHintAndHighlight(idx, currentRowNum, valA, valB, hintText, mathGr
 
 // Убирает всю подсветку - СКОПИРОВАНО ИЗ BASICS
 function clearHighlights(mathGrid) {
+  
   // Возвращаем голубой цвет множимому + убираем мигание
   mathGrid.querySelectorAll('[data-multiplicand-digit]').forEach(el => {
     el.classList.remove('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
@@ -474,6 +481,59 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
         const rowInputs = Array.from(document.querySelectorAll(`.math-input[data-row="${row}"]`));
         const idx = rowInputs.indexOf(e.target);
         
+        // СПЕЦИАЛЬНАЯ ОБРАБОТКА: если строка умножения и введён 0
+        if (row !== "99" && val === "0") {
+          // Проверяем - вся ли строка из нулей?
+          const allZeros = rowInputs.every(inp => inp.dataset.correct === "0");
+          
+          if (allZeros) {
+            // Автоматически заполняем все ячейки нулями и подсвечиваем ВСЕ зелёным
+            rowInputs.forEach(inp => {
+              inp.value = "0";
+              inp.className = 'math-input text-center border-2 rounded font-black outline-none transition-all shadow-sm';
+              inp.classList.add('bg-green-500', 'text-slate-900', 'border-green-600', 'font-black');
+            });
+            
+            // Убираем подсветку
+            if (!isMobile && checkHints.checked) {
+              clearHighlights(mathGrid);
+            }
+            
+            // Переходим к следующей строке
+            const nextRowNum = parseInt(row) + 1;
+            const nextRowInputs = Array.from(document.querySelectorAll(`.math-input[data-row="${nextRowNum}"]`));
+            
+            
+            if (nextRowInputs.length > 0) {
+              activeRowObj.value = nextRowNum;
+              nextRowInputs.forEach(inp => {
+                inp.disabled = false;
+                inp.classList.remove('opacity-50', 'cursor-not-allowed');
+              });
+              nextRowInputs[nextRowInputs.length - 1].focus();
+              
+              
+              if (!isMobile && checkHints.checked) {
+                updateHintAndHighlight(nextRowInputs.length - 1, nextRowNum, currentA, currentB, hintText, mathGrid);
+                scheduleSideHint(nextRowInputs.length - 1, nextRowNum, currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+              }
+            } else {
+              activeRowObj.value = 99;
+              const resultInputs = Array.from(document.querySelectorAll(`.math-input[data-row="99"]`));
+              resultInputs.forEach(inp => {
+                inp.disabled = false;
+                inp.classList.remove('opacity-50', 'cursor-not-allowed');
+              });
+              resultInputs[resultInputs.length - 1].focus();
+              if (!isMobile && checkHints.checked) {
+                updateHintForSum(resultInputs.length - 1, currentB, hintText, mathGrid, carries);
+                scheduleSideHintForSum(resultInputs.length - 1, currentB, carries, sideHint, sideHintText, mathGrid);
+              }
+            }
+            return; // Выходим, не продолжаем обычную логику
+          }
+        }
+        
         // Убираем подсветку
         if (!isMobile && checkHints.checked) {
           clearHighlights(mathGrid);
@@ -489,8 +549,17 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
               scheduleSideHintForSum(idx - 1, currentB, carries, sideHint, sideHintText, mathGrid);
             } else {
               // LEVEL 1: Подсказки для умножения
-              updateHintAndHighlight(idx - 1, parseInt(row), currentA, currentB, hintText, mathGrid);
-              scheduleSideHint(idx - 1, parseInt(row), currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+              // Проверяем - нулевая ли строка?
+              const allZeros = rowInputs.every(inp => inp.dataset.correct === "0");
+              
+              if (allZeros) {
+                // Для нулевой строки - специальная логика (БЕЗ updateHintAndHighlight!)
+                // НЕ ВЫЗЫВАЕМ updateHintAndHighlight чтобы не затереть подсветку из onfocus
+              } else {
+                // Обычная строка - стандартная логика
+                updateHintAndHighlight(idx - 1, parseInt(row), currentA, currentB, hintText, mathGrid);
+                scheduleSideHint(idx - 1, parseInt(row), currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+              }
             }
           }
         } else {
@@ -519,8 +588,14 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
               nextRowInputs[nextRowInputs.length - 1].focus();
               // Показываем подсказку для первой ячейки новой строки
               if (!isMobile && checkHints.checked) {
-                updateHintAndHighlight(nextRowInputs.length - 1, nextRowNum, currentA, currentB, hintText, mathGrid);
-                scheduleSideHint(nextRowInputs.length - 1, nextRowNum, currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+                // Проверяем - нулевая ли следующая строка?
+                const nextRowAllZeros = nextRowInputs.every(inp => inp.dataset.correct === "0");
+                if (!nextRowAllZeros) {
+                  // Обычная строка
+                  updateHintAndHighlight(nextRowInputs.length - 1, nextRowNum, currentA, currentB, hintText, mathGrid);
+                  scheduleSideHint(nextRowInputs.length - 1, nextRowNum, currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+                }
+                // Для нулевой строки подсветка будет в onfocus
               }
             } else {
               activeRowObj.value = 99;
@@ -568,8 +643,71 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
       const idx = rowInputs.indexOf(el);
       
       if (!isMobile && checkHints.checked && idx >= 0) {
-        updateHintAndHighlight(idx, parseInt(row), currentA, currentB, hintText, mathGrid);
-        scheduleSideHint(idx, parseInt(row), currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+        // Проверяем - вся ли строка из нулей?
+        const allZeros = rowInputs.every(inp => inp.dataset.correct === "0");
+        
+        if (allZeros) {
+          // Специальная подсказка для нулевой строки
+          clearHighlights(mathGrid);
+          hintText.textContent = "Запиши цифру 0 в результат";
+          
+          // КОПИРУЮ ЛОГИКУ ИЗ updateHintAndHighlight - ТАМ ЖЕ РАБОТАЕТ!
+          const sA = currentA.toString();
+          const sB = currentB.toString();
+          const digitsB = sB.split('').reverse();
+          const multiplierDigitIndex = parseInt(row);
+          const mult = parseInt(digitsB[multiplierDigitIndex]);
+          const resultLength = rowInputs.length;
+          const digitIndex = sA.length - 1 - (resultLength - 1 - idx);
+          
+          
+          if (digitIndex >= 0 && digitIndex < sA.length) {
+            const digit = sA[digitIndex];
+            
+            // Подсвечиваем цифру множимого - КАК В updateHintAndHighlight
+            const multiplicandDigit = mathGrid.querySelector(`[data-multiplicand-digit="${digitIndex}"]`);
+            
+            if (multiplicandDigit) {
+              multiplicandDigit.classList.remove('bg-cyan-400');
+              multiplicandDigit.classList.add('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
+              
+              setTimeout(() => {
+                const hasYellow = multiplicandDigit.classList.contains('bg-yellow-400');
+                const hasPulse = multiplicandDigit.classList.contains('cell-pulse-yellow');
+              }, 2000);
+            }
+            
+            // Подсвечиваем цифру множителя - КАК В updateHintAndHighlight
+            const multiplierDigitDOMIndex = sB.length - 1 - multiplierDigitIndex;
+            const multiplierDigit = mathGrid.querySelector(`[data-multiplier-digit="${multiplierDigitDOMIndex}"]`);
+            
+            if (multiplierDigit) {
+              multiplierDigit.classList.remove('bg-gray-400');
+              multiplierDigit.classList.add('bg-yellow-400', 'scale-110', 'cell-pulse-yellow');
+            }
+            
+            // Подсвечиваем ячейку результата
+            el.classList.remove('bg-yellow-200');
+            el.classList.add('bg-orange-300', 'cell-pulse-orange');
+            
+            // Правая подсказка через 1 сек
+            if (window.currentSideHintTimer) {
+              clearTimeout(window.currentSideHintTimer);
+            }
+            sideHint.classList.add('hidden');
+            sideHint.classList.remove('side-hint-animate');
+            
+            window.currentSideHintTimer = setTimeout(() => {
+              sideHintText.innerHTML = `${digit}×0 = 0<br>0 пишем`;
+              sideHint.classList.remove('hidden');
+              sideHint.classList.add('side-hint-animate');
+            }, 1000);
+          }
+        } else {
+          // Обычная логика
+          updateHintAndHighlight(idx, parseInt(row), currentA, currentB, hintText, mathGrid);
+          scheduleSideHint(idx, parseInt(row), currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
+        }
       }
     };
   });
