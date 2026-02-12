@@ -250,12 +250,6 @@ function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, m
   const currentCarry = Math.floor(product / 10);
   const writtenDigit = product % 10;
   
-  // Показываем подсказку если есть перенос
-  if (currentCarry === 0 && prevCarry === 0) {
-    sideHint.classList.add('hidden');
-    return;
-  }
-  
   // Формируем текст подсказки
   let hintTextContent = `${digit}×${mult}`;
   if (prevCarry > 0) {
