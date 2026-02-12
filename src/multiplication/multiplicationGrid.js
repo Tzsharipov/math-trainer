@@ -29,13 +29,7 @@ function updateHintAndHighlight(idx, currentRowNum, valA, valB, hintText, mathGr
   
   if (digitIndex >= 0 && digitIndex < sA.length) {
     const digit = sA[digitIndex];
-    
-    // Если умножаем на 0 или цифра = 0 - другая подсказка
-    if (mult === 0 || digit === "0") {
-      hintText.textContent = `Запиши цифру 0 в результат`;
-    } else {
-      hintText.textContent = `Умножь ${digit} × ${mult}`;
-    }
+    hintText.textContent = `Умножь ${digit} × ${mult}`;
     
     // Подсвечиваем цифру множимого ЯРКО-ЖЁЛТЫМ + МИГАНИЕ
     const multiplicandDigit = mathGrid.querySelector(`[data-multiplicand-digit="${digitIndex}"]`);
