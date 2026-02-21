@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель - Математический Тренажёр</title>
+  
+  <script>
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = 'app.html';
+    }
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+    
+    /* Хедер */
+    .admin-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-header h1 {
+      font-size: 24px;
+      font-weight: 900;
+    }
+    
+    .back-btn {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .back-btn:hover {
+      background: white;
+      color: #667eea;
+    }
+    
+    /* Контейнер */
+    .admin-container {
+      padding: 30px 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    
+    /* Сообщения */
+    .message {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      min-width: 400px;
+      max-width: 600px;
+      padding: 20px 30px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      display: none;
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    .message.show {
+      display: block;
+    }
+    
+    .message.success {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      color: #065f46;
+    }
+    
+    .message.error {
+      background: #fee2e2;
+      border: 2px solid #ef4444;
+      color: #991b1b;
+    }
+    
+    /* Секции */
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section h2 {
+      font-size: 22px;
+      color: #111827;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    /* Фильтры */
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 10px 20px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    
+    .filter-btn:hover {
+      border-color: #667eea;
+    }
+    
+    .filter-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+    
+    /* Карточки заявок */
+    .application-card {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+    
+    .application-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .app-number {
+      font-size: 18px;
+      font-weight: 900;
+      color: #667eea;
+    }
+    
+    .app-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    .app-status.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .app-status.paid {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .app-status.completed {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    
+    .app-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    
+    .app-detail {
+      color: #6b7280;
+    }
+    
+    .app-detail strong {
+      color: #111827;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .app-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .app-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    
+    .app-btn.confirm {
+      background: #10b981;
+      color: white;
+    }
+    
+    .app-btn.confirm:hover {
+      background: #059669;
+    }
+    
+    .app-btn.create {
+      background: #667eea;
+      color: white;
+    }
+    
+    .app-btn.create:hover {
+      background: #5568d3;
+    }
+    
+    .app-btn.delete {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .app-btn.delete:hover {
+      background: #dc2626;
+    }
+    
+    .no-applications {
+      text-align: center;
+      padding: 60px 20px;
+      color: #9ca3af;
+      font-size: 16px;
+    }
+    
+    /* Форма создания пользователя */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .create-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .create-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .result {
+      display: none;
+      background: #ecfdf5;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .result.show {
+      display: block;
+    }
+    
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 15px;
+    }
+    
+    .result-item {
+      margin-bottom: 10px;
+      color: #047857;
+      font-weight: 600;
+    }
+    
+    .password-display {
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: #dc2626;
+      margin-top: 5px;
+      user-select: all;
+    }
+    
+    .copy-btn {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s;
+    }
+    
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+    
+    /* Таблица пользователей */
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    .users-table th {
+      background: #f3f4f6;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .users-table td {
+      padding: 15px 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .users-table tr:hover {
+      background: #f9fafb;
+    }
+    
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-badge.paid {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status-badge.unpaid {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .action-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-sm {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-sm.activate {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-sm.activate:hover {
+      background: #059669;
+    }
+    
+    .btn-sm.deactivate {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .btn-sm.deactivate:hover {
+      background: #d97706;
+    }
+    
+    .btn-sm.devices {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-sm.devices:hover {
+      background: #5568d3;
+    }
+    
+    .btn-sm.delete {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-sm.delete:hover {
+      background: #dc2626;
+    }
+    
+    /* Модальное окно устройств */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .modal-header h3 {
+      font-size: 20px;
+      color: #111827;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .close-btn:hover {
+      color: #ef4444;
+    }
+    
+    .device-item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    
+    .device-name {
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 5px;
+    }
+    
+    .device-info {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+    
+    .unbind-btn {
+      padding: 8px 16px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .unbind-btn:hover {
+      background: #dc2626;
+    }
+  </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="admin-header">
+    <h1>⚙️ Админ-панель</h1>
+    <button class="back-btn" onclick="goBack()">← Назад</button>
+  </div>
+  
+  <div class="admin-container">
+    <div id="message" class="message"></div>
+    
+    <!-- Секция заявок -->
+    <div class="section">
+      <h2>📋 Заявки клиентов</h2>
+      
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterApplications('all', event)">
+          Все
+        </button>
+        <button class="filter-btn" onclick="filterApplications('pending_payment', event)">
+          🟡 Ожидают оплаты
+        </button>
+        <button class="filter-btn" onclick="filterApplications('paid', event)">
+          🟢 Оплачены
+        </button>
+        <button class="filter-btn" onclick="filterApplications('completed', event)">
+          ✅ Завершённые
+        </button>
+      </div>
+      
+      <div id="applicationsList">
+        <div class="no-applications">Загрузка заявок...</div>
+      </div>
+    </div>
+    
+    <!-- Секция создания пользователя -->
+    <div class="section">
+      <h2>➕ Создать пользователя вручную</h2>
+      
+      <form id="createForm" onsubmit="handleCreateUser(event)">
+        <div class="form-group">
+          <label for="emailInput">Email нового пользователя *</label>
+          <input 
+            type="email" 
+            id="emailInput" 
+            placeholder="client@example.com"
+            required
+          >
+        </div>
+        
+        <button type="submit" class="create-btn" id="createBtn">
+          Создать пользователя
+        </button>
+      </form>
+      
+      <div id="result" class="result">
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-item" id="resultEmail"></div>
+        <div class="result-item">
+          Пароль:
+          <div class="password-display" id="resultPassword"></div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="copy-btn" onclick="copyPassword()" style="flex: 1;">📋 Скопировать пароль</button>
+          <button class="copy-btn" onclick="closeResult()" style="flex: 1; background: #6b7280;">✕ Закрыть</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Секция пользователей -->
+    <div class="section">
+      <h2>👥 Все пользователи</h2>
+      
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Создан</th>
+            <th>Статус оплаты</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody id="usersList">
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af;">Загрузка...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Модальное окно устройств -->
+  <div id="devicesModal" class="modal" onclick="if(event.target === this) closeDevicesModal()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📱 Устройства пользователя</h3>
+        <button class="close-btn" onclick="closeDevicesModal()">×</button>
+      </div>
+      <div id="devicesList"></div>
+    </div>
+  </div>
+  
+  <script>
+    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllbGNuYmN2c2xsb3F6bXJ6enFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc5MDUxMjUsImV4cCI6MjA1MzQ4MTEyNX0.sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let currentFilter = 'all';
+    let allApplications = [];
+    let currentUserEmail = '';
+    
+    // ========== РАБОТА С ЗАЯВКАМИ ==========
+    
+    async function loadApplications() {
+      try {
+        const url = currentFilter === 'all' 
+          ? `${SUPABASE_URL}/functions/v1/list_applications`
+          : `${SUPABASE_URL}/functions/v1/list_applications?status=${currentFilter}`;
+          
+        const response = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) throw new Error('Ошибка загрузки заявок');
+        
+        allApplications = await response.json();
+        renderApplications();
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        document.getElementById('applicationsList').innerHTML = 
+          '<div class="no-applications">Ошибка загрузки заявок</div>';
+      }
+    }
+    
+    function filterApplications(status, event) {
+      currentFilter = status;
+      
+      // Обновляем активную кнопку
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      loadApplications();
+    }
+    
+    function renderApplications() {
+      const container = document.getElementById('applicationsList');
+      
+      if (allApplications.length === 0) {
+        container.innerHTML = '<div class="no-applications">Заявок не найдено</div>';
+        return;
+      }
+      
+      container.innerHTML = allApplications.map(app => {
+        const date = new Date(app.created_at).toLocaleString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        const statusLabel = {
+          'pending_payment': { text: '🟡 Ожидает оплаты', class: 'pending' },
+          'paid': { text: '🟢 Оплачена', class: 'paid' },
+          'completed': { text: '✅ Завершена', class: 'completed' }
+        }[app.status] || { text: app.status, class: 'pending' };
+        
+        const showConfirmBtn = app.status === 'pending_payment';
+        const showCreateBtn = app.status === 'paid';
+        
+        return `
+          <div class="application-card">
+            <div class="app-header">
+              <div class="app-number">${app.application_number}</div>
+              <div class="app-status ${statusLabel.class}">${statusLabel.text}</div>
+            </div>
+            
+            <div class="app-details">
+              <div class="app-detail">
+                <strong>Email</strong>
+                ${app.email}
+              </div>
+              <div class="app-detail">
+                <strong>Ребёнок</strong>
+                ${app.child_name}
+              </div>
+              <div class="app-detail">
+                <strong>Плательщик</strong>
+                ${app.payer_name}
+              </div>
+              ${app.telegram ? `
+                <div class="app-detail">
+                  <strong>Telegram</strong>
+                  ${app.telegram}
+                </div>
+              ` : ''}
+              <div class="app-detail">
+                <strong>Создана</strong>
+                ${date}
+              </div>
+            </div>
+            
+            <div class="app-actions">
+              ${showConfirmBtn ? `
+                <button class="app-btn confirm" onclick="confirmPayment(${app.id})">
+                  ✓ Подтвердить оплату
+                </button>
+              ` : ''}
+              ${showCreateBtn ? `
+                <button class="app-btn create" onclick="createUserFromApplication(${app.id}, '${app.email}')">
+                  ➕ Создать пользователя
+                </button>
+              ` : ''}
+              <button class="app-btn delete" onclick="deleteApplication(${app.id})">
+                🗑️ Удалить
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    async function confirmPayment(applicationId) {
+      if (!confirm('Подтвердить оплату этой заявки?')) return;
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/update_application_status`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            applicationId,
+            status: 'paid'
+          })
+        });
+        
+        if (!response.ok) throw new Error('Ошибка подтверждения оплаты');
+        
+        showMessage('Оплата подтверждена!', 'success');
+        
+        // Задержка чтобы увидеть сообщение
+        setTimeout(() => {
+          loadApplications();
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка подтверждения оплаты', 'error');
+      }
+    }
+    
+    async function createUserFromApplication(applicationId, email) {
+      if (!confirm(`Создать пользователя для ${email}?`)) return;
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/create_user`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            applicationId: applicationId
+          })
+        });
+        
+        if (!response.ok) throw new Error('Ошибка создания пользователя');
+        
+        const data = await response.json();
+        
+        // Сначала показываем alert с паролем
+        alert(`Пользователь создан!\n\nEmail: ${data.email}\nПароль: ${data.password}\n\nТеперь активируйте пользователя в секции "Пользователи" для отправки Email с доступом.`);
+        
+        // Потом сообщение
+        showMessage('Пользователь создан! Заявка завершена.', 'success');
+        
+        // Перезагружаем с задержкой
+        setTimeout(() => {
+          loadApplications();
+          loadUsers();
+        }, 1000);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка создания пользователя', 'error');
+      }
+    }
+    
+    async function deleteApplication(applicationId) {
+      if (!confirm('Удалить эту заявку? Это действие нельзя отменить.')) return;
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/delete_application`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ applicationId })
+        });
+        
+        if (!response.ok) throw new Error('Ошибка удаления заявки');
+        
+        showMessage('Заявка удалена', 'success');
+        
+        setTimeout(() => {
+          loadApplications();
+        }, 1000);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка удаления заявки', 'error');
+      }
+    }
+    
+    // ========== СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ ВРУЧНУЮ ==========
+    
+    async function handleCreateUser(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('emailInput').value;
+      const createBtn = document.getElementById('createBtn');
+      const originalText = createBtn.textContent;
+      
+      createBtn.disabled = true;
+      createBtn.textContent = 'Создание...';
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/create_user`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email })
+        });
+        
+        if (!response.ok) throw new Error('Ошибка создания');
+        
+        const data = await response.json();
+        
+        document.getElementById('resultTitle').textContent = '✅ Пользователь создан!';
+        document.getElementById('resultEmail').textContent = `Email: ${data.email}`;
+        document.getElementById('resultPassword').textContent = data.password;
+        document.getElementById('result').classList.add('show');
+        
+        document.getElementById('createForm').reset();
+        showMessage('Пользователь создан успешно!', 'success');
+        loadUsers();
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка создания пользователя', 'error');
+      } finally {
+        createBtn.disabled = false;
+        createBtn.textContent = originalText;
+      }
+    }
+    
+    function copyPassword() {
+      const password = document.getElementById('resultPassword').textContent;
+      navigator.clipboard.writeText(password);
+      showMessage('Пароль скопирован!', 'success');
+    }
+    
+    function closeResult() {
+      document.getElementById('result').classList.remove('show');
+      document.getElementById('createForm').reset();
+    }
+    
+    // ========== РАБОТА С ПОЛЬЗОВАТЕЛЯМИ ==========
+    
+    async function loadUsers() {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/list_users`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) throw new Error('Ошибка загрузки пользователей');
+        
+        const users = await response.json();
+        renderUsers(users);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        document.getElementById('usersList').innerHTML = 
+          '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #ef4444;">Ошибка загрузки пользователей</td></tr>';
+      }
+    }
+    
+    function renderUsers(users) {
+      const tbody = document.getElementById('usersList');
+      
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af;">Пользователей нет</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = users.map(user => {
+        const date = new Date(user.created_at).toLocaleDateString('ru-RU');
+        const statusBadge = user.is_paid 
+          ? '<span class="status-badge paid">✅ Оплачено</span>'
+          : '<span class="status-badge unpaid">❌ Не оплачено</span>';
+        
+        return `
+          <tr>
+            <td>${user.email}</td>
+            <td>${date}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <div class="action-btns">
+                ${user.is_paid 
+                  ? `<button class="btn-sm deactivate" onclick="toggleUserStatus('${user.id}', false)">Отменить</button>`
+                  : `<button class="btn-sm activate" onclick="toggleUserStatus('${user.id}', true)">Активировать</button>`
+                }
+                <button class="btn-sm devices" onclick="showDevices('${user.email}')">Устройства</button>
+                <button class="btn-sm delete" onclick="deleteUser('${user.id}', '${user.email}')">Удалить</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    async function toggleUserStatus(userId, isPaid) {
+      const action = isPaid ? 'активировать' : 'деактивировать';
+      if (!confirm(`Вы уверены что хотите ${action} пользователя?`)) return;
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/update_user_status`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userId, isPaid })
+        });
+        
+        if (!response.ok) throw new Error('Ошибка обновления статуса');
+        
+        showMessage(isPaid ? 'Пользователь активирован! Email с доступом отправлен.' : 'Статус обновлён', 'success');
+        
+        setTimeout(() => {
+          loadUsers();
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка обновления статуса', 'error');
+      }
+    }
+    
+    async function deleteUser(userId, email) {
+      if (!confirm(`Удалить пользователя ${email}? Это действие нельзя отменить.`)) return;
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/delete_user`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userId })
+        });
+        
+        if (!response.ok) throw new Error('Ошибка удаления');
+        
+        showMessage('Пользователь удалён', 'success');
+        
+        setTimeout(() => {
+          loadUsers();
+        }, 1000);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка удаления пользователя', 'error');
+      }
+    }
+    
+    async function showDevices(email) {
+      currentUserEmail = email;
+      
+      try {
+        const { data, error } = await supabaseClient
+          .from('user_devices')
+          .select('*')
+          .eq('email', email)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        const devicesList = document.getElementById('devicesList');
+        
+        if (data.length === 0) {
+          devicesList.innerHTML = '<div class="no-applications">У пользователя нет зарегистрированных устройств</div>';
+        } else {
+          devicesList.innerHTML = data.map(device => {
+            const createdDate = new Date(device.created_at).toLocaleString('ru-RU');
+            const lastLogin = device.last_login 
+              ? new Date(device.last_login).toLocaleString('ru-RU')
+              : 'Никогда';
+            
+            return `
+              <div class="device-item">
+                <div class="device-name">${device.device_name}</div>
+                <div class="device-info">
+                  Создано: ${createdDate}<br>
+                  Последний вход: ${lastLogin}
+                </div>
+                <button class="unbind-btn" onclick="unbindDevice(${device.id})">
+                  Отвязать устройство
+                </button>
+              </div>
+            `;
+          }).join('');
+        }
+        
+        document.getElementById('devicesModal').classList.add('active');
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка загрузки устройств', 'error');
+      }
+    }
+    
+    function closeDevicesModal() {
+      document.getElementById('devicesModal').classList.remove('active');
+    }
+    
+    async function unbindDevice(deviceId) {
+      if (!confirm('Отвязать это устройство?')) return;
+      
+      try {
+        const { error } = await supabaseClient
+          .from('user_devices')
+          .delete()
+          .eq('id', deviceId);
+        
+        if (error) throw error;
+        
+        showMessage('Устройство отвязано', 'success');
+        showDevices(currentUserEmail);
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showMessage('Ошибка отвязки устройства', 'error');
+      }
+    }
+    
+    // ========== УТИЛИТЫ ==========
+    
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message show ${type}`;
+      
+      setTimeout(() => {
+        msg.classList.remove('show');
+      }, 8000); // 8 секунд вместо 5
+    }
+    
+    function goBack() {
+      window.location.href = 'app.html';
+    }
+    
+    // Загружаем данные при загрузке страницы
+    loadApplications();
+    loadUsers();
+  </script>
+</body>
+</html>

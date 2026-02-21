@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Математический Тренажёр 🎓</title>
+  <meta name="description" content="Математический тренажёр для детей 8-10 лет. Научите ребёнка умножать и делить столбиком за 2 недели без слёз и репетиторов." />
+  <title>Математический Тренажёр - Умножение и деление столбиком для детей 2-4 класса</title>
+  
   <style>
     * {
       margin: 0;
@@ -12,317 +14,513 @@
     }
     
     body {
-      visibility: hidden;
-      overflow: hidden;
-      font-family: 'Comic Sans MS', 'Arial', sans-serif;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
+      font-family: 'Arial', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+      background: #f9fafb;
     }
     
-    body.loaded {
-      visibility: visible;
-      opacity: 1;
-    }
-    
+    /* Container */
     .container {
-      width: 100vw;
-      height: 100vh;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #87CEEB;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
     
-    .image-wrapper {
-      position: relative;
-      display: inline-block;
-      max-width: 100%;
-      max-height: 100vh;
-    }
-    
-    .background-image {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 100vh;
-    }
-    
-    .clickable-zones {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding: 3%;
-      pointer-events: none;
-      z-index: 2;
-    }
-    
-    .zone {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      pointer-events: all;
-    }
-    
-    /* Видимые кнопки - адаптивный размер относительно картинки */
-    .btn {
-      width: 15%;
-      min-width: 100px;
-      max-width: 180px;
-      padding: 2% 2%;
-      background: linear-gradient(135deg, #FFD700, #FFA500);
-      border: 3px solid #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      font-size: clamp(9px, 2.5vw, 16px);
-      font-weight: 900;
-      color: #020004;
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: clamp(60px, 10vh, 120px) 20px clamp(40px, 8vh, 80px);
       text-align: center;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-      transition: all 0.3s ease;
-      animation: bounce 2s infinite;
     }
     
-    @media (min-width: 768px) {
-      .btn {
-        min-width: 120px;
-        padding: 2% 3%;
-        border: 4px solid #fff;
-        border-radius: 20px;
-        font-size: clamp(11px, 1.3vw, 16px);
-      }
-    }
-    
-    .zone-left .btn {
-      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-    }
-    
-    .zone-left:hover .btn {
-      background: linear-gradient(135deg, #FFF59D, #FFEB3B);
-    }
-    
-    .zone-right .btn {
-      background: linear-gradient(135deg, #4ECDC4, #44A08D);
-    }
-    
-    .zone-right:hover .btn {
-      background: linear-gradient(135deg, #81D4FA, #4FC3F7);
-    }
-    
-    .zone:hover .btn {
-      transform: scale(1.15) rotate(-2deg);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-    }
-    
-    .zone:active .btn {
-      transform: scale(0.95);
-    }
-    
-    /* Смена текста при hover */
-    .zone:hover .btn-text {
-      display: none;
-    }
-    
-    .zone:hover .btn-text-hover {
-      display: block;
-    }
-    
-    .btn-emoji {
-      font-size: clamp(12px, 3vw, 20px);
-      display: block;
-      margin-bottom: 2px;
-    }
-    
-    .btn-text {
-      font-size: clamp(8px, 2.5vw, 14px);
-      line-height: 1.1;
-      display: block;
+    .hero h1 {
+      font-size: clamp(28px, 6vw, 48px);
       font-weight: 900;
-    }
-    
-    /* Текст при наведении */
-    .btn-text-hover {
-      display: none;
-      font-size: clamp(9px, 2.5vw, 15px);
+      margin-bottom: 20px;
       line-height: 1.2;
-      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-8px);
-      }
+    .hero .subtitle {
+      font-size: clamp(16px, 3vw, 22px);
+      margin-bottom: 15px;
+      opacity: 0.95;
+      font-weight: 600;
     }
     
-    /* Адаптивность для мобильных */
-    @media (max-width: 768px) {
-      .clickable-zones {
-        padding: 15px;
-      }
-      
-      .btn {
-        width: 140px;
-        padding: 12px 15px;
-        font-size: 14px;
-      }
-      
-      .btn-emoji {
-        font-size: 24px;
-        margin-bottom: 3px;
-      }
-      
-      .btn-text {
-        font-size: 11px;
-      }
+    .hero .for-grade {
+      font-size: clamp(16px, 3vw, 22px);
+      opacity: 0.9;
+      margin-bottom: 30px;
+      font-weight: 600;
     }
     
-    @media (max-width: 480px) {
-      .clickable-zones {
-        padding: 10px;
-      }
-      
-      .btn {
-        width: 120px;
-        padding: 10px 12px;
-      }
-      
-      .btn-emoji {
-        font-size: 20px;
-      }
-      
-      .btn-text {
-        font-size: 10px;
+    .hero-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    @media (min-width: 640px) {
+      .hero-buttons {
+        flex-direction: row;
+        justify-content: center;
       }
     }
     
-    /* Центральная кнопка внизу */
-    .center-button-wrapper {
-      position: absolute;
-      bottom: 3%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 3;
-      pointer-events: all;
-    }
-    
-    .center-btn {
-      background: linear-gradient(135deg, #10B981, #059669);
-      border: 4px solid #fff;
-      border-radius: 20px;
-      padding: 10px 8px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      cursor: pointer;
+    .btn {
+      display: inline-block;
+      padding: clamp(14px, 2.5vh, 18px) clamp(28px, 5vw, 40px);
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: clamp(16px, 3vw, 20px);
+      text-decoration: none;
       transition: all 0.3s ease;
-      animation: bounce 2s infinite;
-      min-width: 120px;
-      max-width: 180px;
+      cursor: pointer;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: 2px solid #047857;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    /* Section */
+    section {
+      padding: clamp(40px, 8vh, 80px) 20px;
+    }
+    
+    .section-title {
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: clamp(30px, 5vh, 50px);
+      color: #1f2937;
+    }
+    
+    /* Problems Section */
+    .problems {
+      background: white;
+    }
+    
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .problem-item {
+      background: #FEF2F2;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid #EF4444;
+    }
+    
+    .problem-item::before {
+      content: "❌";
+      font-size: 24px;
+      margin-right: 10px;
+    }
+    
+    .problem-item p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #991B1B;
+      font-weight: 600;
+    }
+    
+    /* Solution Section */
+    .solution {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .feature-item {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .feature-item::before {
+      content: "✅";
+      font-size: 28px;
+      margin-right: 10px;
+    }
+    
+    .feature-item p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #065F46;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    
+    /* Modules Section */
+    .modules {
+      background: white;
+    }
+    
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .module-card {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .module-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    
+    .module-title {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: #4338CA;
+    }
+    
+    .module-desc {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #4B5563;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    
+    .module-level {
+      display: inline-block;
+      background: #10B981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+    
+    /* Pricing Section */
+    .pricing {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
       text-align: center;
     }
     
-    @media (min-width: 768px) {
-      .center-btn {
-        min-width: 180px;
-        padding: 12px 20px;
-      }
+    .pricing .section-title {
+      color: white;
     }
     
-    .center-btn:hover {
-      transform: scale(1.15) rotate(-2deg);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-      background: linear-gradient(135deg, #34D399, #10B981);
+    .price-card {
+      background: white;
+      color: #1f2937;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: clamp(30px, 5vw, 50px);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     }
     
-    .center-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .center-btn-emoji {
-      font-size: clamp(18px, 2vw, 24px);
-      display: block;
-      margin-bottom: 3px;
-    }
-    
-    .center-btn-text {
-      font-size: clamp(8px, 2.5vw, 12px);
-      line-height: 1.1;
-      display: block;
+    .price-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 900;
-      color: #fff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
     }
     
-    /* === BLUR OVERLAY === */
-    .blur-overlay {
+    .price-amount {
+      font-size: clamp(48px, 10vw, 72px);
+      font-weight: 900;
+      color: #10B981;
+      margin-bottom: 10px;
+    }
+    
+    .price-period {
+      font-size: clamp(18px, 3vw, 24px);
+      color: #6B7280;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    
+    .price-compare {
+      background: #F3F4F6;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 30px 0;
+      text-align: left;
+    }
+    
+    .price-compare p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #4B5563;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .price-compare p::before {
+      content: "📌";
+      margin-right: 8px;
+    }
+    
+    .bonus {
+      background: #FEF3C7;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border-left: 4px solid #F59E0B;
+    }
+    
+    .bonus p {
+      font-size: clamp(13px, 2.5vw, 15px);
+      color: #92400E;
+      font-weight: 700;
+    }
+    
+    .bonus p::before {
+      content: "🎁";
+      margin-right: 8px;
+    }
+    
+    .payment-info {
+      margin-top: 25px;
+      font-size: clamp(13px, 2.5vw, 14px);
+      color: #6B7280;
+      text-align: center;
+    }
+    
+    .payment-info p {
+      margin: 5px 0;
+    }
+    
+    .promo-block .payment-info {
+      text-align: center;
+    }
+    
+    /* FAQ Section */
+    .faq {
+      background: white;
+    }
+    
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      background: #F9FAFB;
+      padding: 25px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .faq-question {
+      font-size: clamp(16px, 3vw, 18px);
+      font-weight: 900;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+    
+    .faq-question::before {
+      content: "❓";
+      margin-right: 10px;
+    }
+    
+    .faq-answer {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #4B5563;
+      line-height: 1.6;
+    }
+    
+    /* CTA Section */
+    .cta {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      text-align: center;
+    }
+    
+    .cta .section-title {
+      color: white;
+    }
+    
+    .cta-text {
+      font-size: clamp(16px, 3vw, 20px);
+      margin-bottom: 30px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    
+    .cta-note {
+      margin-top: 25px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      opacity: 0.9;
+      font-weight: 600;
+    }
+    
+    /* Footer */
+    footer {
+      background: #1f2937;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    footer a {
+      color: #10B981;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .login-link {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .login-link a {
+      color: #60A5FA;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      backdrop-filter: blur(15px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
       justify-content: center;
-      transition: opacity 0.5s ease, backdrop-filter 0.5s ease;
+      align-items: center;
+      padding: 20px;
     }
     
-    .blur-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-      backdrop-filter: blur(0px);
+    .modal-overlay.active {
+      display: flex;
     }
     
-    /* Форма входа */
-    .login-form {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40px;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      min-width: 320px;
-      max-width: 400px;
-      text-align: center;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    .login-form h2 {
-      color: white;
-      font-size: 28px;
-      font-weight: 900;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    
-    .login-form p {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-    
-    .login-form input {
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(30px, 5vw, 50px);
+      max-width: 500px;
       width: 100%;
-      padding: 14px;
-      margin-bottom: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
       border: none;
-      border-radius: 12px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #9ca3af;
+      transition: color 0.3s;
+    }
+    
+    .modal-close:hover {
+      color: #374151;
+    }
+    
+    .modal-title {
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 900;
+      color: #667eea;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .form-group label .required {
+      color: #ef4444;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
       font-size: 16px;
-      font-weight: 600;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
       outline: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #667eea;
     }
     
-    .login-form input:focus {
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
-    }
-    
-    .login-form button {
+    .submit-btn {
       width: 100%;
       padding: 16px;
       background: linear-gradient(135deg, #10B981, #059669);
@@ -332,186 +530,573 @@
       font-size: 18px;
       font-weight: 900;
       cursor: pointer;
+      transition: all 0.3s;
       text-transform: uppercase;
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
     }
     
-    .login-form button:hover {
+    .submit-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     }
     
-    .login-form button:active {
-      transform: translateY(0);
-    }
-    
-    /* Блокировка кнопок пока не залогинен */
-    body.locked .zone,
-    body.locked .center-btn {
-      pointer-events: none;
+    .submit-btn:disabled {
       opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .success-screen {
+      display: none;
+      text-align: center;
+    }
+    
+    .success-screen.active {
+      display: block;
+    }
+    
+    .application-number {
+      background: #f3f4f6;
+      border: 2px solid #667eea;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 900;
+      color: #667eea;
+    }
+    
+    .payment-info {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .payment-info h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 15px;
+    }
+    
+    .payment-method {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .payment-method strong {
+      display: block;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+    
+    .copy-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .copy-btn:hover {
+      background: #5568d3;
+    }
+    
+    .warning-box {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-weight: 600;
+      color: #92400e;
+    }
+    
+    .contact-info {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f0f9ff;
+      border-radius: 8px;
+    }
+    
+    .telegram-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 12px 24px;
+      background: #0088cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    
+    .telegram-btn:hover {
+      background: #006699;
+      transform: translateY(-2px);
+    }
+    
+    /* Promo Block Styles */
+    .promo-block {
+      background: white;
+      max-width: 950px;
+      margin: 60px auto;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    .promo-banner {
+      background: linear-gradient(135deg, #de1c80, #b45309);
+      color: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    
+    .promo-cta-btn {
+      display: inline-block;
+      padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: 2px solid #047857;
+      border-radius: 12px;
+      font-size: clamp(18px, 3.5vw, 24px);
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: none;
+      letter-spacing: 0;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .promo-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .promo-price-note {
+      background: #f3f4f6;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: #b91c1c;
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: 600;
+      line-height: 1.5;
     }
   </style>
-  
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="locked">
-  <!-- BLUR OVERLAY с формой входа -->
-  <div class="blur-overlay" id="loginOverlay">
-    <div class="login-form">
-      <h2>🎓 Вход</h2>
-      <p>Введите логин и пароль</p>
-      <input type="text" id="loginInput" placeholder="Логин" autocomplete="username">
-      <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="current-password">
-      <button onclick="handleLogin()">Войти</button>
-    </div>
-  </div>
-  
-  <div class="container">
-    <div class="image-wrapper">
-      <!-- Фоновая картинка -->
-      <img 
-        src="math-trainer_start.jpg" 
-        alt="Математический тренажёр" 
-        class="background-image"
-      />
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>🎓 Умножение столбиком и деление уголком — это просто. Полное освоение алгоритмов за 2 недели</h1>
+      <p class="subtitle">Без слёз над домашкой и споров с родителями</p>
+      <p class="for-grade">Интерактивный тренажёр для учеников 2-4 класса</p>
       
-      <!-- Кликабельные зоны -->
-      <div class="clickable-zones">
-        <!-- Левая зона - Умножение -->
-        <div 
-          class="zone zone-left" 
-          onclick="window.location.href='multiplication.html'"
-        >
-          <div class="btn">
-            <span class="btn-emoji">✖️</span>
-            <span class="btn-text">УМНОЖЕНИЕ<br>СТОЛБИКОМ</span>
-            <span class="btn-text-hover">Нажми—перейдёшь<br>к умножению</span>
-          </div>
+      <div class="hero-buttons">
+        <a href="javascript:void(0)" class="btn btn-primary" onclick="openOrderModal()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Оформить доступ для обучения</a>
+        <a href="#modules" class="btn btn-secondary" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Посмотреть модули</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problems Section -->
+  <section class="problems">
+    <div class="container">
+      <h2 class="section-title">😤 Знакомые ситуации?</h2>
+      
+      <div class="problems-grid">
+        <div class="problem-item">
+          <p>Ребёнок путается в столбиках и переносах</p>
+        </div>
+        <div class="problem-item">
+          <p>Учитель объяснил раз — и всё, дальше сам</p>
+        </div>
+        <div class="problem-item">
+          <p>Сидите с ним по вечерам, нервы сдают</p>
+        </div>
+        <div class="problem-item">
+          <p>Репетиторы стоят 1500₽/час</p>
+        </div>
+        <div class="problem-item">
+          <p>YouTube-уроки смотрит, но не понимает</p>
+        </div>
+        <div class="problem-item">
+          <p>Контрольные приближаются, оценки падают</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="solution">
+    <div class="container">
+      <h2 class="section-title">✨ Тренажёр учит КАК В ШКОЛЕ, но понятно!</h2>
+      
+      <div class="features-grid">
+        <div class="feature-item">
+          <p>Пошаговые подсказки на КАЖДОМ шаге<br>"Умножь 7×3, напиши 1, запомни 2"</p>
+        </div>
+        <div class="feature-item">
+          <p>Нельзя ошибиться и "застрять"<br>Система сама покажет где ошибка</p>
+        </div>
+        <div class="feature-item">
+          <p>Работает везде: дома, в дороге, на даче<br>Телефон, планшет, компьютер</p>
+        </div>
+        <div class="feature-item">
+          <p>3 уровня: от простого к сложному<br>Как в школьной программе 2-4 класса</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules Section -->
+  <section class="modules" id="modules">
+    <div class="container">
+      <h2 class="section-title">📚 3 модуля обучения (как в школе)</h2>
+      
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-icon">🌱</div>
+          <h3 class="module-title">УРОВЕНЬ 1: Первые шаги</h3>
+          <p class="module-desc">Умножение на одну цифру. Учим переносы и запоминание. Идеально для начинающих.</p>
+          <span class="module-level">✓ Для 2-3 класса</span>
         </div>
         
-        <!-- Правая зона - Деление -->
-        <div 
-          class="zone zone-right" 
-          onclick="window.location.href='division.html'"
-        >
-          <div class="btn">
-            <span class="btn-emoji">➗</span>
-            <span class="btn-text">ДЕЛЕНИЕ<br>УГОЛКОМ</span>
-            <span class="btn-text-hover">Нажми—перейдёшь<br>к делению</span>
-          </div>
+        <div class="module-card">
+          <div class="module-icon">🔢</div>
+          <h3 class="module-title">УРОВЕНЬ 2: Умножение столбиком</h3>
+          <p class="module-desc">Многозначные числа. Полный алгоритм с подсказками на каждом этапе.</p>
+          <span class="module-level">✓ Для 3-4 класса</span>
         </div>
-      </div>
-      
-      <!-- Центральная кнопка внизу - Основы -->
-      <div class="center-button-wrapper">
-        <div 
-          class="center-btn"
-          onclick="window.location.href='basics.html'"
-        >
-          <span class="center-btn-emoji">🌱</span>
-          <span class="center-btn-text">СТАРТ:<br>УМНОЖАЕМ НА<br>ОДНО ЧИСЛО</span>
+        
+        <div class="module-card">
+          <div class="module-icon">➗</div>
+          <h3 class="module-title">УРОВЕНЬ 3: Деление уголком</h3>
+          <p class="module-desc">Самое сложное — просто! Пошаговое объяснение каждого действия.</p>
+          <span class="module-level">✓ Для 3-4 класса</span>
         </div>
       </div>
     </div>
-  </div>
-  
-  <script>
-    // Инициализация Supabase
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      
+      <div class="promo-block" style="margin-bottom: 40px;">
+        <div class="promo-banner">
+          ВАШ РЕБЁНОК ОСВОИТ ЭТИ ОПЕРАЦИИ ЗА 2 НЕДЕЛИ<br>БЕЗ СЛЁЗ И СПОРОВ С РОДИТЕЛЯМИ
+        </div>
+        
+        <button class="promo-cta-btn" onclick="openOrderModal()">
+          Оформить доступ для обучения
+        </button>
+        
+        <div class="promo-price-note">
+          Стоимость полного доступа - 990 руб.<br>
+          Навсегда для всей семьи
+        </div>
+        
+        <div class="price-compare">
+          <p>Это дешевле чем:</p>
+          <p>1 занятие с репетитором (1500₽/час)</p>
+          <p>Комплект тетрадей и пособий (800₽)</p>
+          <p>Онлайн-курс на месяц (2500₽)</p>
+        </div>
+        
+        <div class="bonus">
+          <p>БОНУС: Персонализированные поздравления с именем ребёнка</p>
+        </div>
+        
+        <div class="payment-info">
+          <p>💳 Оплата картой или СБП</p>
+          <p>🔒 Безопасная передача данных</p>
+          <p>✓ Доступ открывается в течение 1-2 часов</p>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq">
+    <div class="container">
+      <h2 class="section-title">❓ Частые вопросы</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">С какого возраста можно начинать?</div>
+          <div class="faq-answer">От 8 лет (2 класс), если ребёнок знает таблицу умножения хотя бы частично. Есть модуль "Первые шаги" для начинающих.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">А если ребёнок совсем не понимает математику?</div>
+          <div class="faq-answer">Модуль "Первые шаги" начинается с самых основ. Каждое действие сопровождается подсказками. Система не даст ошибиться и застрять.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">Нужно устанавливать программу?</div>
+          <div class="faq-answer">Нет! Работает прямо в браузере. Любое устройство с интернетом — телефон, планшет или компьютер.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">Сколько времени нужно заниматься?</div>
+          <div class="faq-answer">15-20 минут в день достаточно. Можно больше — дети сами захотят продолжать, потому что это интересно!</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">На сколько детей один доступ?</div>
+          <div class="faq-answer">Неограниченно! Все дети в семье могут заниматься. Можно даже настроить имя каждого ребёнка для персонализированных поздравлений.</div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">Как получить доступ после оплаты?</div>
+          <div class="faq-answer">После оплаты вы получите логин и пароль на email в течение 1-2 часов. Можно сразу начинать заниматься!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <h2 class="section-title">⏰ Начните СЕГОДНЯ!</h2>
+      
+      <p class="cta-text">
+        Пока вы думаете, другие дети уже учатся и получают пятёрки.<br>
+        Дайте вашему ребёнку инструмент для успеха в математике!
+      </p>
+      
+      <button class="btn btn-primary" onclick="openOrderModal()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">
+        Оформить доступ для обучения
+      </button>
+      
+      <p class="cta-note">
+        P.S. Это НЕ подписка. Оплата один раз — пользуйтесь вечно.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Математический тренажёр © 2025</p>
+      <p style="opacity: 0.8; font-size: 14px; margin-top: 8px;">столбиком.рф | stolbik.online</p>
+      <p>Email: <a href="/cdn-cgi/l/email-protection#e7939d948f86958e978891a7808a868e8bc984888a"><span class="__cf_email__" data-cfemail="f0848a8398918299809f86b0979d91999cde939f9d">[email&#160;protected]</span></a></p>
+      <p>Telegram: <a href="https://t.me/SharipovT" target="_blank">@SharipovT</a></p>
+      
+      <div class="login-link">
+        <p><a href="app.html">Уже есть доступ? Войти в приложение →</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Открытие формы заявки
     const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    // Обработка входа (НАСТОЯЩАЯ проверка через БД)
-    async function handleLogin() {
-      const login = document.getElementById('loginInput').value.trim();
-      const password = document.getElementById('passwordInput').value.trim();
+    function openOrderModal() {
+      document.getElementById('orderModal').classList.add('active');
+      document.getElementById('registrationForm').style.display = 'block';
+      document.getElementById('successScreen').classList.remove('active');
+      document.getElementById('applicationForm').reset();
       
-      // Проверка что поля не пустые
-      if (!login || !password) {
-        alert('Введите логин и пароль!');
-        return;
-      }
+      // Сброс состояния кнопки
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Отправить заявку';
+    }
+    
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.remove('active');
+    }
+    
+    async function submitApplication(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка...';
+      
+      const email = document.getElementById('emailInput').value.trim();
+      const childName = document.getElementById('childNameInput').value.trim();
+      const payerName = document.getElementById('payerNameInput').value.trim();
+      const telegram = document.getElementById('telegramInput').value.trim();
       
       try {
-        // Запрос к БД: ищем пользователя с таким логином и паролем
-        const { data, error } = await supabaseClient
-          .from('users')
-          .select('*')
-          .eq('login', login)
-          .eq('password', password)
-          .eq('is_active', true)
-          .single();
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/submit_application`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY
+          },
+          body: JSON.stringify({
+            email,
+            childName,
+            payerName,
+            telegram: telegram || null
+          })
+        });
         
-        if (error || !data) {
-          // Пользователь не найден или пароль неверный
-          alert('Неверный логин или пароль!');
-          console.error('Ошибка входа:', error);
+        const result = await response.json();
+        
+        if (!response.ok) {
+          alert('❌ ' + (result.error || 'Ошибка отправки заявки'));
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Отправить заявку';
           return;
         }
         
-        // Успешный вход!
-        console.log('Вход выполнен:', data);
-        
-        // Сохраняем в localStorage что пользователь залогинен
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userId', data.id);
-        localStorage.setItem('userLogin', data.login);
-        
-        // Убираем overlay с анимацией
-        const overlay = document.getElementById('loginOverlay');
-        overlay.classList.add('hidden');
-        
-        // Разблокируем кнопки
-        document.body.classList.remove('locked');
+        // Показываем экран успеха
+        document.getElementById('registrationForm').style.display = 'none';
+        document.getElementById('successScreen').classList.add('active');
+        document.getElementById('appNumberDisplay').textContent = result.applicationNumber;
+        document.getElementById('appNumberComment').textContent = 'Заявка ' + result.applicationNumber;
         
       } catch (err) {
-        alert('Произошла ошибка при входе. Попробуйте ещё раз.');
-        console.error('Ошибка:', err);
+        console.error('Error:', err);
+        alert('❌ Ошибка соединения. Попробуйте позже.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить заявку';
       }
     }
     
-    // Ждём полной загрузки DOM
-    window.addEventListener('DOMContentLoaded', () => {
-      // Проверка - залогинен ли уже пользователь
-      const isLoggedIn = localStorage.getItem('isLoggedIn');
-      
-      if (isLoggedIn === 'true') {
-        // Пользователь уже залогинен - скрываем форму
-        const overlay = document.getElementById('loginOverlay');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('locked');
-      }
-      
-      // Enter для отправки формы
-      const passwordInput = document.getElementById('passwordInput');
-      if (passwordInput) {
-        passwordInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') handleLogin();
-        });
-      }
-      
-      // Показываем страницу ТОЛЬКО после полной загрузки изображения
-      const backgroundImg = document.querySelector('.background-image');
-      
-      if (backgroundImg) {
-        if (backgroundImg.complete) {
-          document.body.classList.add('loaded');
-        } else {
-          backgroundImg.addEventListener('load', () => {
-            document.body.classList.add('loaded');
+    function copyToClipboard(text, button) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = '✅ Скопировано!';
+        button.style.background = '#10B981';
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.background = '#667eea';
+        }, 2000);
+      }).catch(err => {
+        console.error('Ошибка копирования:', err);
+        alert('Не удалось скопировать. Скопируйте вручную.');
+      });
+    }
+    
+    // Старая функция для совместимости
+    function openOrderForm() {
+      openOrderModal();
+    }
+    
+    // Плавная прокрутка к якорям
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
           });
-          
-          setTimeout(() => {
-            document.body.classList.add('loaded');
-          }, 1000);
         }
-      } else {
-        document.body.classList.add('loaded');
-      }
+      });
     });
   </script>
-</body>
-</html>
+
+  <!-- Modal Window -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeOrderModal()">✕</button>
+      
+      <!-- Registration Form -->
+      <div id="registrationForm">
+        <h2 class="modal-title">📝 Оформление доступа</h2>
+        
+        <form id="applicationForm" onsubmit="submitApplication(event)">
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" id="emailInput" required placeholder="ivanov@mail.ru">
+          </div>
+          
+          <div class="form-group">
+            <label>Имя ребёнка <span class="required">*</span></label>
+            <input type="text" id="childNameInput" required placeholder="Ваня">
+          </div>
+          
+          <div class="form-group">
+            <label>Ваше ФИО (как в банке) <span class="required">*</span></label>
+            <input type="text" id="payerNameInput" required placeholder="Иванов Иван Борисович">
+          </div>
+          
+          <div class="form-group">
+            <label>Telegram (необязательно)</label>
+            <input type="text" id="telegramInput" placeholder="@ivan_ivanov">
+          </div>
+          
+          <button type="submit" class="submit-btn" id="submitBtn">
+            Отправить заявку
+          </button>
+        </form>
+      </div>
+      
+      <!-- Success Screen -->
+      <div id="successScreen" class="success-screen">
+        <h2 class="modal-title">✅ Заявка создана!</h2>
+        
+        <div class="application-number">
+          📋 Ваш номер заявки:<br>
+          <span id="appNumberDisplay"></span>
+        </div>
+        
+        <div class="payment-info">
+          <h3>Для активации доступа:</h3>
+          
+          <p><strong>1️⃣ Переведите 990₽:</strong></p>
+          
+          <div class="payment-method">
+            <strong>📱 СБП (по номеру телефона):</strong>
+            +7 925 090 72 41<br>
+            <small>(Тахир Жураевич Ш.)</small>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('+79250907241', this)">
+              📋 Скопировать номер
+            </button>
+          </div>
+          
+          <div class="payment-method">
+            <strong>💳 Карта МИР:</strong>
+            2202 2056 3073 0999<br>
+            <small>(Шарипов Тахир Жураевич)</small>
+            <button type="button" class="copy-btn" onclick="copyToClipboard('2202205630730999', this)">
+              📋 Скопировать номер
+            </button>
+          </div>
+        </div>
+        
+        <div class="warning-box">
+          ⚠️ В комментарии к платежу укажите:<br>
+          <strong id="appNumberComment"></strong>
+        </div>
+        
+        <div class="contact-info">
+          <p><strong>2️⃣ После оплаты напишите:</strong></p>
+          <a href="https://t.me/SharipovT" target="_blank" class="telegram-btn">
+            💬 Написать в Telegram
+          </a>
+          <p style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+            или на email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56222c253e37243f26392016313b373f3a7835393b">[email&#160;protected]</a>
+          </p>
+        </div>
+        
+     

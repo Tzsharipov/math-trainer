@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Математический Тренажёр 🎓</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      visibility: hidden;
+      overflow: hidden;
+      font-family: 'Comic Sans MS', 'Arial', sans-serif;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    body.loaded {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #87CEEB;
+    }
+    
+    .image-wrapper {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      max-height: 100vh;
+    }
+    
+    .background-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 100vh;
+    }
+    
+    .clickable-zones {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 3%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    
+    .zone {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      pointer-events: all;
+    }
+    
+    .btn {
+      width: 15%;
+      min-width: 100px;
+      max-width: 180px;
+      padding: 2% 2%;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      border: 3px solid #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      font-size: clamp(9px, 2.5vw, 16px);
+      font-weight: 900;
+      color: #020004;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+      animation: bounce 2s infinite;
+    }
+    
+    @media (min-width: 768px) {
+      .btn {
+        min-width: 120px;
+        padding: 2% 3%;
+        border: 4px solid #fff;
+        border-radius: 20px;
+        font-size: clamp(11px, 1.3vw, 16px);
+      }
+    }
+    
+    .zone-left .btn {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    }
+    
+    .zone-left:hover .btn {
+      background: linear-gradient(135deg, #FFF59D, #FFEB3B);
+    }
+    
+    .zone-right .btn {
+      background: linear-gradient(135deg, #4ECDC4, #44A08D);
+    }
+    
+    .zone-right:hover .btn {
+      background: linear-gradient(135deg, #81D4FA, #4FC3F7);
+    }
+    
+    .zone:hover .btn {
+      transform: scale(1.15) rotate(-2deg);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .zone:active .btn {
+      transform: scale(0.95);
+    }
+    
+    .zone:hover .btn-text {
+      display: none;
+    }
+    
+    .zone:hover .btn-text-hover {
+      display: block;
+    }
+    
+    .btn-emoji {
+      font-size: clamp(12px, 3vw, 20px);
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .btn-text {
+      font-size: clamp(8px, 2.5vw, 14px);
+      line-height: 1.1;
+      display: block;
+      font-weight: 900;
+    }
+    
+    .btn-text-hover {
+      display: none;
+      font-size: clamp(9px, 2.5vw, 15px);
+      line-height: 1.2;
+      font-weight: 800;
+    }
+    
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .clickable-zones {
+        padding: 15px;
+      }
+      
+      .btn {
+        width: 140px;
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      
+      .btn-emoji {
+        font-size: 24px;
+        margin-bottom: 3px;
+      }
+      
+      .btn-text {
+        font-size: 11px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .clickable-zones {
+        padding: 10px;
+      }
+      
+      .btn {
+        width: 120px;
+        padding: 10px 12px;
+      }
+      
+      .btn-emoji {
+        font-size: 20px;
+      }
+      
+      .btn-text {
+        font-size: 10px;
+      }
+    }
+    
+    .center-button-wrapper {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      pointer-events: all;
+    }
+    
+    .center-btn {
+      background: linear-gradient(135deg, #10B981, #059669);
+      border: 4px solid #fff;
+      border-radius: 20px;
+      padding: 10px 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: bounce 2s infinite;
+      min-width: 120px;
+      max-width: 180px;
+      text-align: center;
+    }
+    
+    @media (min-width: 768px) {
+      .center-btn {
+        min-width: 180px;
+        padding: 12px 20px;
+      }
+    }
+    
+    .center-btn:hover {
+      transform: scale(1.15) rotate(-2deg);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(135deg, #34D399, #10B981);
+    }
+    
+    .center-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .center-btn-emoji {
+      font-size: clamp(18px, 2vw, 24px);
+      display: block;
+      margin-bottom: 3px;
+    }
+    
+    .center-btn-text {
+      font-size: clamp(8px, 2.5vw, 12px);
+      line-height: 1.1;
+      display: block;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .blur-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      backdrop-filter: blur(15px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease, backdrop-filter 0.5s ease;
+    }
+    
+    .blur-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(0px);
+    }
+    
+    .login-form {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      min-width: 320px;
+      max-width: 400px;
+      text-align: center;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .login-form h2 {
+      color: white;
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .login-form p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      outline: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .password-wrapper input {
+      margin-bottom: 0;
+      padding-right: 45px;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 20px;
+      user-select: none;
+    }
+    
+    .login-form input:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+    }
+    
+    .login-form button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .login-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+    }
+    
+    .login-form button:active {
+      transform: translateY(0);
+    }
+    
+    body.locked .zone,
+    body.locked .center-btn {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    .logout-btn {
+      position: fixed;
+      top: clamp(60px, 10vh, 80px);
+      right: clamp(10px, 2vw, 20px);
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+      border: clamp(2px, 0.3vw, 3px) solid white;
+      border-radius: clamp(8px, 1.5vw, 12px);
+      padding: clamp(8px, 2vh, 12px) clamp(12px, 3vw, 20px);
+      font-size: clamp(12px, 3vw, 16px);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 100;
+      display: none;
+    }
+    
+    .logout-btn.show {
+      display: block;
+    }
+    
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+    }
+    
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+    
+    .settings-btn {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      right: clamp(10px, 2vw, 20px);
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: clamp(2px, 0.3vw, 3px) solid white;
+      border-radius: clamp(8px, 1.5vw, 12px);
+      padding: clamp(8px, 2vh, 12px) clamp(12px, 3vw, 20px);
+      font-size: clamp(12px, 3vw, 16px);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 100;
+      display: none;
+      text-decoration: none;
+    }
+    
+    .settings-btn.show {
+      display: block;
+    }
+    
+    .settings-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+    }
+    
+    .settings-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* ВРЕМЕННО ДЛЯ ВИДЕО - Баннеры */
+    .promo-banner {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 193, 7, 0.95);
+      color: #1f2937;
+      padding: 40px 60px;
+      text-align: center;
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      animation: fadeIn 0.5s ease-in;
+      max-width: 80%;
+    }
+    
+    .promo-banner.fade-out {
+      animation: fadeOut 1s ease-out forwards;
+    }
+    
+    .final-banner {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      z-index: 10001;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .final-banner h1 {
+      font-size: clamp(32px, 8vw, 72px);
+      font-weight: 900;
+      margin-bottom: 30px;
+      text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .final-banner h2 {
+      font-size: clamp(28px, 6vw, 56px);
+      font-weight: 700;
+      color: #fbbf24;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
+  
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/ClientJS/0.2.1/client.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="locked">
+  <!-- ВРЕМЕННО ДЛЯ ВИДЕО - Начальный баннер -->
+  <!-- <div class="promo-banner" id="initialBanner">
+    «Сын всё понимал. А через два дня забывал»
+  </div> -->
+  
+  <!-- ВРЕМЕННО ДЛЯ ВИДЕО - Финальный баннер -->
+  <!-- <div class="final-banner" id="finalBanner">
+    <h1>Сделал для сына — поможет и вам.</h1>
+    <h2>stolbik.online</h2>
+  </div> -->
+  
+  <a href="settings.html" class="settings-btn" id="settingsBtn">⚙️ Настройки</a>
+  <a href="admin.html" class="settings-btn" id="adminBtn" style="right: clamp(10px, 2vw, 20px); left: auto; background: linear-gradient(135deg, #F59E0B, #D97706); display: none;">👑 Админ-панель</a>
+  <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">🚪 Выход</button>
+  
+  <div class="blur-overlay" id="loginOverlay">
+    <div class="login-form">
+      <h2>🎓 Вход</h2>
+      <p>Введите email и пароль</p>
+      <input type="text" id="loginInput" placeholder="Email" autocomplete="username">
+      <div class="password-wrapper">
+        <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="current-password">
+        <span class="password-toggle" onclick="togglePassword()">👁️</span>
+      </div>
+      <button onclick="handleLogin()">Войти</button>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="image-wrapper">
+      <img 
+        src="math-trainer_start.jpg" 
+        alt="Математический тренажёр" 
+        class="background-image"
+      />
+      
+      <div class="clickable-zones">
+        <div class="zone zone-left" onclick="window.location.href='multiplication.html'">
+          <div class="btn">
+            <span class="btn-emoji">✖️</span>
+            <span class="btn-text">УМНОЖЕНИЕ<br>СТОЛБИКОМ</span>
+            <span class="btn-text-hover">Нажми—перейдёшь<br>к умножению</span>
+          </div>
+        </div>
+        
+        <div class="zone zone-right" onclick="window.location.href='division.html'">
+          <div class="btn">
+            <span class="btn-emoji">➗</span>
+            <span class="btn-text">ДЕЛЕНИЕ<br>УГОЛКОМ</span>
+            <span class="btn-text-hover">Нажми—перейдёшь<br>к делению</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="center-button-wrapper">
+        <div class="center-btn" onclick="window.location.href='basics.html'">
+          <span class="center-btn-emoji">🌱</span>
+          <span class="center-btn-text">СТАРТ:<br>УМНОЖАЕМ НА<br>ОДНО ЧИСЛО</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    function getDeviceFingerprint() {
+      if (typeof ClientJS === 'undefined') {
+        const screenRes = screen.width + 'x' + screen.height;
+        const colorDepth = screen.colorDepth;
+        const timezone = new Date().getTimezoneOffset();
+        const language = navigator.language;
+        const platform = navigator.platform;
+        const userAgent = navigator.userAgent;
+        
+        const data = screenRes + '|' + colorDepth + '|' + timezone + '|' + language + '|' + platform + '|' + userAgent;
+        
+        let hash = 0;
+        for (let i = 0; i < data.length; i++) {
+          const char = data.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash;
+        }
+        
+        return 'fb_' + Math.abs(hash).toString(36);
+      }
+      
+      const client = new ClientJS();
+      const fingerprint = client.getFingerprint();
+      return 'fp_' + fingerprint.toString();
+    }
+    
+    function getDeviceName() {
+      const ua = navigator.userAgent;
+      let deviceName = 'Неизвестное устройство';
+      
+      if (/Mobile|Android|iPhone|iPad/i.test(ua)) {
+        if (/iPhone/i.test(ua)) deviceName = 'iPhone';
+        else if (/iPad/i.test(ua)) deviceName = 'iPad';
+        else if (/Android/i.test(ua)) deviceName = 'Android';
+        else deviceName = 'Мобильное устройство';
+      } else {
+        if (/Windows/i.test(ua)) deviceName = 'Windows ПК';
+        else if (/Mac/i.test(ua)) deviceName = 'Mac';
+        else if (/Linux/i.test(ua)) deviceName = 'Linux ПК';
+        else deviceName = 'Компьютер';
+      }
+      
+      return deviceName;
+    }
+    
+    function togglePassword() {
+      const passwordInput = document.getElementById('passwordInput');
+      const toggleIcon = document.querySelector('.password-toggle');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.textContent = '👁️';
+      }
+    }
+    
+async function handleLogin() {
+  const email = document.getElementById('loginInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
+  
+  if (!email || !password) {
+    alert('Введите email и пароль!');
+    return;
+  }
+  
+  try {
+  // СНАЧАЛА генерируем fingerprint
+  const deviceFingerprint = getDeviceFingerprint();
+  
+  // Вызываем нашу функцию login_check
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/login_check`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY
+    },
+    body: JSON.stringify({ email, password, deviceFingerprint })
+  });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      // Если пароль неверный или в базе стоит is_paid: false
+      alert(result.error || 'Ошибка входа');
+      return;
+    }
+
+    // Если функция подтвердила вход и оплату, создаем сессию
+    const { error: sessionError } = await supabaseClient.auth.setSession({
+      access_token: result.session.access_token,
+      refresh_token: result.session.refresh_token
+    });
+
+    if (sessionError) throw sessionError;
+
+    // Дальше идет твоя родная логика проверки устройств
+    const userId = result.session.user.id;
+    // const deviceFingerprint = getDeviceFingerprint();
+
+    
+    const deviceName = getDeviceName();
+    
+    const { data: devices, error: devicesError } = await supabaseClient
+      .from('user_devices')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (devicesError) {
+      alert('Ошибка проверки устройств. Попробуйте позже.');
+      return;
+    }
+    
+    const existingDevice = devices.find(d => d.device_fingerprint === deviceFingerprint);
+    
+    if (existingDevice) {
+      await supabaseClient
+        .from('user_devices')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', existingDevice.id);
+    } else {
+      if (devices.length >= 3) {
+        alert('⚠️ Лимит устройств достигнут!');
+        return;
+      }
+      await supabaseClient.from('user_devices').insert({
+          user_id: userId,
+          device_fingerprint: deviceFingerprint,
+          device_name: deviceName,
+          email: email  // ← ДОБАВИТЬ ЭТО
+      });
+    }
+    
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('userEmail', email);
+    localStorage.setItem('deviceFingerprint', deviceFingerprint);
+    
+    const overlay = document.getElementById('loginOverlay');
+    overlay.classList.add('hidden');
+    document.body.classList.remove('locked');
+    
+    document.getElementById('settingsBtn').classList.add('show');
+    document.getElementById('logoutBtn').classList.add('show');
+    
+    if (email === 'tzsharipov@gmail.com') {
+      document.getElementById('adminBtn').style.display = 'block';
+    }
+    
+  } catch (err) {
+    console.error(err);
+    alert('Произошла ошибка при входе. Попробуйте ещё раз.');
+  }
+}
+    
+    function handleLogout() {
+      if (!confirm('Вы уверены что хотите выйти?')) {
+        return;
+      }
+      
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
+      
+      window.location.reload();
+    }
+    
+window.addEventListener('DOMContentLoaded', async () => {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      
+      if (isLoggedIn === 'true') {
+        // Сразу показываем кнопки, так как пользователь "свой"
+        document.getElementById('settingsBtn').classList.add('show');
+        document.getElementById('logoutBtn').classList.add('show');
+        
+        const userEmail = localStorage.getItem('userEmail');
+        if (userEmail === 'tzsharipov@gmail.com') {
+          document.getElementById('adminBtn').style.display = 'block';
+        }
+
+        // ПРОВЕРКА: Если уже залогинены, проверяем оплату СРАЗУ
+        const isAccessOk = await checkAccessStrict();
+        
+        if (isAccessOk) {
+          const overlay = document.getElementById('loginOverlay');
+          if (overlay) {
+            overlay.classList.add('hidden');
+            document.body.classList.remove('locked');
+          }
+        }
+      }
+      
+      const passwordInput = document.getElementById('passwordInput');
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') handleLogin();
+        });
+      }
+      
+      const backgroundImg = document.querySelector('.background-image');
+      if (backgroundImg) {
+        if (backgroundImg.complete) document.body.classList.add('loaded');
+        else backgroundImg.addEventListener('load', () => document.body.classList.add('loaded'));
+      } else {
+        document.body.classList.add('loaded');
+      }
+    });
+
+    // ЖЕСТКАЯ ПРОВЕРКА: Если оплаты нет — выкидываем немедленно
+    async function checkAccessStrict() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) return false;
+
+        const { data: profile, error } = await supabaseClient
+          .from('profiles')
+          .select('is_paid')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error || !profile || profile.is_paid !== true) {
+          console.log("Доступ закрыт админом. Выход...");
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('userEmail');
+          await supabaseClient.auth.signOut();
+          
+          // Если мы уже внутри — перезагружаем страницу, чтобы появилось окно входа
+          if (!document.getElementById('loginOverlay').classList.contains('hidden')) {
+             return false;
+          }
+          window.location.reload();
+          return false;
+        }
+        return true;
+      } catch (e) {
+        console.error("Ошибка проверки доступа:", e);
+        return true; // В случае ошибки сети не выкидываем
+      }
+    }
+  </script>
+
+  <script>
+  // ВРЕМЕННО ДЛЯ ВИДЕО - Баннеры
+  (function() {
+    // Показываем баннер ПОСЛЕ логина когда появляется стартовая страница
+    const observer = new MutationObserver(function(mutations) {
+      if (!document.body.classList.contains('locked')) {
+        // Стартовая страница показана!
+        setTimeout(() => {
+          const banner = document.getElementById('initialBanner');
+          banner.style.display = 'block';
+          
+          // Функция скрытия баннера
+          function hideBanner() {
+            banner.classList.add('fade-out');
+            setTimeout(() => banner.remove(), 1000);
+          }
+          
+          // Убираем баннер при клике на любую из трёх кнопок
+          const multiplicationBtn = document.querySelector('a[href="multiplication.html"]');
+          const divisionBtn = document.querySelector('a[href="division.html"]');
+          const basicsBtn = document.querySelector('a[href="basics.html"]');
+          
+          if (multiplicationBtn) multiplicationBtn.addEventListener('click', hideBanner);
+          if (divisionBtn) divisionBtn.addEventListener('click', hideBanner);
+          if (basicsBtn) basicsBtn.addEventListener('click', hideBanner);
+        }, 500);
+        
+        observer.disconnect();
+      }
+    });
+    
+    observer.observe(document.body, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+    
+    // Клавиша K для финального баннера (только латиница!)
+    document.addEventListener('keydown', (e) => {
+      console.log('Нажата клавиша:', e.key, e.code);
+      if (e.key.toLowerCase() === 'k') {
+        const finalBanner = document.getElementById('finalBanner');
+        console.log('Показываю финальный баннер');
+        finalBanner.style.display = 'flex';
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Настройки аккаунта</title>
+  
+  <script>
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(15px, 3vh, 30px);
+    }
+    
+    .settings-container {
+      background: white;
+      border-radius: clamp(20px, 3vw, 30px);
+      padding: clamp(30px, 5vw, 50px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 500px;
+    }
+    
+    h1 {
+      color: #667eea;
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: 900;
+      margin-bottom: clamp(10px, 2vh, 15px);
+      text-align: center;
+      text-transform: uppercase;
+    }
+    
+    h2 {
+      color: #374151;
+      font-size: clamp(16px, 3vw, 18px);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    
+    .user-info {
+      background: #f3f4f6;
+      padding: clamp(12px, 2vh, 16px);
+      border-radius: 12px;
+      margin-bottom: clamp(20px, 3vh, 30px);
+      text-align: center;
+    }
+    
+    .user-info p {
+      color: #374151;
+      font-size: clamp(13px, 2.5vw, 16px);
+      font-weight: 600;
+    }
+    
+    .user-info span {
+      color: #667eea;
+      font-weight: 900;
+    }
+    
+    .devices-section {
+      margin-bottom: clamp(20px, 3vh, 30px);
+      padding: clamp(15px, 2vh, 20px);
+      background: #f9fafb;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+    }
+    
+    .devices-section h2 {
+      margin-bottom: 8px;
+    }
+    
+    .devices-section > p {
+      color: #6b7280;
+      font-size: clamp(11px, 2vw, 12px);
+      margin-bottom: 15px;
+    }
+    
+    #devicesList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .device-item {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .device-info {
+      flex: 1;
+    }
+    
+    .device-name {
+      color: #111827;
+      font-size: clamp(13px, 2.5vw, 14px);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .device-current {
+      color: #059669;
+      font-size: clamp(10px, 2vw, 11px);
+      font-weight: 700;
+      margin-left: 8px;
+    }
+    
+    .device-date {
+      color: #6b7280;
+      font-size: clamp(10px, 2vw, 11px);
+    }
+    
+    .device-unlink-btn {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: clamp(11px, 2vw, 12px);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .device-unlink-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+    
+    .device-unlink-btn:active {
+      transform: translateY(0);
+    }
+    
+    .devices-loading,
+    .devices-empty,
+    .devices-error {
+      color: #6b7280;
+      font-size: clamp(12px, 2.5vw, 13px);
+      text-align: center;
+      padding: 10px;
+    }
+    
+    .devices-error {
+      color: #DC2626;
+    }
+    
+    .form-group {
+      margin-bottom: clamp(16px, 2.5vh, 20px);
+    }
+    
+    label {
+      display: block;
+      color: #374151;
+      font-size: clamp(13px, 2.5vw, 15px);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .password-wrapper {
+      position: relative;
+    }
+    
+    input {
+      width: 100%;
+      padding: clamp(12px, 2vh, 16px);
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    .password-wrapper input {
+      padding-right: 45px;
+    }
+    
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 20px;
+      user-select: none;
+    }
+    
+    .help-text {
+      color: #6b7280;
+      font-size: clamp(11px, 2vw, 13px);
+      margin-top: 5px;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: clamp(14px, 2.5vh, 18px);
+      font-size: clamp(15px, 3vw, 18px);
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transition: all 0.3s ease;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary {
+      width: 100%;
+      background: #e5e7eb;
+      color: #374151;
+      border: none;
+      border-radius: 12px;
+      padding: clamp(12px, 2vh, 14px);
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: clamp(10px, 1.5vh, 15px);
+    }
+    
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+    
+    .message {
+      padding: clamp(12px, 2vh, 16px);
+      border-radius: 12px;
+      margin-bottom: clamp(15px, 2vh, 20px);
+      font-size: clamp(13px, 2.5vw, 15px);
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+    
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 2px solid #10b981;
+    }
+    
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid #ef4444;
+    }
+    
+    .message.show {
+      display: block;
+    }
+  </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="settings-container">
+    <h1>⚙️ Настройки</h1>
+    
+    <div class="user-info">
+      <p>Текущий email: <span id="currentLogin"></span></p>
+    </div>
+    
+    <div id="message" class="message"></div>
+    
+    <div class="devices-section">
+      <h2>🔐 Привязанные устройства</h2>
+      <p>Максимум 3 устройства на один аккаунт</p>
+      
+      <div id="devicesList">
+        <p class="devices-loading">Загрузка...</p>
+      </div>
+    </div>
+    
+    <form id="settingsForm">
+      <div class="form-group">
+        <label>Текущий пароль *</label>
+        <div class="password-wrapper">
+          <input type="password" id="currentPassword" required>
+          <span class="password-toggle" onclick="togglePassword('currentPassword')">👁️</span>
+        </div>
+        <p class="help-text">Для подтверждения изменений</p>
+      </div>
+      
+      <div class="form-group">
+        <label>Имя ребёнка 👶</label>
+        <input type="text" id="childName" placeholder="Например: Маша, Саша, Даша">
+        <p class="help-text">Будет использоваться в поздравлениях</p>
+      </div>
+      
+      <div class="form-group">
+        <label>Новый пароль</label>
+        <div class="password-wrapper">
+          <input type="password" id="newPassword" placeholder="Оставьте пустым чтобы не менять">
+          <span class="password-toggle" onclick="togglePassword('newPassword')">👁️</span>
+        </div>
+        <p class="help-text">Минимум 6 символов</p>
+      </div>
+      
+      <div class="form-group">
+        <label>Подтвердите новый пароль</label>
+        <div class="password-wrapper">
+          <input type="password" id="confirmPassword" placeholder="Повторите новый пароль">
+          <span class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</span>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn-primary">Сохранить изменения</button>
+      <button type="button" class="btn-secondary" onclick="window.location.href='app.html'">Назад на главную</button>
+    </form>
+  </div>
+  
+  <script>
+    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    document.getElementById('currentLogin').textContent = localStorage.getItem('userEmail') || 'Неизвестно';
+    
+    const currentChildName = localStorage.getItem('childName');
+    if (currentChildName) {
+      document.getElementById('childName').value = currentChildName;
+    }
+    
+    async function unlinkDevice(deviceId) {
+      if (!confirm('Вы уверены что хотите отвязать это устройство?\n\nВладелец устройства больше не сможет войти в приложение.')) {
+        return;
+      }
+      
+      try {
+        const { error } = await supabaseClient
+          .from('user_devices')
+          .delete()
+          .eq('id', deviceId);
+        
+        if (error) {
+          alert('Ошибка отвязки устройства!');
+          console.error(error);
+          return;
+        }
+        
+        alert('✅ Устройство успешно отвязано!');
+        loadDevices();
+        
+      } catch (err) {
+        alert('Произошла ошибка. Попробуйте ещё раз.');
+        console.error(err);
+      }
+    }
+    
+    async function loadDevices() {
+      const userId = localStorage.getItem('userId');
+      const currentFingerprint = localStorage.getItem('deviceFingerprint');
+      
+      try {
+        const { data: devices, error } = await supabaseClient
+          .from('user_devices')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          document.getElementById('devicesList').innerHTML = '<p class="devices-error">Ошибка загрузки устройств</p>';
+          return;
+        }
+        
+        if (devices.length === 0) {
+          document.getElementById('devicesList').innerHTML = '<p class="devices-empty">Нет привязанных устройств</p>';
+          return;
+        }
+        
+        let html = '';
+        devices.forEach(device => {
+          const isCurrentDevice = device.device_fingerprint === currentFingerprint;
+          const date = new Date(device.created_at).toLocaleDateString('ru-RU');
+          
+          html += `
+            <div class="device-item">
+              <div class="device-info">
+                <div class="device-name">
+                  ${device.device_name || 'Устройство'}
+                  ${isCurrentDevice ? '<span class="device-current">● Текущее</span>' : ''}
+                </div>
+                <div class="device-date">Добавлено: ${date}</div>
+              </div>
+              ${!isCurrentDevice ? `<button onclick="unlinkDevice(${device.id})" class="device-unlink-btn">Отвязать</button>` : ''}
+            </div>
+          `;
+        });
+        
+        document.getElementById('devicesList').innerHTML = html;
+        
+      } catch (err) {
+        document.getElementById('devicesList').innerHTML = '<p class="devices-error">Ошибка загрузки</p>';
+      }
+    }
+    
+    loadDevices();
+    
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const currentToggle = input.nextElementSibling;
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        currentToggle.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        currentToggle.textContent = '👁️';
+      }
+    }
+    
+    function showMessage(text, type) {
+      const message = document.getElementById('message');
+      message.textContent = text;
+      message.className = `message ${type} show`;
+      
+      setTimeout(() => {
+        message.classList.remove('show');
+      }, 5000);
+    }
+    
+    document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const currentPassword = document.getElementById('currentPassword').value.trim();
+      const childName = document.getElementById('childName').value.trim();
+      const newPassword = document.getElementById('newPassword').value.trim();
+      const confirmPassword = document.getElementById('confirmPassword').value.trim();
+      const userEmail = localStorage.getItem('userEmail');
+      
+      if (!currentPassword) {
+        showMessage('Введите текущий пароль!', 'error');
+        return;
+      }
+      
+      if (!childName && !newPassword) {
+        showMessage('Введите имя ребёнка и/или новый пароль!', 'error');
+        return;
+      }
+      
+      if (newPassword && newPassword.length < 6) {
+        showMessage('Новый пароль должен быть минимум 6 символов!', 'error');
+        return;
+      }
+      
+      if (newPassword && newPassword !== confirmPassword) {
+        showMessage('Пароли не совпадают!', 'error');
+        return;
+      }
+      
+      try {
+        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+          email: userEmail,
+          password: currentPassword
+        });
+        
+        if (authError || !authData.user) {
+          showMessage('Неверный текущий пароль!', 'error');
+          return;
+        }
+        
+        if (newPassword) {
+          const { error: updateError } = await supabaseClient.auth.updateUser({
+            password: newPassword
+          });
+          
+          if (updateError) {
+            showMessage('Ошибка смены пароля!', 'error');
+            return;
+          }
+        }
+        
+        if (childName) {
+          localStorage.setItem('childName', childName);
+        }
+        
+        showMessage('✅ Данные успешно обновлены!', 'success');
+        document.getElementById('settingsForm').reset();
+        if (childName) {
+          document.getElementById('childName').value = childName;
+        }
+        
+      } catch (err) {
+        showMessage('Произошла ошибка. Попробуйте ещё раз.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

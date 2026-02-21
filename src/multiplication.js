@@ -2,12 +2,16 @@ import './style.css';
 import { getRandom } from './multiplication/multiplicationHelpers.js';
 import { buildGrid, setupLogic } from './multiplication/multiplicationGrid.js';
 
-console.log('MULTIPLICATION.JS LOADED v11 (модульная версия)');
+console.log('MULTIPLICATION.JS LOADED - CORRECT PATHS');
 
 // DOM элементы
 const workspace = document.querySelector('#workspace');
 const mathGrid = document.querySelector('#mathGrid');
 const checkHints = document.querySelector('#checkHints');
+const hintPopup = document.querySelector('#hintPopup');
+const hintText = document.querySelector('#hintText');
+const sideHint = document.querySelector('#sideHint');
+const sideHintText = document.querySelector('#sideHintText');
 const btnGen = document.querySelector('#btnGen');
 const btnStartMan = document.querySelector('#btnStartMan');
 const selectA = document.querySelector('#selectA');
@@ -20,6 +24,7 @@ const checkMessage = document.querySelector('#checkMessage');
 const btnClearAll = document.querySelector('#btnClearAll');
 const settingsPanel = document.querySelector('#settingsPanel');
 const btnNewExample = document.querySelector('#btnNewExample');
+const btnBackToSettings = document.querySelector('#btnBackToSettings');
 
 // Глобальное состояние
 let currentA = 0;
@@ -62,8 +67,32 @@ btnClearAll.onclick = () => {
   }
 };
 
-// Новый пример
+// Новый пример (генерирует с теми же разрядностями)
 btnNewExample.onclick = () => {
+  if (currentA && currentB) {
+    // Определяем текущий режим
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    
+    if (mode === 'auto') {
+      // Генерируем новые числа с той же разрядностью
+      const digitsA = String(currentA).length;
+      const digitsB = String(currentB).length;
+      currentA = getRandom(digitsA);
+      currentB = getRandom(digitsB);
+    } else {
+      // В ручном режиме тоже генерируем с той же разрядностью
+      const digitsA = String(currentA).length;
+      const digitsB = String(currentB).length;
+      currentA = getRandom(digitsA);
+      currentB = getRandom(digitsB);
+    }
+    
+    buildGridWrapper();
+  }
+};
+
+// Назад к настройкам
+btnBackToSettings.onclick = () => {
   workspace.classList.add('hidden');
   workspace.classList.remove('flex');
   settingsPanel.classList.remove('hidden');
@@ -71,10 +100,6 @@ btnNewExample.onclick = () => {
   checkMessage.textContent = '';
 };
 
-// Включение/выключение подсказок
-checkHints.onchange = () => {
-  if (currentA && currentB) buildGridWrapper();
-};
 
 // Обёртка для buildGrid
 function buildGridWrapper() {
@@ -86,6 +111,10 @@ function buildGridWrapper() {
     mathGrid,
     checkMessage,
     checkHints,
+    hintPopup,
+    hintText,
+    sideHint,
+    sideHintText,
     carries,
     activeRow,
     setupLogic
