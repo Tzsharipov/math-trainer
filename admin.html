@@ -1145,6 +1145,28 @@
     // Загружаем данные при загрузке страницы
     loadApplications();
     loadUsers();
+
+    // Realtime подписки — автообновление без кнопки Обновить
+    supabaseClient
+      .channel('admin-applications')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, () => {
+        loadApplications();
+      })
+      .subscribe();
+
+    supabaseClient
+      .channel('admin-profiles')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+        loadUsers();
+      })
+      .subscribe();
+
+    supabaseClient
+      .channel('admin-devices')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_devices' }, () => {
+        loadUsers();
+      })
+      .subscribe();
   </script>
 </body>
 </html>
