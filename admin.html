@@ -670,7 +670,7 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImllbGNuYmN2c2xsb3F6bXJ6enFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc5MDUxMjUsImV4cCI6MjA1MzQ4MTEyNX0.sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
     
     const { createClient } = supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY, { realtime: { enabled: false } });
     
     let currentFilter = 'all';
     let allApplications = [];
@@ -854,12 +854,6 @@
         setTimeout(() => {
           loadApplications();
           loadUsers();
-
-    // Автообновление каждые 5 секунд
-    setInterval(() => {
-      loadApplications();
-      loadUsers();
-    }, 5000);
         }, 1000);
         
       } catch (error) {
