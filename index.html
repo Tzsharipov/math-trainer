@@ -968,6 +968,9 @@
           return;
         }
         
+        // Сигнал для Яндекс.Метрики — заявка реально попала в базу
+        if (typeof ym !== 'undefined') ym(107219867, 'reachGoal', 'order_success');
+        
         // Показываем экран успеха
         document.getElementById('registrationForm').style.display = 'none';
         document.getElementById('successScreen').classList.add('active');
