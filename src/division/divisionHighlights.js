@@ -5,35 +5,51 @@ export function clearHighlights(inputRefs) {
   for (const k in inputRefs) {
     const el = inputRefs[k]
     if (!el) continue
-    const bg = el.style.backgroundColor
-    // НЕ стираем зелёный и красный фон (результаты проверки)
-    if (bg === 'rgb(134, 239, 172)' || bg === 'rgb(255, 154, 154)') {
+    // НЕ стираем зелёный и красный (результаты проверки)
+    if (el.classList.contains('bg-green-400') || el.classList.contains('bg-red-400')) {
       continue
     }
-    el.style.backgroundColor = ''
+    // Убираем классы подсветки и анимации
+    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
+    // Восстанавливаем исходный фон
+    if (el.dataset.stepType === 'product') {
+      el.style.backgroundColor = ''
+      el.classList.remove('bg-blue-100')
+      // Восстанавливаем через оригинальный класс
+    } else if (el.dataset.stepType === 'difference') {
+      el.style.backgroundColor = ''
+    } else if (el.dataset.quotientIndex !== undefined) {
+      el.style.backgroundColor = ''
+    }
   }
 }
 
 export function highlightElement(el, type, hintsEnabled) {
   if (!el) return
-  
+
   if (type === 'hint') {
     if (!hintsEnabled) return
-    
-    const currentBg = el.style.backgroundColor
-    if (currentBg === 'rgb(134, 239, 172)' || currentBg === 'rgb(255, 154, 154)') {
-      return
-    }
-    
+    // Не перебиваем зелёный/красный
+    if (el.classList.contains('bg-green-400') || el.classList.contains('bg-red-400')) return
+
+    // Убираем старую подсветку
+    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
+
     if (el.dataset.stepType === 'product') {
-      el.style.backgroundColor = '#44d6e8'
+      el.classList.add('bg-orange-300', 'cell-pulse-orange')
     } else if (el.dataset.stepType === 'difference') {
-      el.style.backgroundColor = '#fff59d'
+      el.classList.add('bg-yellow-300', 'cell-pulse-yellow')
+    } else if (el.dataset.quotientIndex !== undefined) {
+      el.classList.add('bg-orange-300', 'cell-pulse-orange')
     }
   } else if (type === 'ok') {
-    el.style.backgroundColor = '#86efac'
+    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
+    el.classList.add('bg-green-400')
+    el.style.backgroundColor = ''
   } else if (type === 'wrong') {
-    el.style.backgroundColor = '#ff9a9a'
+    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
+    el.classList.add('bg-red-400')
+    el.style.backgroundColor = ''
   }
 }
 

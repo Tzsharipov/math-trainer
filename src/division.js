@@ -287,51 +287,98 @@ function setupLogic() {
 function handleQuotientInput(e, index) {
   const value = e.target.value;
   quotientInputs[index] = value;
-  
+
+  // Сбрасываем старую подсветку
+  e.target.classList.remove('bg-green-400', 'bg-red-400', 'cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300');
+  e.target.style.backgroundColor = '';
+
   if (!value) return;
-  
+
   const correctQuotient = String(Math.floor(dividend / divisor));
   const correctDigit = correctQuotient[index];
-  
-  e.target.style.backgroundColor = '';
-  
+
   if (value === correctDigit) {
-    // Ð—ÐµÐ»Ñ‘Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½ Ð’Ð¡Ð•Ð“Ð”Ð Ð¿Ñ€Ð¸ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ð¼ Ð¾Ñ‚Ð²ÐµÑ‚Ðµ
-    e.target.style.backgroundColor = '#86efac';
-    
+    e.target.classList.add('bg-green-400');
+
     const stepIndex = stepsData.findIndex(s => s.quotientIndex === index);
     if (stepIndex >= 0) {
       const stepData = stepsData[stepIndex];
       const partialDividendLen = String(stepData.partialDividend).length;
       const offset = stepData.offset;
       const rightmostCol = offset + partialDividendLen - 1;
-      
+
       setTimeout(() => {
         inputRefs[`${stepIndex}:product:${rightmostCol}`]?.focus();
         focusedRow = { step: stepIndex, type: 'product' };
         const dividendDigitsArray = String(dividend).split('').map(Number);
+        updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
         updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
       }, 0);
     }
   } else {
-    e.target.style.backgroundColor = '#ff9a9a';
+    e.target.classList.add('bg-red-400');
   }
 }
 
 function handleStepInput(e, step, type, col) {
   const value = e.target.value;
   steps[step][type + 'Input'][col] = value;
-  
-  if (!value) return;
-  
-  const stepData = stepsData[step];
-  const filledCount = steps[step][type + 'Input'].filter(d => d !== '').length;
+
   const dividendDigitsArray = String(dividend).split('').map(Number);
-  
+  const stepData = stepsData[step];
+
+  // Мгновенная подсветка каждой цифры
+  e.target.classList.remove('bg-green-400', 'bg-red-400', 'cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300');
+  e.target.style.backgroundColor = '';
+
+  if (value && hintsEnabled) {
+    if (type === 'product') {
+      // Проверяем цифру произведения: знаем правильный продукт
+      const expectedProductStr = String(stepData.quotientDigit * divisor);
+      const expectedLen = expectedProductStr.length;
+      const offset = stepData.offset;
+      // позиция в строке продукта справа налево
+      const productStartCol = offset + String(stepData.partialDividend).length - expectedLen;
+      const digitPos = col - productStartCol; // позиция цифры в продукте
+      if (digitPos >= 0 && digitPos < expectedLen) {
+        const correctDigit = expectedProductStr[digitPos];
+        if (value === correctDigit) {
+          e.target.classList.add('bg-green-400');
+        } else {
+          e.target.classList.add('bg-red-400');
+        }
+      }
+    } else if (type === 'difference') {
+      // Проверяем цифру разности
+      let correctValue;
+      if (step === stepsData.length - 1) {
+        correctValue = String(stepData.remainder);
+      } else {
+        correctValue = String(stepsData[step + 1].partialDividend);
+      }
+      const correctLen = correctValue.length;
+      const offset = stepData.offset;
+      const diffStartCol = offset + String(stepData.partialDividend).length - correctLen;
+      const digitPos = col - diffStartCol;
+      if (digitPos >= 0 && digitPos < correctLen) {
+        const correctDigit = correctValue[digitPos];
+        if (value === correctDigit) {
+          e.target.classList.add('bg-green-400');
+        } else {
+          e.target.classList.add('bg-red-400');
+        }
+      }
+    }
+  }
+
+  if (!value) return;
+
+  const filledCount = steps[step][type + 'Input'].filter(d => d !== '').length;
+
   if (type === 'product') {
     const expectedProduct = stepData.quotientDigit * divisor;
     const expectedLen = String(expectedProduct).length;
-    
+
     if (filledCount < expectedLen) {
       if (col - 1 >= 0) {
         setTimeout(() => inputRefs[`${step}:product:${col - 1}`]?.focus(), 0);
@@ -339,11 +386,11 @@ function handleStepInput(e, step, type, col) {
     } else if (filledCount === expectedLen) {
       setTimeout(() => {
         checkProduct(step, steps, stepsData, quotientInputs, inputRefs, hintsEnabled, { value: null }, checkMessage);
-        
+
         const offset = stepData.offset;
         const partialLen = String(stepData.partialDividend).length;
         const targetCol = offset + partialLen - 1;
-        
+
         inputRefs[`${step}:difference:${targetCol}`]?.focus();
         focusedRow = { step, type: 'difference' };
         updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
@@ -352,7 +399,7 @@ function handleStepInput(e, step, type, col) {
     }
   } else if (type === 'difference') {
     const diffOnlyLen = stepData.remainder ? String(stepData.remainder).length : 1;
-    
+
     if (filledCount < diffOnlyLen) {
       if (col - 1 >= 0) {
         setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
@@ -361,7 +408,7 @@ function handleStepInput(e, step, type, col) {
       const partialDividend = stepData.partialDividend ? stepData.partialDividend.toString() : '';
       const offset = stepData.offset || 0;
       const targetColForCarry = offset + partialDividend.length;
-      
+
       if (targetColForCarry < dividendDigitsArray.length) {
         setTimeout(() => inputRefs[`${step}:difference:${targetColForCarry}`]?.focus(), 0);
       }
@@ -370,7 +417,7 @@ function handleStepInput(e, step, type, col) {
         checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
           checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
         });
-        
+
         const nextQuotientIndex = step + 1;
         if (nextQuotientIndex < quotientInputs.length) {
           inputRefs[`q:${nextQuotientIndex}`]?.focus();

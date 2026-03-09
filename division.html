@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
   <script src="/metrika.js"></script>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Math Trainer - Деление уголком</title>
@@ -21,6 +22,20 @@
     }
     body.loaded {
       visibility: visible;
+    }
+    .cell-pulse-yellow {
+      animation: pulseYellow 0.8s ease-in-out infinite alternate;
+    }
+    .cell-pulse-orange {
+      animation: pulseOrange 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes pulseYellow {
+      from { background-color: #facc15; }
+      to   { background-color: #fef08a; }
+    }
+    @keyframes pulseOrange {
+      from { background-color: #fb923c; }
+      to   { background-color: #fed7aa; }
     }
   </style>
 </head>
