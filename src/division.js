@@ -351,7 +351,7 @@ function handleStepInput(e, step, type, col) {
       setTimeout(() => {
         checkProduct(step, steps, stepsData, quotientInputs, inputRefs, hintsEnabled, { value: null }, checkMessage, () => { solved = true; });
         
-        if (solved && hintsEnabled) return;
+        if (hintsEnabled && step === stepsData.length - 1) return;
         
         const offset = stepData.offset;
         const partialLen = String(stepData.partialDividend).length;
