@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <script src="/metrika.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Старт: Умножаем на одно число</title>
   
   <!-- Проверка авторизации -->
   <script>
-    // Проверяем залогинен ли пользователь
+    // Проверяем доступ: залогинен или демо режим
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-      // Не залогинен - редирект на главную
-      window.location.href = 'index.html';
+      if (localStorage.getItem('isDemoMode') === 'true') {
+        // Демо режим — разрешаем, но инициализируем счётчик
+        window.__demoModule = 'basics';
+      } else {
+        window.location.href = 'index.html';
+      }
     }
   </script>
   
@@ -187,5 +190,103 @@
   
   <script type="module" src="/src/basics.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    // Демо-режим
+    (function() {
+      if (localStorage.getItem('isLoggedIn') === 'true') return;
+      if (localStorage.getItem('isDemoMode') !== 'true') return;
+
+      const DEMO_KEY = 'demo_basics_count';
+      const DEMO_LIMIT = 5;
+      const METRIKA_ID = 107219867;
+
+      function getCount() {
+        return parseInt(localStorage.getItem(DEMO_KEY) || '0', 10);
+      }
+
+      function showCounter() {
+        const remaining = DEMO_LIMIT - getCount();
+        let el = document.getElementById('demoCounter');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'demoCounter';
+          el.style.cssText = 'position:fixed;top:12px;right:12px;z-index:1000;background:#fbbf24;color:#1f2937;padding:8px 16px;border-radius:20px;font-weight:900;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.2);';
+          document.body.appendChild(el);
+        }
+        el.textContent = '🎯 Демо: осталось ' + remaining + ' из ' + DEMO_LIMIT + ' примеров';
+      }
+
+      function getTotalDemoCount() {
+        return (parseInt(localStorage.getItem('demo_basics_count') || '0', 10) +
+                parseInt(localStorage.getItem('demo_multiplication_count') || '0', 10) +
+                parseInt(localStorage.getItem('demo_division_count') || '0', 10));
+      }
+
+      function showOffer() {
+        try { if (typeof ym !== 'undefined') ym(METRIKA_ID, 'reachGoal', 'demo_finished'); } catch(e) {}
+        const existing = document.getElementById('demoOfferModal');
+        if (existing) return;
+        const allModulesDone = getTotalDemoCount() >= 15;
+        const modal = document.createElement('div');
+        modal.id = 'demoOfferModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;';
+        modal.innerHTML = `
+          <div style="background:white;border-radius:24px;padding:36px 28px;max-width:460px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+            <div style="font-size:60px;margin-bottom:12px;">🏆</div>
+            <h2 style="font-size:clamp(20px,5vw,26px);font-weight:900;color:#1f2937;margin-bottom:16px;line-height:1.3;">Ты молодец!</h2>
+            <p style="font-size:clamp(15px,3vw,18px);color:#374151;margin-bottom:28px;line-height:1.6;">
+              Чтобы закрепить успех и стать отличником, открой полный доступ к <strong>1000+ примеров</strong>.
+            </p>
+            <button onclick="window.location.href='index.html#pricing'" style="display:block;width:100%;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;border-radius:14px;padding:18px 24px;font-size:clamp(16px,3.5vw,20px);font-weight:900;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
+              🎓 Открыть полный доступ — 990 ₽
+            </button>
+            ${!allModulesDone ? `<button onclick="window.location.href='app.html'" style="display:block;width:100%;background:#f3f4f6;color:#6b7280;border:none;border-radius:14px;padding:14px 24px;font-size:clamp(14px,3vw,16px);font-weight:700;cursor:pointer;">Попробовать другой модуль</button>` : ''}
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      window.addEventListener('load', function() {
+        // Если лимит уже достигнут при входе — сразу блокируем
+        if (getCount() >= DEMO_LIMIT) {
+          showOffer();
+          return;
+        }
+
+        if (getCount() > 0) showCounter();
+
+        const mathGrid = document.getElementById('mathGrid');
+        if (!mathGrid) return;
+
+        // Считаем каждый раз когда mathGrid перерисовывается (новый пример)
+        // firstRender = первый пример (btnGen/btnStartMan) — он бесплатный, не считается
+        let firstRender = true;
+
+        const observer = new MutationObserver(function() {
+          if (firstRender) {
+            firstRender = false;
+            showCounter();
+            return;
+          }
+          // Каждый следующий пример — считаем
+          const count = getCount();
+          if (count >= DEMO_LIMIT) {
+            showOffer();
+            return;
+          }
+          const newCount = count + 1;
+          localStorage.setItem(DEMO_KEY, String(newCount));
+          if (newCount >= DEMO_LIMIT) {
+            showOffer();
+          } else {
+            showCounter();
+          }
+        });
+
+        observer.observe(mathGrid, { childList: true });
+      });
+    })();
+  </script>
 </body>
 </html>

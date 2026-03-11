@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
- <script src="/metrika.js"></script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Math Trainer - Умножение и Деление</title>
   
   <!-- Проверка авторизации -->
   <script>
-    // Проверяем залогинен ли пользователь
+    // Проверяем доступ: залогинен или демо режим
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-      // Не залогинен - редирект на главную
-      window.location.href = 'index.html';
+      if (localStorage.getItem('isDemoMode') === 'true') {
+        // Демо режим — разрешаем, но инициализируем счётчик
+        window.__demoModule = 'multiplication';
+      } else {
+        window.location.href = 'index.html';
+      }
     }
   </script>
   
@@ -120,8 +122,7 @@
 <body>
   <!-- ВРЕМЕННО ДЛЯ ВИДЕО -->
   <div class="final-banner" id="finalBanner">
-    <!-- <h1>Сделал для сына — поможет и вам</h1> -->
-    <h2>столбиком.рф</h2>
+    <h1>Сделал для сына — поможет и вам.</h1>
     <h2>stolbik.online</h2>
   </div>
 
@@ -259,5 +260,120 @@
   });
   </script>
 
+
+  <script>
+    // Демо-режим: перехват кнопок после загрузки JS модуля
+    (function() {
+      if (localStorage.getItem('isLoggedIn') === 'true') return; // залогинен — не нужно
+      if (localStorage.getItem('isDemoMode') !== 'true') return;  // не демо — не нужно
+
+      const MODULE = 'multiplication';
+      const DEMO_KEY = 'demo_' + MODULE + '_count';
+      const DEMO_LIMIT = 5;
+      const METRIKA_ID = 107219867;
+
+      function getCount() {
+        return parseInt(localStorage.getItem(DEMO_KEY) || '0', 10);
+      }
+
+      function showCounter() {
+        const remaining = DEMO_LIMIT - getCount();
+        let el = document.getElementById('demoCounter');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'demoCounter';
+          el.style.cssText = 'position:fixed;top:12px;right:12px;z-index:1000;background:#fbbf24;color:#1f2937;padding:8px 16px;border-radius:20px;font-weight:900;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.2);';
+          document.body.appendChild(el);
+        }
+        el.textContent = '🎯 Демо: осталось ' + remaining + ' из ' + DEMO_LIMIT + ' примеров';
+      }
+
+      function getTotalDemoCount() {
+        return (parseInt(localStorage.getItem('demo_basics_count') || '0', 10) +
+                parseInt(localStorage.getItem('demo_multiplication_count') || '0', 10) +
+                parseInt(localStorage.getItem('demo_division_count') || '0', 10));
+      }
+
+      function showOffer() {
+        try { if (typeof ym !== 'undefined') ym(METRIKA_ID, 'reachGoal', 'demo_finished'); } catch(e) {}
+        const existing = document.getElementById('demoOfferModal');
+        if (existing) return;
+        const totalDone = getTotalDemoCount();
+        const allModulesDone = totalDone >= 15;
+        const modal = document.createElement('div');
+        modal.id = 'demoOfferModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;';
+        modal.innerHTML = `
+          <div style="background:white;border-radius:24px;padding:36px 28px;max-width:460px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+            <div style="font-size:60px;margin-bottom:12px;">🏆</div>
+            <h2 style="font-size:clamp(20px,5vw,26px);font-weight:900;color:#1f2937;margin-bottom:16px;line-height:1.3;">Ты молодец!</h2>
+            <p style="font-size:clamp(15px,3vw,18px);color:#374151;margin-bottom:28px;line-height:1.6;">
+              Чтобы закрепить успех и стать отличником, открой полный доступ к <strong>1000+ примеров</strong>.
+            </p>
+            <button onclick="window.location.href='index.html#pricing'" style="display:block;width:100%;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;border-radius:14px;padding:18px 24px;font-size:clamp(16px,3.5vw,20px);font-weight:900;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
+              🎓 Открыть полный доступ — 990 ₽
+            </button>
+            ${!allModulesDone ? `<button onclick="window.location.href='app.html'" style="display:block;width:100%;background:#f3f4f6;color:#6b7280;border:none;border-radius:14px;padding:14px 24px;font-size:clamp(14px,3vw,16px);font-weight:700;cursor:pointer;">
+              Попробовать другой модуль
+            </button>` : ''}
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      function wrapButton(btn) {
+        if (!btn) return;
+        const original = btn.onclick;
+        btn.onclick = function(e) {
+          const count = getCount();
+          // Лимит уже достигнут — блокируем
+          if (count >= DEMO_LIMIT) {
+            showOffer();
+            return;
+          }
+          // Показываем пример (выполняем оригинальное действие)
+          if (original) original.call(this, e);
+          // Считаем ПОСЛЕ того как пример показан
+          const newCount = count + 1;
+          localStorage.setItem(DEMO_KEY, String(newCount));
+          if (newCount >= DEMO_LIMIT) {
+            // Пользователь решил 5-й пример — показываем оффер
+            showOffer();
+          } else {
+            showCounter();
+          }
+        };
+      }
+
+      // Ждём пока JS модуля назначит обработчики
+      window.addEventListener('load', function() {
+        // Если лимит уже достигнут — сразу блокируем модуль
+        if (getCount() >= DEMO_LIMIT) {
+          showOffer();
+          return;
+        }
+        const btnGen = document.getElementById('btnGen');
+        const btnNewExample = document.getElementById('btnNewExample');
+        const btnStartMan = document.getElementById('btnStartMan');
+        // btnGen и btnStartMan не считаются — они только открывают первый пример
+        // Счёт идёт только через btnNewExample
+        if (btnGen) {
+          const origGen = btnGen.onclick;
+          btnGen.onclick = function(e) {
+            if (origGen) origGen.call(this, e);
+          };
+        }
+        if (btnStartMan) {
+          const origMan = btnStartMan.onclick;
+          btnStartMan.onclick = function(e) {
+            if (origMan) origMan.call(this, e);
+          };
+        }
+        wrapButton(btnNewExample);
+        // Показываем счётчик если уже есть прогресс
+        if (getCount() > 0) showCounter();
+      });
+    })();
+  </script>
 </body>
 </html>

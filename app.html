@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
- <script src="/metrika.js"></script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Математический Тренажёр 🎓</title>
@@ -513,6 +511,7 @@
   <a href="settings.html" class="settings-btn" id="settingsBtn">⚙️ Настройки</a>
   <a href="admin.html" class="settings-btn" id="adminBtn" style="right: clamp(10px, 2vw, 20px); left: auto; background: linear-gradient(135deg, #F59E0B, #D97706); display: none;">👑 Админ-панель</a>
   <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">🚪 Выход</button>
+  <button class="logout-btn" id="demoExitBtn" onclick="handleDemoExit()" style="display:none; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 12px rgba(245,158,11,0.4);">🚪 Выйти из демо</button>
   
   <div class="blur-overlay" id="loginOverlay">
     <div class="login-form">
@@ -723,6 +722,12 @@ async function handleLogin() {
   }
 }
     
+    function handleDemoExit() {
+      localStorage.removeItem('isDemoMode');
+      // счётчики НЕ чистим — они остаются на устройстве
+      window.location.href = 'index.html';
+    }
+
     function handleLogout() {
       if (!confirm('Вы уверены что хотите выйти?')) {
         return;
@@ -737,6 +742,17 @@ async function handleLogin() {
     
 window.addEventListener('DOMContentLoaded', async () => {
       const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const isDemoMode = localStorage.getItem('isDemoMode') === 'true';
+
+      // Демо режим — скрываем оверлей логина, показываем приложение
+      if (isDemoMode && isLoggedIn !== 'true') {
+        const overlay = document.getElementById('loginOverlay');
+        if (overlay) {
+          overlay.classList.add('hidden');
+          document.body.classList.remove('locked');
+        }
+        document.getElementById('demoExitBtn').style.display = 'block';
+      }
       
       if (isLoggedIn === 'true') {
         // Сразу показываем кнопки, так как пользователь "свой"

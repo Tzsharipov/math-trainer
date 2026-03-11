@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script src="/metrika.js"></script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Математический тренажёр для детей 8-10 лет. Научите ребёнка умножать и делить столбиком за 2 недели без слёз и репетиторов." />
@@ -714,7 +712,7 @@
       
       <div class="hero-buttons">
         <a href="javascript:void(0)" class="btn btn-primary" onclick="openOrderModal()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Оформить доступ для обучения</a>
-        <a href="#modules" class="btn btn-secondary" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Посмотреть модули</a>
+        <a href="javascript:void(0)" class="btn" onclick="startDemo()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px); background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 2px solid #b45309; box-shadow: 0 4px 20px rgba(245,158,11,0.5); animation: pulse-demo 2s ease-in-out infinite;">🎯 Попробовать бесплатно</a>
       </div>
     </div>
   </section>
@@ -902,7 +900,7 @@
     <div class="container">
       <p>Математический тренажёр © 2025</p>
       <p style="opacity: 0.8; font-size: 14px; margin-top: 8px;">столбиком.рф | stolbik.online</p>
-      <p>Email: <a href="mailto:tzsharipov@gmail.com">tzsharipov@gmail.com</a></p>
+      <p>Email: <a href="/cdn-cgi/l/email-protection#3d49474e555c4f544d524b7d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="c1b5bbb2a9a0b3a8b1aeb781a6aca0a8adefa2aeac">[email&#160;protected]</span></a></p>
       <p>Telegram: <a href="https://t.me/SharipovT" target="_blank">@SharipovT</a></p>
       
       <div class="login-link">
@@ -911,7 +909,7 @@
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Открытие формы заявки
     const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
@@ -942,7 +940,7 @@
       } else {
         console.log('Метрика: ym не определён (заблокирован или не загружен)');
       }
-      
+
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Отправка...';
@@ -1006,6 +1004,11 @@
     }
     
     // Старая функция для совместимости
+    function startDemo() {
+      localStorage.setItem('isDemoMode', 'true');
+      window.location.href = 'app.html';
+    }
+
     function openOrderForm() {
       openOrderModal();
     }
@@ -1109,4 +1112,9 @@
           </p>
         </div>
         
-     
+     </div>
+    </div>
+  </div>
+
+</body>
+</html>

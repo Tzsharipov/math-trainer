@@ -712,7 +712,7 @@
       
       <div class="hero-buttons">
         <a href="javascript:void(0)" class="btn btn-primary" onclick="openOrderModal()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Оформить доступ для обучения</a>
-        <a href="#modules" class="btn btn-secondary" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px);">Посмотреть модули</a>
+        <a href="javascript:void(0)" class="btn" onclick="startDemo()" style="font-size: clamp(18px, 3.5vw, 24px); padding: clamp(16px, 3vh, 22px) clamp(32px, 6vw, 50px); background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 2px solid #b45309; box-shadow: 0 4px 20px rgba(245,158,11,0.5); animation: pulse-demo 2s ease-in-out infinite;">🎯 Попробовать бесплатно</a>
       </div>
     </div>
   </section>
@@ -1108,3 +1108,9 @@
         </div>
         
      
+  <script>
+    function startDemo() {
+      localStorage.setItem('isDemoMode', 'true');
+      window.location.href = 'app.html';
+    }
+  </script>
