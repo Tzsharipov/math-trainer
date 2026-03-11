@@ -5,51 +5,44 @@ export function clearHighlights(inputRefs) {
   for (const k in inputRefs) {
     const el = inputRefs[k]
     if (!el) continue
-    // НЕ стираем зелёный и красный (результаты проверки)
-    if (el.classList.contains('bg-green-400') || el.classList.contains('bg-red-400')) {
+    // Мигание убираем со ВСЕХ ячеек, включая зелёные/красные
+    el.classList.remove('cell-pulse-yellow', 'cell-pulse-orange')
+    const bg = el.style.backgroundColor
+    // НЕ стираем зелёный и красный фон (результаты проверки)
+    if (bg === 'rgb(134, 239, 172)' || bg === 'rgb(255, 154, 154)') {
       continue
     }
-    // Убираем классы подсветки и анимации
-    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
-    // Восстанавливаем исходный фон
-    if (el.dataset.stepType === 'product') {
-      el.style.backgroundColor = ''
-      el.classList.remove('bg-blue-100')
-      // Восстанавливаем через оригинальный класс
-    } else if (el.dataset.stepType === 'difference') {
-      el.style.backgroundColor = ''
-    } else if (el.dataset.quotientIndex !== undefined) {
-      el.style.backgroundColor = ''
-    }
+    el.style.backgroundColor = ''
   }
 }
 
 export function highlightElement(el, type, hintsEnabled) {
   if (!el) return
-
+  
   if (type === 'hint') {
     if (!hintsEnabled) return
-    // Не перебиваем зелёный/красный
-    if (el.classList.contains('bg-green-400') || el.classList.contains('bg-red-400')) return
-
-    // Убираем старую подсветку
-    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
-
+    
+    const currentBg = el.style.backgroundColor
+    if (currentBg === 'rgb(134, 239, 172)' || currentBg === 'rgb(255, 154, 154)') {
+      return
+    }
+    
     if (el.dataset.stepType === 'product') {
-      el.classList.add('bg-orange-300', 'cell-pulse-orange')
+      el.style.backgroundColor = '#ff9800'
+      el.classList.add('cell-pulse-orange')
     } else if (el.dataset.stepType === 'difference') {
-      el.classList.add('bg-yellow-300', 'cell-pulse-yellow')
-    } else if (el.dataset.quotientIndex !== undefined) {
-      el.classList.add('bg-orange-300', 'cell-pulse-orange')
+      el.style.backgroundColor = '#fff59d'
+      el.classList.add('cell-pulse-yellow')
+    } else if ('quotientIndex' in el.dataset) {
+      el.style.backgroundColor = '#ff9800'
+      el.classList.add('cell-pulse-orange')
     }
   } else if (type === 'ok') {
-    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
-    el.classList.add('bg-green-400')
-    el.style.backgroundColor = ''
+    el.classList.remove('cell-pulse-yellow', 'cell-pulse-orange')
+    el.style.backgroundColor = '#86efac'
   } else if (type === 'wrong') {
-    el.classList.remove('cell-pulse-orange', 'cell-pulse-yellow', 'bg-orange-300', 'bg-yellow-300')
-    el.classList.add('bg-red-400')
-    el.style.backgroundColor = ''
+    el.classList.remove('cell-pulse-yellow', 'cell-pulse-orange')
+    el.style.backgroundColor = '#ff9a9a'
   }
 }
 
@@ -77,7 +70,9 @@ export function updateHighlights(focusedRow, inputRefs, stepsData, dividendDigit
   if (!stepsData.length) return
   
   if (focusedRow.step === null) {
-    updateHighlightsForStep(0, inputRefs, stepsData, dividendDigitsArray, hintsEnabled)
+    const qIdx = focusedRow.quotientIndex || 0
+    const stepIdx = stepsData.findIndex(s => s.quotientIndex === qIdx)
+    updateHighlightsForStep(stepIdx >= 0 ? stepIdx : 0, inputRefs, stepsData, dividendDigitsArray, hintsEnabled)
     return
   }
   

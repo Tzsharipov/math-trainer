@@ -1,6 +1,6 @@
 // ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ÑÑ‚Ð¸ Ð¾Ñ‚Ð²ÐµÑ‚Ð¾Ð² (Ð¸Ð· Laravel/useDivisionChecks.js)
 import { getUserNumber } from './divisionHelpers.js';
-import { highlightElement } from './divisionHighlights.js';
+import { highlightElement, clearHighlights } from './divisionHighlights.js';
 
 export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputRefs, hintsEnabled, quotientStatus, checkMessage) {
   const step = steps[stepIndex]
@@ -29,7 +29,7 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
   step.productStatus = isCorrect ? 'correct' : 'wrong'
   
   // Ð•ÑÐ»Ð¸ ÑÑ‚Ð¾ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ ÑˆÐ°Ð³ Ð¸ Ð²ÑÑ‘ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾
-  if (isCorrect && stepIndex === stepsData.length - 1 && hintsEnabled) {
+  if (isCorrect && stepIndex === stepsData.length - 1) {
     const allQuotientFilled = quotientInputs.every(q => q !== '')
     if (allQuotientFilled) {
       quotientStatus.value = 'correct'
@@ -68,6 +68,7 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
           });
         }, 600);
       }
+      clearHighlights(inputRefs)
     }
   }
   

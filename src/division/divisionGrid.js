@@ -106,22 +106,32 @@ export function buildGrid(
     const offset = stepData.offset;
     
     // Product row
+    const productStr = String(stepData.product);
     for (let c = 0; c < divLen; c++) {
       const col = c + 1;
+      const dp = c - offset;
+      const correctDigit = (dp >= 0 && dp < productStr.length) ? productStr[dp] : '';
       html += `<input type="text" inputmode="numeric" maxlength="1" 
         data-step="${sIdx}" data-type="product" data-col="${c}"
-        data-step-type="product"
+        data-step-type="product" data-correct="${correctDigit}"
         style="grid-row: ${currentRow}; grid-column: ${col}; width: ${cellWidth}; height: ${cellWidth}; font-size: ${fontSize}; margin-top: ${sIdx === 0 ? '4px' : '0'};"
         class="step-input text-center border-2 border-gray-300 bg-yellow-100 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm">`;
     }
     currentRow++; // Увеличиваем ПОСЛЕ product
-    
+
     // Difference row
+    const isLastStep = sIdx === stepsData.length - 1;
+    const diffStr = isLastStep ? String(stepData.remainder) : String(stepsData[sIdx + 1].partialDividend);
+    const diffOff = isLastStep
+      ? (offset + String(stepData.partialDividend).length - diffStr.length)
+      : stepsData[sIdx + 1].offset;
     for (let c = 0; c < divLen; c++) {
       const col = c + 1;
+      const dp = c - diffOff;
+      const correctDigit = (dp >= 0 && dp < diffStr.length) ? diffStr[dp] : '';
       html += `<input type="text" inputmode="numeric" maxlength="1" 
         data-step="${sIdx}" data-type="difference" data-col="${c}"
-        data-step-type="difference"
+        data-step-type="difference" data-correct="${correctDigit}"
         style="grid-row: ${currentRow}; grid-column: ${col}; width: ${cellWidth}; height: ${cellWidth}; font-size: ${fontSize}; margin-bottom: 2px;"
         class="step-input text-center border-2 border-gray-300 bg-blue-100 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm">`;
     }
