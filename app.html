@@ -836,6 +836,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Стартовая страница показана!
         setTimeout(() => {
           const banner = document.getElementById('initialBanner');
+          if (!banner) return;
           banner.style.display = 'block';
           
           // Функция скрытия баннера
