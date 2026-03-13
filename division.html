@@ -99,9 +99,9 @@
     
     <div id="ui-auto" class="space-y-4">
       <select id="selectDividend" class="w-full p-3 rounded-xl text-slate-800 font-bold outline-none border-none shadow-lg">
-        <option value="3">3-значное делимое</option>
+        <option value="3" selected>3-значное делимое</option>
         <option value="4">4-значное делимое</option>
-        <option value="5" selected>5-значное делимое</option>
+        <option value="5">5-значное делимое</option>
         <option value="6">6-значное делимое</option>
         <option value="7">7-значное делимое</option>
       </select>
@@ -254,6 +254,10 @@
 
       // Ждём пока JS модуля назначит обработчики
       window.addEventListener('load', function() {
+        // В демо-режиме включаем подсказки автоматически
+        const checkHints = document.getElementById('checkHints');
+        if (checkHints) checkHints.checked = true;
+
         // Если лимит уже достигнут — сразу блокируем модуль
         if (getCount() >= DEMO_LIMIT) {
           blockModule();
@@ -279,6 +283,7 @@
         wrapButton(btnNewExample);
         // Показываем счётчик если уже есть прогресс
         if (getCount() > 0) showCounter();
+        else showCounter(); // показываем "5 из 5" сразу при первом входе
       });
     })();
   </script>

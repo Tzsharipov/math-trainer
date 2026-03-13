@@ -82,19 +82,7 @@
       border-width: 3px;
       border-style: solid;
     }
-
-    @media (max-width: 767px) {
-      #sideHint {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        margin-left: 0 !important;
-        margin-top: 12px !important;
-        max-width: 100% !important;
-        width: 100%;
-      }
-    }
-
+    
     /* ВРЕМЕННО ДЛЯ ВИДЕО */
     .final-banner {
       display: none;
@@ -360,6 +348,10 @@
 
       // Ждём пока JS модуля назначит обработчики
       window.addEventListener('load', function() {
+        // В демо-режиме включаем подсказки автоматически
+        const checkHints = document.getElementById('checkHints');
+        if (checkHints) checkHints.checked = true;
+
         // Если лимит уже достигнут — сразу блокируем модуль
         if (getCount() >= DEMO_LIMIT) {
           showOffer();
@@ -385,6 +377,7 @@
         wrapButton(btnNewExample);
         // Показываем счётчик если уже есть прогресс
         if (getCount() > 0) showCounter();
+        else showCounter(); // показываем "5 из 5" сразу при первом входе
       });
     })();
   </script>
