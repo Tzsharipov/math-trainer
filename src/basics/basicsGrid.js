@@ -17,13 +17,9 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   // Определяем размер экрана
   const isMobile = window.innerWidth < 768;
   
-  // НА МОБИЛЬНЫХ СКРЫВАЕМ ПОДСКАЗКИ, на десктопе показываем
-  if (isMobile) {
-    hintPopup.classList.add('hidden');
-    sideHint.classList.add('hidden');
-  } else {
-    hintPopup.classList.remove('hidden');
-  }
+  // НА МОБИЛЬНЫХ: hintPopup сверху, sideHint снизу (через CSS)
+  // НА ДЕСКТОПЕ: hintPopup сверху, sideHint справа
+  hintPopup.classList.remove('hidden');
   
   const sA = multiplicand.toString();
   const sB = multiplier.toString();
@@ -86,9 +82,7 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   if (inputs.length) {
     inputs[inputs.length - 1].focus();
     currentFocusedIndex = inputs.length - 1;
-    if (!isMobile) {
-      updateHintAndHighlight(inputs.length - 1, multiplicand, multiplier, hintText, mathGrid);
-    }
+    updateHintAndHighlight(inputs.length - 1, multiplicand, multiplier, hintText, mathGrid);
   }
 }
 
@@ -127,10 +121,8 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
         if (idx > 0) {
           currentFocusedIndex = idx - 1;
           inputs[idx - 1].focus();
-          if (!isMobile) {
-            updateHintAndHighlight(idx - 1, multiplicand, multiplier, hintText, mathGrid);
-            scheduleSideHint(idx - 1, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
-          }
+          updateHintAndHighlight(idx - 1, multiplicand, multiplier, hintText, mathGrid);
+          scheduleSideHint(idx - 1, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
         } else {
           // Все заполнено - проверяем результат
           currentFocusedIndex = -1;
@@ -145,10 +137,8 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
     
     el.onfocus = () => {
       currentFocusedIndex = idx;
-      if (!isMobile) {
-        updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGrid);
-        scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
-      }
+      updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGrid);
+      scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
     };
   });
 }

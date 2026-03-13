@@ -455,8 +455,10 @@ export function buildGrid(
   // Определяем размер экрана
   const isMobile = window.innerWidth < 768;
   
-  // НА МОБИЛЬНЫХ СКРЫВАЕМ ПОДСКАЗКИ, на десктопе показываем если включены
-  if (isMobile || !checkHints.checked) {
+  // НА МОБИЛЬНЫХ: hintPopup сверху, sideHint снизу (через CSS)
+  // НА ДЕСКТОПЕ: hintPopup сверху, sideHint справа
+  // Если подсказки выключены — скрываем обе
+  if (!checkHints.checked) {
     hintPopup.classList.add('hidden');
     sideHint.classList.add('hidden');
   } else {
@@ -470,7 +472,7 @@ export function buildGrid(
   const firstRow = Array.from(document.querySelectorAll('.math-input[data-row="0"]'));
   if (firstRow.length) {
     firstRow[firstRow.length - 1].focus();
-    if (!isMobile && checkHints.checked) {
+    if (checkHints.checked) {
       const idx = firstRow.length - 1;
       updateHintAndHighlight(idx, 0, valA, valB, hintText, mathGrid);
       scheduleSideHint(idx, 0, valA, valB, carries, sideHint, sideHintText, mathGrid, totalCols);
@@ -526,7 +528,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
             });
             
             // Убираем подсветку
-            if (!isMobile && checkHints.checked) {
+            if (checkHints.checked) {
               clearHighlights(mathGrid);
             }
             
@@ -544,7 +546,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
               nextRowInputs[nextRowInputs.length - 1].focus();
               
               
-              if (!isMobile && checkHints.checked) {
+              if (checkHints.checked) {
                 updateHintAndHighlight(nextRowInputs.length - 1, nextRowNum, currentA, currentB, hintText, mathGrid);
                 scheduleSideHint(nextRowInputs.length - 1, nextRowNum, currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
               }
@@ -556,7 +558,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
                 inp.classList.remove('opacity-50', 'cursor-not-allowed');
               });
               resultInputs[resultInputs.length - 1].focus();
-              if (!isMobile && checkHints.checked) {
+              if (checkHints.checked) {
                 updateHintForSum(resultInputs.length - 1, currentB, hintText, mathGrid, carries);
                 scheduleSideHintForSum(resultInputs.length - 1, currentB, carries, sideHint, sideHintText, mathGrid);
               }
@@ -566,7 +568,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
         }
         
         // Убираем подсветку
-        if (!isMobile && checkHints.checked) {
+        if (checkHints.checked) {
           clearHighlights(mathGrid);
         }
         
@@ -576,7 +578,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
           rowInputs[nextIdx].focus();
           
           // Обновляем подсказки для СЛЕДУЮЩЕЙ ячейки
-          if (!isMobile && checkHints.checked) {
+          if (checkHints.checked) {
             if (row === "99") {
               // LEVEL 2: Подсказки для сложения
               updateHintForSum(nextIdx, currentB, hintText, mathGrid, carries);
@@ -612,7 +614,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
               });
               nextRowInputs[nextRowInputs.length - 1].focus();
               // Показываем подсказку для первой ячейки новой строки
-              if (!isMobile && checkHints.checked) {
+              if (checkHints.checked) {
                 // Проверяем - нулевая ли следующая строка?
                 const nextRowAllZeros = nextRowInputs.every(inp => inp.dataset.correct === "0");
                 if (!nextRowAllZeros) {
@@ -631,7 +633,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
               });
               resultInputs[resultInputs.length - 1].focus();
               // Показываем подсказки для первой ячейки результата
-              if (!isMobile && checkHints.checked) {
+              if (checkHints.checked) {
                 updateHintForSum(resultInputs.length - 1, currentB, hintText, mathGrid, carries);
                 scheduleSideHintForSum(resultInputs.length - 1, currentB, carries, sideHint, sideHintText, mathGrid);
               }
@@ -657,7 +659,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
         const resultInputs = Array.from(document.querySelectorAll('.math-input[data-row="99"]'));
         const idx = resultInputs.indexOf(el);
         
-        if (!isMobile && checkHints.checked && idx >= 0) {
+        if (checkHints.checked && idx >= 0) {
           updateHintForSum(idx, currentB, hintText, mathGrid, carries);
           scheduleSideHintForSum(idx, currentB, carries, sideHint, sideHintText, mathGrid);
         }
@@ -667,7 +669,7 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
       const rowInputs = Array.from(document.querySelectorAll(`.math-input[data-row="${row}"]`));
       const idx = rowInputs.indexOf(el);
       
-      if (!isMobile && checkHints.checked && idx >= 0) {
+      if (checkHints.checked && idx >= 0) {
         // Обычная логика для ВСЕХ строк
         updateHintAndHighlight(idx, parseInt(row), currentA, currentB, hintText, mathGrid);
         scheduleSideHint(idx, parseInt(row), currentA, currentB, carries, sideHint, sideHintText, mathGrid, totalCols);
