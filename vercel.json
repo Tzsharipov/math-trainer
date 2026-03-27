@@ -9,7 +9,7 @@
     {
       "source": "/api/auth/:path*",
       "destination": "https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/:path*"
-    },
+    }
   ],
   "headers": [
     {
