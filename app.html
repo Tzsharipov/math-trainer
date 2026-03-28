@@ -564,7 +564,7 @@
   </div>
   
   <script>
-    const SUPABASE_URL = window.location.origin + '/api/supabase';
+    const SUPABASE_URL = 'https://ielcnbcvslloqzmrzzqc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_oj4Mypwi8KKdReaOpu8AwQ_qtRSotnJ';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
@@ -640,7 +640,7 @@ async function handleLogin() {
   const deviceFingerprint = getDeviceFingerprint();
   
   // Вызываем нашу функцию login_check
-  const response = await fetch(`${window.location.origin}/api/auth/login_check`, {
+  const response = await fetch(`https://ielcnbcvslloqzmrzzqc.supabase.co/functions/v1/login_check`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
