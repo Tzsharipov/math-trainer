@@ -108,18 +108,13 @@ function clearHighlights(mathGrid) {
   });
 }
 
-// Запускает показ боковой подсказки через 1 секунду - СКОПИРОВАНО ИЗ BASICS
+// Показывает подсказку сразу без задержки
 function scheduleSideHint(idx, currentRowNum, valA, valB, carries, sideHint, sideHintText, mathGrid, totalCols) {
   if (window.currentSideHintTimer) {
     clearTimeout(window.currentSideHintTimer);
   }
   
-  sideHint.classList.add('hidden');
-  sideHint.classList.remove('side-hint-animate');
-  
-  window.currentSideHintTimer = setTimeout(() => {
-    showSideHintAutomatic(idx, currentRowNum, valA, valB, carries, sideHint, sideHintText, mathGrid, totalCols);
-  }, 1000);
+  showSideHintAutomatic(idx, currentRowNum, valA, valB, carries, sideHint, sideHintText, mathGrid, totalCols);
 }
 
 function showSideHintAutomatic(idx, currentRowNum, valA, valB, carries, sideHint, sideHintText, mathGrid, totalCols) {
@@ -153,10 +148,10 @@ function showSideHintAutomatic(idx, currentRowNum, valA, valB, carries, sideHint
     
     if (prevCarry > 0) {
       sideHintText.innerHTML = `Запиши ${prevCarry}<br>${prevCarry} пишем`;
-      sideHint.classList.remove('hidden');
-      sideHint.classList.add('side-hint-animate');
+      sideHint.style.visibility = 'visible';
+      
     } else {
-      sideHint.classList.add('hidden');
+      sideHint.style.visibility = 'hidden';
     }
     return;
   }
@@ -184,8 +179,8 @@ function showSideHintAutomatic(idx, currentRowNum, valA, valB, carries, sideHint
   sideHintText.innerHTML = hintTextContent;
   
   // Показываем с анимацией
-  sideHint.classList.remove('hidden');
-  sideHint.classList.add('side-hint-animate');
+  sideHint.style.visibility = 'visible';
+  
   
   // Подсвечиваем ячейку переноса СВЕТЛО-ОРАНЖЕВЫМ + МИГАНИЕ если есть
   if (prevCarry > 0) {
@@ -276,12 +271,7 @@ function scheduleSideHintForSum(idx, valB, carries, sideHint, sideHintText, math
     clearTimeout(window.currentSideHintTimer);
   }
   
-  sideHint.classList.add('hidden');
-  sideHint.classList.remove('side-hint-animate');
-  
-  window.currentSideHintTimer = setTimeout(() => {
-    showSideHintForSum(idx, valB, carries, sideHint, sideHintText, mathGrid);
-  }, 1000);
+  showSideHintForSum(idx, valB, carries, sideHint, sideHintText, mathGrid);
 }
 
 function showSideHintForSum(idx, valB, carries, sideHint, sideHintText, mathGrid) {
@@ -310,8 +300,8 @@ function showSideHintForSum(idx, valB, carries, sideHint, sideHintText, mathGrid
     const digit = cellsToAdd[0];
     sideHintText.innerHTML = `Запиши цифру ${digit} в результат`;
     
-    sideHint.classList.remove('hidden');
-    sideHint.classList.add('side-hint-animate');
+    sideHint.style.visibility = 'visible';
+    
   } else {
     // ОСТАЛЬНЫЕ ЯЧЕЙКИ - складываем с переносом
     const prevCarry = carries[colIndex] || 0;
@@ -331,8 +321,8 @@ function showSideHintForSum(idx, valB, carries, sideHint, sideHintText, mathGrid
     
     sideHintText.innerHTML = hintTextContent;
     
-    sideHint.classList.remove('hidden');
-    sideHint.classList.add('side-hint-animate');
+    sideHint.style.visibility = 'visible';
+    
     
     // Подсвечиваем перенос если есть
     if (prevCarry > 0) {
@@ -459,10 +449,10 @@ export function buildGrid(
   // НА ДЕСКТОПЕ: hintPopup сверху, sideHint справа
   // Если подсказки выключены — скрываем обе
   if (!checkHints.checked) {
-    hintPopup.classList.add('hidden');
-    sideHint.classList.add('hidden');
+    hintPopup.style.visibility = 'hidden';
+    sideHint.style.visibility = 'hidden';
   } else {
-    hintPopup.classList.remove('hidden');
+    hintPopup.style.visibility = 'visible';
   }
   
   // Вызываем callback для настройки логики
@@ -602,6 +592,8 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
           // Строка правильная - активируем следующую
           if (row === '99') {
             checkResult(checkMessage);
+            hintPopup.style.visibility = 'hidden';
+            sideHint.style.visibility = 'hidden';
           } else {
             const nextRowNum = parseInt(row) + 1;
             const nextRowInputs = Array.from(document.querySelectorAll(`.math-input[data-row="${nextRowNum}"]`));
