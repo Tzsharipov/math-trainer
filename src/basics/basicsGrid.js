@@ -18,7 +18,7 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   const isMobile = window.innerWidth < 768;
   
   // Показываем подсказки на всех устройствах
-  hintPopup.classList.remove('hidden');
+  hintPopup.style.visibility = 'visible';
   sideHint.style.visibility = 'hidden';
   
   const sA = multiplicand.toString();
@@ -131,7 +131,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
           // Все заполнено - проверяем результат
           currentFocusedIndex = -1;
           checkResult(inputs, checkMessage);
-          hintPopup.classList.add('hidden');
+          hintPopup.style.visibility = 'hidden';
           sideHint.style.visibility = 'hidden';
         }
       } else {

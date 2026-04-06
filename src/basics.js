@@ -85,7 +85,7 @@ btnBackToSettings.onclick = () => {
   
   mathGrid.innerHTML = '';
   checkMessage.textContent = '';
-  hintPopup.classList.add('hidden');
+  hintPopup.style.visibility = 'hidden';
   sideHint.style.visibility = 'hidden';
 };
 
