@@ -17,9 +17,9 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   // Определяем размер экрана
   const isMobile = window.innerWidth < 768;
   
-  // НА МОБИЛЬНЫХ: hintPopup сверху, sideHint снизу (через CSS)
-  // НА ДЕСКТОПЕ: hintPopup сверху, sideHint справа
+  // Показываем подсказки на всех устройствах
   hintPopup.classList.remove('hidden');
+  sideHint.style.visibility = 'hidden';
   
   const sA = multiplicand.toString();
   const sB = multiplier.toString();
@@ -79,10 +79,14 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   
   // Фокус на последнюю ячейку (начинаем справа)
   const inputs = document.querySelectorAll('.math-input');
+  const sAInit = multiplicand.toString().split('').reverse();
+  const multInit = parseInt(multiplier);
   if (inputs.length) {
     inputs[inputs.length - 1].focus();
     currentFocusedIndex = inputs.length - 1;
     updateHintAndHighlight(inputs.length - 1, multiplicand, multiplier, hintText, mathGrid);
+    // Показываем нижнюю подсказку сразу для первой ячейки
+    showSideHintAutomatic(inputs.length - 1, sAInit, multInit, {}, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
   }
 }
 
@@ -128,7 +132,7 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
           currentFocusedIndex = -1;
           checkResult(inputs, checkMessage);
           hintPopup.classList.add('hidden');
-          sideHint.classList.add('hidden');
+          sideHint.style.visibility = 'hidden';
         }
       } else {
         e.target.classList.add('bg-red-500', 'text-white', 'border-red-600', 'font-black');
@@ -138,7 +142,6 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
     el.onfocus = () => {
       currentFocusedIndex = idx;
       updateHintAndHighlight(idx, multiplicand, multiplier, hintText, mathGrid);
-      scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, result.length, totalCols);
     };
   });
 }
@@ -220,25 +223,20 @@ function clearHighlights(mathGrid) {
   });
 }
 
-// Запускает показ боковой подсказки через 1 секунду
+// Показывает подсказку сразу без задержки
 function scheduleSideHint(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols) {
   if (window.currentSideHintTimer) {
     clearTimeout(window.currentSideHintTimer);
   }
   
-  sideHint.classList.add('hidden');
-  sideHint.classList.remove('side-hint-animate');
-  
-  window.currentSideHintTimer = setTimeout(() => {
-    showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols);
-  }, 1000);
+  showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols);
 }
 
 function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, mathGrid, inputs, resultLength, totalCols) {
   const digitIndex = resultLength - 1 - idx;
   
   if (digitIndex < 0 || digitIndex >= sA.length) {
-    sideHint.classList.add('hidden');
+    sideHint.style.visibility = 'hidden';
     return;
   }
   
@@ -261,9 +259,8 @@ function showSideHintAutomatic(idx, sA, mult, carries, sideHint, sideHintText, m
   
   sideHintText.innerHTML = hintTextContent;
   
-  // Показываем с анимацией
-  sideHint.classList.remove('hidden');
-  sideHint.classList.add('side-hint-animate');
+  // Показываем сразу
+  sideHint.style.visibility = 'visible';
   
   // Подсвечиваем ячейку переноса СВЕТЛО-ОРАНЖЕВЫМ + МИГАНИЕ если есть
   if (prevCarry > 0) {

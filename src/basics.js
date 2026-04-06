@@ -63,7 +63,6 @@ btnStartMan.onclick = () => {
 btnClearAll.onclick = () => {
   if (currentMultiplicand && currentMultiplier) {
     buildGrid(currentMultiplicand, currentMultiplier, settingsPanel, workspace, mathGrid, checkMessage, hintPopup, hintText, sideHint, sideHintText);
-    sideHint.classList.add('hidden');
   }
 };
 
@@ -87,7 +86,7 @@ btnBackToSettings.onclick = () => {
   mathGrid.innerHTML = '';
   checkMessage.textContent = '';
   hintPopup.classList.add('hidden');
-  sideHint.classList.add('hidden');
+  sideHint.style.visibility = 'hidden';
 };
 
 document.body.classList.add('loaded');
