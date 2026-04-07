@@ -113,7 +113,9 @@ btnClearAll.onclick = () => {
       s.differenceStatus = null;
     });
     checkMessage.textContent = '';
-    solved = false;
+  solved = false;
+    hintsEnabled = false;
+    checkHints.checked = false;
     focusedRow = { step: null, type: null };
     
     // ÐžÑ‡Ð¸Ñ‰Ð°ÐµÐ¼ Ð²Ð¸Ð·ÑƒÐ°Ð»ÑŒÐ½Ð¾ Ð²ÑÐµ Ð¸Ð½Ð¿ÑƒÑ‚Ñ‹
@@ -204,8 +206,6 @@ btnBackToSettings.onclick = () => {
   settingsPanel.classList.remove('hidden');
   mathGrid.innerHTML = '';
   checkMessage.textContent = '';
-  const sideHint = document.getElementById('sideHint');
-  if (sideHint) sideHint.style.visibility = 'hidden';
 };
 
 
@@ -214,7 +214,14 @@ checkHints.onchange = () => {
   hintsEnabled = checkHints.checked;
   const dividendDigitsArray = String(dividend).split('').map(Number);
   
+  const bc = document.getElementById('beigeContainer');
+  const sh = document.getElementById('sideHint');
+  const cm = document.getElementById('checkMessage');
+  
   if (hintsEnabled) {
+    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = ''; bc.style.borderRadius = ''; bc.style.boxShadow = ''; }
+    if (sh) sh.style.display = '';
+    if (cm) cm.style.display = '';
     setTimeout(() => {
       inputRefs['q:0']?.focus();
       focusedRow = { step: null, type: null, quotientIndex: 0 };
@@ -222,6 +229,9 @@ checkHints.onchange = () => {
       updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
     }, 0);
   } else {
+    if (bc) { bc.style.background = 'none'; bc.style.padding = '0'; bc.style.borderRadius = '0'; bc.style.boxShadow = 'none'; }
+    if (sh) sh.style.display = 'none';
+    if (cm) cm.style.display = 'none';
     // ÐŸÑ€Ð¸ Ð²Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ð¸ Ð¿Ð¾Ð´ÑÐºÐ°Ð·Ð¾Ðº - ÑƒÐ±Ð¸Ñ€Ð°ÐµÐ¼ Ð³Ð¾Ð»ÑƒÐ±ÑƒÑŽ/Ð¶Ñ‘Ð»Ñ‚ÑƒÑŽ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÑƒ Ð¸ Ñ‚ÐµÐºÑÑ‚ Ð¿Ð¾Ð´ÑÐºÐ°Ð·ÐºÐ¸
     clearHintMessage();
     for (const k in inputRefs) {
@@ -240,6 +250,18 @@ checkHints.onchange = () => {
 
 function buildGridWrapper() {
   buildGrid(dividend, divisor, settingsPanel, workspace, mathGrid, checkMessage, steps, stepsData, inputRefs, focusedRow, quotientInputs, setupLogic);
+  const bc = document.getElementById('beigeContainer');
+  const sh = document.getElementById('sideHint');
+  const cm = document.getElementById('checkMessage');
+  if (checkHints.checked) {
+    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = ''; bc.style.borderRadius = ''; bc.style.boxShadow = ''; }
+    if (sh) sh.style.display = '';
+    if (cm) cm.style.display = '';
+  } else {
+    if (bc) { bc.style.background = 'none'; bc.style.padding = '0'; bc.style.borderRadius = '0'; bc.style.boxShadow = 'none'; }
+    if (sh) sh.style.display = 'none';
+    if (cm) cm.style.display = 'none';
+  }
 }
 
 function setupLogic() {
@@ -351,6 +373,8 @@ function handleStepInput(e, step, type, col) {
       setTimeout(() => {
         checkProduct(step, steps, stepsData, quotientInputs, inputRefs, hintsEnabled, { value: null }, checkMessage, () => { solved = true; });
         
+        if (hintsEnabled && step === stepsData.length - 1) return;
+        
         const offset = stepData.offset;
         const partialLen = String(stepData.partialDividend).length;
         const targetCol = offset + partialLen - 1;
@@ -362,63 +386,34 @@ function handleStepInput(e, step, type, col) {
       }, 0);
     }
   } else if (type === 'difference') {
-    const isLastStep = step === stepsData.length - 1;
     const diffOnlyLen = stepData.remainder ? String(stepData.remainder).length : 1;
     
-    if (isLastStep) {
-      // Последний шаг — нужно заполнить ВСЕ ячейки разности
-      const pdStr = String(stepData.partialDividend);
-      const pdLen = pdStr.length;
-      const offset = stepData.offset || 0;
-      
-      // Считаем сколько ячеек разности уже заполнено (от offset до offset+pdLen-1)
-      let lastStepFilled = 0;
-      for (let c = offset; c < offset + pdLen; c++) {
-        if (steps[step].differenceInput[c] !== '') lastStepFilled++;
+    if (filledCount < diffOnlyLen) {
+      if (col - 1 >= 0) {
+        setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
       }
+    } else if (filledCount === diffOnlyLen) {
+      const partialDividend = stepData.partialDividend ? stepData.partialDividend.toString() : '';
+      const offset = stepData.offset || 0;
+      const targetColForCarry = offset + partialDividend.length;
       
-      if (lastStepFilled < pdLen) {
-        // Ещё не все заполнены — перемещаем курсор влево
-        if (col - 1 >= offset) {
-          setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
-        }
-      } else {
-        // Все заполнены — салют и поздравление
-        setTimeout(() => {
-          checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
-            checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
-          });
-        }, 0);
+      if (targetColForCarry < dividendDigitsArray.length) {
+        setTimeout(() => inputRefs[`${step}:difference:${targetColForCarry}`]?.focus(), 0);
       }
     } else {
-      // Не последний шаг — стандартная логика
-      if (filledCount < diffOnlyLen) {
-        if (col - 1 >= 0) {
-          setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
-        }
-      } else if (filledCount === diffOnlyLen) {
-        const partialDividend = stepData.partialDividend ? stepData.partialDividend.toString() : '';
-        const offset = stepData.offset || 0;
-        const targetColForCarry = offset + partialDividend.length;
+      setTimeout(() => {
+        checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
+          checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
+        });
         
-        if (targetColForCarry < dividendDigitsArray.length) {
-          setTimeout(() => inputRefs[`${step}:difference:${targetColForCarry}`]?.focus(), 0);
+        const nextQuotientIndex = step + 1;
+        if (nextQuotientIndex < quotientInputs.length) {
+          inputRefs[`q:${nextQuotientIndex}`]?.focus();
+          focusedRow = { step: null, type: null, quotientIndex: nextQuotientIndex };
+          if (!solved) updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+          updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
         }
-      } else {
-        setTimeout(() => {
-          checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
-            checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
-          });
-          
-          const nextQuotientIndex = step + 1;
-          if (nextQuotientIndex < quotientInputs.length) {
-            inputRefs[`q:${nextQuotientIndex}`]?.focus();
-            focusedRow = { step: null, type: null, quotientIndex: nextQuotientIndex };
-            if (!solved) updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
-            updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
-          }
-        }, 0);
-      }
+      }, 0);
     }
   }
 }

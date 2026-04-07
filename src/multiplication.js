@@ -121,6 +121,52 @@ function buildGridWrapper() {
     activeRow,
     setupLogic
   );
+  // Устанавливаем стиль бежевого контейнера
+  const beigeContainer = document.getElementById('beigeContainer');
+  if (beigeContainer) {
+    if (checkHints.checked) {
+      beigeContainer.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)';
+      beigeContainer.style.padding = '';
+      beigeContainer.style.borderRadius = '';
+      beigeContainer.style.boxShadow = '';
+      hintPopup.style.display = '';
+      sideHint.style.display = '';
+      checkMessage.style.display = '';
+    } else {
+      beigeContainer.style.background = 'none';
+      beigeContainer.style.padding = '0';
+      beigeContainer.style.borderRadius = '0';
+      beigeContainer.style.boxShadow = 'none';
+      hintPopup.style.display = 'none';
+      sideHint.style.display = 'none';
+      checkMessage.style.display = 'none';
+    }
+  }
+
 }
+
+// Переключение фона при вкл/выкл подсказок
+checkHints.onchange = () => {
+  const beigeContainer = document.getElementById('beigeContainer');
+  if (beigeContainer) {
+    if (checkHints.checked) {
+      beigeContainer.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)';
+      beigeContainer.style.padding = '';
+      beigeContainer.style.borderRadius = '';
+      beigeContainer.style.boxShadow = '';
+      hintPopup.style.display = '';
+      sideHint.style.display = '';
+      checkMessage.style.display = '';
+    } else {
+      beigeContainer.style.background = 'none';
+      beigeContainer.style.padding = '0';
+      beigeContainer.style.borderRadius = '0';
+      beigeContainer.style.boxShadow = 'none';
+      hintPopup.style.display = 'none';
+      sideHint.style.display = 'none';
+      checkMessage.style.display = 'none';
+    }
+  }
+};
 
 document.body.classList.add('loaded');
