@@ -103,10 +103,11 @@ export function updateHighlights(focusedRow, inputRefs, stepsData, dividendDigit
         highlightElement(inputRefs[key], 'hint', hintsEnabled)
       }
     } else {
-      const remStr = String(stepDatum.remainder)
-      const len = remStr.length || 1
-      const offset = clampInt(stepDatum.offset, 0, dividendDigitsArray.length - 1)
-      for (let c = offset; c < offset + len; c++) {
+      // Последний шаг — подсвечиваем ВСЕ ячейки разности (нужно заполнить нулями)
+      const pdStr = String(stepDatum.partialDividend)
+      const pdLen = pdStr.length
+      const pdOffset = clampInt(stepDatum.offset, 0, dividendDigitsArray.length - 1)
+      for (let c = pdOffset; c < pdOffset + pdLen; c++) {
         const key = `${stepIndex}:difference:${c}`
         highlightElement(inputRefs[key], 'hint', hintsEnabled)
       }

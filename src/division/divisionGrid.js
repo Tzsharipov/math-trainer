@@ -89,14 +89,6 @@ export function buildGrid(
       class="quotient-input text-center border-2 border-gray-300 bg-blue-200 rounded font-black outline-none focus:border-blue-400 transition-all shadow-sm">`;
   });
   
-  // Контейнер для подсказки (занимает место в grid, но сама подсказка absolute)
-  const hintStartCol = dividendCols + 2;
-  html += `<div style="grid-row: 3; grid-column: ${hintStartCol} / -1; position: relative; height: 0;">
-    <div id="hintMessage" 
-      style="position: absolute; top: 8px; left: 0; font-size: clamp(11px, calc(20vw / ${totalGridCols}), 15px); word-wrap: break-word; white-space: normal; line-height: 1.3; max-width: 400px;"
-      class="text-blue-600 font-bold text-left"></div>
-  </div>`;
-  
   // Разделительная линия
   html += `<div class="border-l-2 border-gray-400 row-span-full" style="grid-column: ${dividendCols + 1};"></div>`;
   

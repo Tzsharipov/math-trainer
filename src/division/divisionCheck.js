@@ -33,42 +33,6 @@ export function checkProduct(stepIndex, steps, stepsData, quotientInputs, inputR
     const allQuotientFilled = quotientInputs.every(q => q !== '')
     if (allQuotientFilled) {
       quotientStatus.value = 'correct'
-      const childName = localStorage.getItem('childName'); const message = childName ? `🥳 Умничка, ${childName}! Частное введено верно!` : '🥳 Частное введено верно!'; checkMessage.textContent = message;
-      
-      // Confetti
-      if (window.confetti) {
-        // ÐŸÐµÑ€Ð²Ñ‹Ð¹ Ð·Ð°Ð»Ð¿
-        confetti({
-          particleCount: 200,
-          spread: 120,
-          origin: { x: 0.5, y: 0.6 },
-          colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4'],
-          scalar: 1.5
-        });
-        
-        // Ð’Ñ‚Ð¾Ñ€Ð¾Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 300Ð¼Ñ)
-        setTimeout(() => {
-          confetti({
-            particleCount: 150,
-            spread: 100,
-            origin: { x: 0.5, y: 0.6 },
-            colors: ['#FFD700', '#FF6347', '#00CED1'],
-            scalar: 1.5
-          });
-        }, 300);
-        
-        // Ð¢Ñ€ÐµÑ‚Ð¸Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 600Ð¼Ñ)
-        setTimeout(() => {
-          confetti({
-            particleCount: 150,
-            spread: 100,
-            origin: { x: 0.5, y: 0.6 },
-            colors: ['#32CD32', '#FF69B4', '#FFD700'],
-            scalar: 1.5
-          });
-        }, 600);
-      }
-      clearHighlights(inputRefs)
     }
   }
   
@@ -117,8 +81,26 @@ export function checkDifference(stepIndex, steps, stepsData, inputRefs, hintsEna
   }
   
   // Ð•ÑÐ»Ð¸ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ Ð¸ ÑÑ‚Ð¾ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ ÑˆÐ°Ð³
-  if (isCorrect && stepIndex === stepsData.length - 1 && onComplete) {
-    onComplete()
+  if (isCorrect && stepIndex === stepsData.length - 1) {
+    // Поздравление и конфетти после последней разности
+    const childName = localStorage.getItem('childName');
+    const message = childName ? '🥳 Умничка, ' + childName + '! Пример решён верно!' : '🥳 Пример решён верно!';
+    const checkMsg = document.getElementById('checkMessage');
+    if (checkMsg) {
+      checkMsg.textContent = message;
+      checkMsg.className = 'text-xl font-bold text-center mt-1 min-h-[1rem] text-green-600';
+    }
+    // Скрываем подсказку
+    const sideHint = document.getElementById('sideHint');
+    if (sideHint) sideHint.style.visibility = 'hidden';
+    
+    if (window.confetti) {
+      confetti({ particleCount: 200, spread: 120, origin: { x: 0.5, y: 0.6 }, colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4'], scalar: 1.5 });
+      setTimeout(() => confetti({ particleCount: 150, spread: 100, origin: { x: 0.5, y: 0.6 }, colors: ['#FFD700', '#FF6347', '#00CED1'], scalar: 1.5 }), 300);
+      setTimeout(() => confetti({ particleCount: 150, spread: 100, origin: { x: 0.5, y: 0.6 }, colors: ['#32CD32', '#FF69B4', '#FFD700'], scalar: 1.5 }), 600);
+    }
+    clearHighlights(inputRefs);
+    if (onComplete) onComplete();
   }
 }
 
