@@ -219,7 +219,7 @@ checkHints.onchange = () => {
   const cm = document.getElementById('checkMessage');
   
   if (hintsEnabled) {
-    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = ''; bc.style.borderRadius = ''; bc.style.boxShadow = ''; }
+    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(16px, 3.5vw, 32px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
     if (sh) sh.style.display = '';
     if (cm) cm.style.display = '';
     setTimeout(() => {
@@ -254,7 +254,7 @@ function buildGridWrapper() {
   const sh = document.getElementById('sideHint');
   const cm = document.getElementById('checkMessage');
   if (checkHints.checked) {
-    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = ''; bc.style.borderRadius = ''; bc.style.boxShadow = ''; }
+    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(16px, 3.5vw, 32px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
     if (sh) sh.style.display = '';
     if (cm) cm.style.display = '';
   } else {
@@ -373,8 +373,6 @@ function handleStepInput(e, step, type, col) {
       setTimeout(() => {
         checkProduct(step, steps, stepsData, quotientInputs, inputRefs, hintsEnabled, { value: null }, checkMessage, () => { solved = true; });
         
-        if (hintsEnabled && step === stepsData.length - 1) return;
-        
         const offset = stepData.offset;
         const partialLen = String(stepData.partialDividend).length;
         const targetCol = offset + partialLen - 1;
@@ -387,33 +385,62 @@ function handleStepInput(e, step, type, col) {
     }
   } else if (type === 'difference') {
     const diffOnlyLen = stepData.remainder ? String(stepData.remainder).length : 1;
+    const isLastStep = step === stepsData.length - 1;
     
-    if (filledCount < diffOnlyLen) {
-      if (col - 1 >= 0) {
-        setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
-      }
-    } else if (filledCount === diffOnlyLen) {
-      const partialDividend = stepData.partialDividend ? stepData.partialDividend.toString() : '';
+    if (isLastStep) {
+      // Последний шаг — нужно заполнить ВСЕ ячейки разности
+      const pdStr = String(stepData.partialDividend);
+      const pdLen = pdStr.length;
       const offset = stepData.offset || 0;
-      const targetColForCarry = offset + partialDividend.length;
       
-      if (targetColForCarry < dividendDigitsArray.length) {
-        setTimeout(() => inputRefs[`${step}:difference:${targetColForCarry}`]?.focus(), 0);
+      // Считаем сколько ячеек разности уже заполнено
+      let lastStepFilled = 0;
+      for (let c = offset; c < offset + pdLen; c++) {
+        if (steps[step].differenceInput[c] !== '') lastStepFilled++;
+      }
+      
+      if (lastStepFilled < pdLen) {
+        // Ещё не все заполнены — перемещаем курсор влево
+        if (col - 1 >= offset) {
+          setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
+        }
+      } else {
+        // Все заполнены — салют и поздравление
+        setTimeout(() => {
+          checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
+            checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
+          });
+        }, 0);
       }
     } else {
-      setTimeout(() => {
-        checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
-          checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
-        });
-        
-        const nextQuotientIndex = step + 1;
-        if (nextQuotientIndex < quotientInputs.length) {
-          inputRefs[`q:${nextQuotientIndex}`]?.focus();
-          focusedRow = { step: null, type: null, quotientIndex: nextQuotientIndex };
-          if (!solved) updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
-          updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
+      // Не последний шаг — стандартная логика
+      if (filledCount < diffOnlyLen) {
+        if (col - 1 >= 0) {
+          setTimeout(() => inputRefs[`${step}:difference:${col - 1}`]?.focus(), 0);
         }
-      }, 0);
+      } else if (filledCount === diffOnlyLen) {
+        const partialDividend = stepData.partialDividend ? stepData.partialDividend.toString() : '';
+        const offset = stepData.offset || 0;
+        const targetColForCarry = offset + partialDividend.length;
+        
+        if (targetColForCarry < dividendDigitsArray.length) {
+          setTimeout(() => inputRefs[`${step}:difference:${targetColForCarry}`]?.focus(), 0);
+        }
+      } else {
+        setTimeout(() => {
+          checkDifference(step, steps, stepsData, inputRefs, hintsEnabled, () => {
+            checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage);
+          });
+          
+          const nextQuotientIndex = step + 1;
+          if (nextQuotientIndex < quotientInputs.length) {
+            inputRefs[`q:${nextQuotientIndex}`]?.focus();
+            focusedRow = { step: null, type: null, quotientIndex: nextQuotientIndex };
+            if (!solved) updateHighlights(focusedRow, inputRefs, stepsData, dividendDigitsArray, hintsEnabled);
+            updateHintMessage(focusedRow, stepsData, dividend, divisor, hintsEnabled);
+          }
+        }, 0);
+      }
     }
   }
 }
