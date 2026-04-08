@@ -219,7 +219,7 @@ checkHints.onchange = () => {
   const cm = document.getElementById('checkMessage');
   
   if (hintsEnabled) {
-    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(16px, 3.5vw, 32px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
+    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(2px, 0.4vw, 4px) clamp(10px, 2vw, 18px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
     if (sh) sh.style.display = '';
     if (cm) cm.style.display = '';
     setTimeout(() => {
@@ -254,7 +254,7 @@ function buildGridWrapper() {
   const sh = document.getElementById('sideHint');
   const cm = document.getElementById('checkMessage');
   if (checkHints.checked) {
-    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(16px, 3.5vw, 32px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
+    if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(2px, 0.4vw, 4px) clamp(10px, 2vw, 18px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
     if (sh) sh.style.display = '';
     if (cm) cm.style.display = '';
   } else {

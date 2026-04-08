@@ -85,14 +85,13 @@ export function checkDifference(stepIndex, steps, stepsData, inputRefs, hintsEna
     // Поздравление и конфетти после последней разности
     const childName = localStorage.getItem('childName');
     const message = childName ? '🥳 Умничка, ' + childName + '! Пример решён верно!' : '🥳 Пример решён верно!';
-    const checkMsg = document.getElementById('checkMessage');
-    if (checkMsg) {
-      checkMsg.textContent = message;
-      checkMsg.className = 'text-xl font-bold text-center mt-1 min-h-[1rem] text-green-600';
-    }
-    // Скрываем подсказку
+    // Выводим поздравление в нижнюю подсказку (как в multiplication)
     const sideHint = document.getElementById('sideHint');
-    if (sideHint) sideHint.style.visibility = 'hidden';
+    const sideHintText = document.getElementById('sideHintText');
+    const sideHintBox = sideHint ? sideHint.querySelector('div') : null;
+    if (sideHintText) sideHintText.textContent = message;
+    if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    if (sideHint) sideHint.style.visibility = 'visible';
     
     if (window.confetti) {
       confetti({ particleCount: 200, spread: 120, origin: { x: 0.5, y: 0.6 }, colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4'], scalar: 1.5 });
@@ -105,68 +104,5 @@ export function checkDifference(stepIndex, steps, stepsData, inputRefs, hintsEna
 }
 
 export function checkQuotient(dividend, divisor, quotientInputs, inputRefs, checkMessage) {
-  const correctQuotient = String(Math.floor(Number(dividend) / Number(divisor)))
-  const userQuotient = quotientInputs.join('')
-  
-  if (userQuotient.length === correctQuotient.length && userQuotient === correctQuotient) {
-    const childName = localStorage.getItem('childName'); const message = childName ? `🥳 Умничка, ${childName}! Частное введено верно!` : '🥳 Частное введено верно!'; checkMessage.textContent = message;
-    checkMessage.className = 'text-xl font-bold text-center min-h-[2rem] text-green-600'
-    
-    console.log('âœ… Ð§Ð°ÑÑ‚Ð½Ð¾Ðµ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ðµ!');
-    console.log('window.confetti:', window.confetti);
-    console.log('typeof window.confetti:', typeof window.confetti);
-    
-    // Confetti (Ñ‚Ð¾Ñ‡Ð½Ð¾ ÐºÐ°Ðº Ð² ÑƒÐ¼Ð½Ð¾Ð¶ÐµÐ½Ð¸Ð¸)
-    if (window.confetti) {
-      console.log('ðŸŽ‰ Ð—Ð°Ð¿ÑƒÑÐºÐ°ÑŽ ÐºÐ¾Ð½Ñ„ÐµÑ‚Ñ‚Ð¸!');
-      // ÐŸÐµÑ€Ð²Ñ‹Ð¹ Ð·Ð°Ð»Ð¿
-      confetti({
-        particleCount: 200,
-        spread: 120,
-        origin: { x: 0.5, y: 0.6 },
-        colors: ['#FFD700', '#FF6347', '#00CED1', '#32CD32', '#FF69B4'],
-        scalar: 1.5
-      });
-      
-      // Ð’Ñ‚Ð¾Ñ€Ð¾Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 300Ð¼Ñ)
-      setTimeout(() => {
-        confetti({
-          particleCount: 150,
-          spread: 100,
-          origin: { x: 0.5, y: 0.6 },
-          colors: ['#FFD700', '#FF6347', '#00CED1'],
-          scalar: 1.5
-        });
-      }, 300);
-      
-      // Ð¢Ñ€ÐµÑ‚Ð¸Ð¹ Ð·Ð°Ð»Ð¿ (Ñ‡ÐµÑ€ÐµÐ· 600Ð¼Ñ)
-      setTimeout(() => {
-        confetti({
-          particleCount: 150,
-          spread: 100,
-          origin: { x: 0.5, y: 0.6 },
-          colors: ['#32CD32', '#FF69B4', '#FFD700'],
-          scalar: 1.5
-        });
-      }, 600);
-    } else {
-      console.error('âŒ window.confetti ÐÐ• ÐÐÐ™Ð”Ð•Ð!');
-    }
-  } else {
-    const childName = localStorage.getItem('childName'); const message = childName ? `Попробуй ещё раз, ${childName}! Проверь цифры частного.` : 'Пока неверно. Проверьте цифры частного.'; checkMessage.textContent = message;
-    checkMessage.className = 'text-xl font-bold text-center min-h-[2rem] text-red-600'
-    
-    // ÐŸÐ¾Ð´ÑÐ²ÐµÑ‚ÐºÐ° Ð¾ÑˆÐ¸Ð±Ð¾Ñ‡Ð½Ñ‹Ñ… Ñ†Ð¸Ñ„Ñ€
-    const correct = correctQuotient.split('')
-    for (let i = 0; i < quotientInputs.length; i++) {
-      const key = `q:${i}`
-      const qEl = inputRefs[key]
-      if (!qEl) continue
-      if (quotientInputs[i] !== correct[i]) {
-        highlightElement(qEl, 'wrong', true)
-      } else {
-        highlightElement(qEl, 'ok', true)
-      }
-    }
-  }
+  // Поздравление уже выведено в checkDifference через sideHint
 }

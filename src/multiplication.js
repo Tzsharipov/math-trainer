@@ -126,7 +126,7 @@ function buildGridWrapper() {
   if (beigeContainer) {
     if (checkHints.checked) {
       beigeContainer.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)';
-      beigeContainer.style.padding = 'clamp(16px, 3.5vw, 32px)';
+      beigeContainer.style.padding = 'clamp(2px, 0.4vw, 4px) clamp(10px, 2vw, 18px)';
       beigeContainer.style.borderRadius = 'clamp(24px, 4vw, 40px)';
       beigeContainer.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
       hintPopup.style.display = '';
@@ -151,7 +151,7 @@ checkHints.onchange = () => {
   if (beigeContainer) {
     if (checkHints.checked) {
       beigeContainer.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)';
-      beigeContainer.style.padding = 'clamp(16px, 3.5vw, 32px)';
+      beigeContainer.style.padding = 'clamp(2px, 0.4vw, 4px) clamp(10px, 2vw, 18px)';
       beigeContainer.style.borderRadius = 'clamp(24px, 4vw, 40px)';
       beigeContainer.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
       hintPopup.style.display = '';

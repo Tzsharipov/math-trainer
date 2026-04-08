@@ -9,14 +9,21 @@ export function checkResult(checkMessage) {
   const allCorrect = resultInputs.every(inp => inp.value === inp.dataset.correct);
   
   if (allCorrect) {
-    // Персонализированное сообщение с именем ребёнка
     const childName = localStorage.getItem('childName');
     const message = childName 
       ? `Правильно! Умничка, ${childName}! 🎉` 
       : 'Правильно! Молодец! 🎉';
     
-    checkMessage.textContent = message;
-    checkMessage.className = 'text-xl font-bold text-center mt-2 text-green-600';
+    // Выводим поздравление в нижнюю подсказку
+    const sideHint = document.getElementById('sideHint');
+    const sideHintText = document.getElementById('sideHintText');
+    const sideHintBox = sideHint?.querySelector('div');
+    if (sideHintText) sideHintText.textContent = message;
+    if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    if (sideHint) sideHint.style.visibility = 'visible';
+    
+    checkMessage.textContent = '';
+    checkMessage.className = 'text-xl font-bold text-center mt-1 min-h-[0]';
     
     if (window.confetti) {
       // Первый залп
@@ -51,13 +58,19 @@ export function checkResult(checkMessage) {
       }, 600);
     }
   } else {
-    // Персонализированное сообщение с именем ребёнка
     const childName = localStorage.getItem('childName');
     const message = childName 
       ? `Попробуй ещё раз, ${childName}! 💪` 
       : 'Попробуй ещё раз!';
     
-    checkMessage.textContent = message;
-    checkMessage.className = 'text-xl font-bold text-center mt-2 text-red-600';
+    const sideHint = document.getElementById('sideHint');
+    const sideHintText = document.getElementById('sideHintText');
+    const sideHintBox = sideHint?.querySelector('div');
+    if (sideHintText) sideHintText.textContent = message;
+    if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+    if (sideHint) sideHint.style.visibility = 'visible';
+    
+    checkMessage.textContent = '';
+    checkMessage.className = 'text-xl font-bold text-center mt-1 min-h-[0]';
   }
 }

@@ -453,6 +453,9 @@ export function buildGrid(
     sideHint.style.visibility = 'hidden';
   } else {
     hintPopup.style.visibility = 'visible';
+    // Восстанавливаем стандартный цвет подсказки
+    const sideHintBox = sideHint.querySelector('div');
+    if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #cdb987, #906b2b)';
   }
   
   // Вызываем callback для настройки логики
@@ -593,7 +596,6 @@ export function setupLogic(totalCols, currentA, currentB, checkHints, checkMessa
           if (row === '99') {
             checkResult(checkMessage);
             hintPopup.style.visibility = 'hidden';
-            sideHint.style.visibility = 'hidden';
           } else {
             const nextRowNum = parseInt(row) + 1;
             const nextRowInputs = Array.from(document.querySelectorAll(`.math-input[data-row="${nextRowNum}"]`));
