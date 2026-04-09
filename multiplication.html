@@ -290,8 +290,8 @@
         if (!el) {
           el = document.createElement('div');
           el.id = 'demoCounter';
-          el.style.cssText = 'position:fixed;top:12px;right:12px;z-index:1000;background:#fbbf24;color:#1f2937;padding:8px 16px;border-radius:20px;font-weight:900;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.2);';
-          document.body.appendChild(el);
+          el.style.cssText = 'background:#fbbf24;color:#1f2937;padding:clamp(6px,1.2vw,10px) clamp(12px,2.5vw,20px);border-radius:20px;font-weight:900;font-size:clamp(12px,2.5vw,14px);box-shadow:0 2px 8px rgba(0,0,0,0.2);text-align:center;margin-bottom:clamp(4px,0.8vw,8px);';
+          var bc = document.getElementById('beigeContainer'); if (bc && bc.parentNode) { bc.parentNode.insertBefore(el, bc); } else { document.body.appendChild(el); }
         }
         el.textContent = '🎯 Демо: осталось ' + remaining + ' из ' + DEMO_LIMIT + ' примеров';
       }
