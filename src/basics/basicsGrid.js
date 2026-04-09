@@ -20,6 +20,9 @@ export function buildGrid(multiplicand, multiplier, settingsPanel, workspace, ma
   // Показываем подсказки на всех устройствах
   hintPopup.style.visibility = 'visible';
   sideHint.style.visibility = 'hidden';
+  // Восстанавливаем стандартный цвет подсказки
+  const sideHintBox = sideHint.querySelector('div');
+  if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #cdb987, #906b2b)';
   
   const sA = multiplicand.toString();
   const sB = multiplier.toString();
@@ -132,7 +135,6 @@ function setupLogic(multiplicand, multiplier, result, totalCols, checkMessage, h
           currentFocusedIndex = -1;
           checkResult(inputs, checkMessage);
           hintPopup.style.visibility = 'hidden';
-          sideHint.style.visibility = 'hidden';
         }
       } else {
         e.target.classList.add('bg-red-500', 'text-white', 'border-red-600', 'font-black');
@@ -306,14 +308,22 @@ function checkResult(inputs, checkMessage) {
   
   const allCorrect = Array.from(inputs).every(inp => inp.value === inp.dataset.correct);
   
+  const sideHint = document.getElementById('sideHint');
+  const sideHintText = document.getElementById('sideHintText');
+  const sideHintBox = sideHint ? sideHint.querySelector('div') : null;
+  
   if (allCorrect) {
     const childName = localStorage.getItem('childName');
     const message = childName 
       ? `Правильно! Умничка, ${childName}! 🎉` 
       : 'Правильно! Молодец! 🎉';
     
-    checkMessage.textContent = message;
-    checkMessage.className = 'text-xl font-bold text-center mt-2 text-green-600';
+    // Выводим в sideHint с зелёным фоном
+    if (sideHintText) sideHintText.textContent = message;
+    if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    if (sideHint) sideHint.style.visibility = 'visible';
+    
+    checkMessage.textContent = '';
     
     if (window.confetti) {
       confetti({
@@ -346,7 +356,11 @@ function checkResult(inputs, checkMessage) {
       ? `Попробуй ещё раз, ${childName}! 💪` 
       : 'Попробуй ещё раз!';
     
-    checkMessage.textContent = message;
-    checkMessage.className = 'text-xl font-bold text-center mt-2 text-red-600';
+    // Выводим в sideHint с красным фоном
+    if (sideHintText) sideHintText.textContent = message;
+    if (sideHintBox) sideHintBox.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+    if (sideHint) sideHint.style.visibility = 'visible';
+    
+    checkMessage.textContent = '';
   }
 }
