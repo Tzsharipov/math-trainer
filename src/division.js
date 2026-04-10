@@ -105,29 +105,7 @@ btnStartMan.onclick = btnGen.onclick;
 // ÐžÑ‡Ð¸ÑÑ‚Ð¸Ñ‚ÑŒ Ð²ÑÑ‘
 btnClearAll.onclick = () => {
   if (dividend && divisor) {
-    quotientInputs.fill('');
-    steps.forEach(s => {
-      s.productInput.fill('');
-      s.differenceInput.fill('');
-      s.productStatus = null;
-      s.differenceStatus = null;
-    });
-    checkMessage.textContent = '';
-  solved = false;
-    hintsEnabled = false;
-    checkHints.checked = false;
-    focusedRow = { step: null, type: null };
-    
-    // ÐžÑ‡Ð¸Ñ‰Ð°ÐµÐ¼ Ð²Ð¸Ð·ÑƒÐ°Ð»ÑŒÐ½Ð¾ Ð²ÑÐµ Ð¸Ð½Ð¿ÑƒÑ‚Ñ‹
-    for (const k in inputRefs) {
-      const el = inputRefs[k];
-      if (el) {
-        el.value = ''; // ÐžÑ‡Ð¸Ñ‰Ð°ÐµÐ¼ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð² HTML
-        el.style.backgroundColor = ''; // Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‚ÐºÑƒ
-      }
-    }
-    
-    setTimeout(() => inputRefs['q:0']?.focus(), 0);
+    buildGridWrapper();
   }
 };
 
@@ -257,6 +235,8 @@ function buildGridWrapper() {
     if (bc) { bc.style.background = 'linear-gradient(135deg, #f5e6ca, #eedcbf)'; bc.style.padding = 'clamp(2px, 0.4vw, 4px) clamp(10px, 2vw, 18px)'; bc.style.borderRadius = 'clamp(24px, 4vw, 40px)'; bc.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)'; }
     if (sh) sh.style.display = '';
     if (cm) cm.style.display = '';
+    const shBox = sh ? sh.querySelector('div') : null;
+    if (shBox) shBox.style.background = 'linear-gradient(135deg, #cdb987, #906b2b)';
   } else {
     if (bc) { bc.style.background = 'none'; bc.style.padding = '0'; bc.style.borderRadius = '0'; bc.style.boxShadow = 'none'; }
     if (sh) sh.style.display = 'none';
