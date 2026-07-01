@@ -775,16 +775,16 @@
             
             <div class="app-actions">
               ${showConfirmBtn ? `
-                <button class="app-btn confirm" onclick="confirmPayment(${app.id})">
+                <button class="app-btn confirm" onclick="confirmPayment('${app.id}')">
                   ✓ Подтвердить оплату
                 </button>
               ` : ''}
               ${showCreateBtn ? `
-                <button class="app-btn create" onclick="createUserFromApplication(${app.id}, '${app.email}')">
+                <button class="app-btn create" onclick="createUserFromApplication('${app.id}', '${app.email}')">
                   ➕ Создать пользователя
                 </button>
               ` : ''}
-              <button class="app-btn delete" onclick="deleteApplication(${app.id})">
+              <button class="app-btn delete" onclick="deleteApplication('${app.id}')">
                 🗑️ Удалить
               </button>
             </div>
