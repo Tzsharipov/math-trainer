@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import { copyFileSync } from 'fs'
+import { cloudflare } from "@cloudflare/vite-plugin";
 export default defineConfig({
   base: '/',
   build: {
@@ -28,5 +29,5 @@ export default defineConfig({
     closeBundle() {
       copyFileSync('netlify.toml', 'dist/netlify.toml')
     }
-  }]
+  }, cloudflare()]
 })
